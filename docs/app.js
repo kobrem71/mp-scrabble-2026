@@ -66,7 +66,9 @@
     const q = p - 0.5, r = q * q;
     return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
   }
-  function randn() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  let seed = 20261116;
+  function rand() { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }
+  function randn() { let u = 0, v = 0; while (!u) u = rand(); while (!v) v = rand(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
 
   // ---------- tabela ----------
   function standings() {
@@ -92,6 +94,7 @@
   // ---------- Monte Carlo ----------
   const SIMS = 20000;
   function simulate() {
+    seed = 20261116; // stałe ziarno: te same kursy przy każdym odświeżeniu
     const base = new Float64Array(N), baseSpread = new Float64Array(N);
     const open = [];
     for (const m of matches) {
