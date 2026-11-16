@@ -449,3 +449,20 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
 .typy-tbl td.nick { white-space: normal; overflow-wrap: anywhere; max-width: 110px; line-height: 1.2; }
 .typy-tbl { width: 100%; }
 .typy-tbl td.nick { overflow-wrap: break-word; word-break: normal; max-width: 130px; }
+
+
+/* Na węższych ekranach karty Typera układają się jedna pod drugą. */
+@media (max-width: 1000px) {
+  .grid-typer { grid-template-columns: minmax(0, 1fr); }
+  .grid-typer > .card:first-child { grid-row: auto; }
+}
+@media (max-width: 700px) {
+  .grid-typer .card-head { padding: 9px 12px; }
+  .grid-typer .card-body { padding: 12px; }
+
+  /* Tabela Graczy pozostaje w jednej karcie; jej szerokie kolumny przewijają się w środku. */
+  [data-panel="gracze"] .card-head { align-items: flex-start; }
+  [data-panel="gracze"] .card-head .note { line-height: 1.35; }
+  [data-panel="gracze"] .card-body { padding: 10px; }
+  [data-panel="gracze"] .table-scroll { overscroll-behavior-inline: contain; }
+}
