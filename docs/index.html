@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=28">
+<link rel="stylesheet" href="style.css?v=29">
 </head>
 <body>
 <div class="viz-root">
@@ -57,6 +57,13 @@
       <div class="card">
         <div class="card-head"><h2 id="titleHead">Szanse na tytuł</h2><span class="note" id="simNote"></span></div>
         <div class="card-body"><div id="titleChart" class="barlist"></div></div>
+      </div>
+    </div>
+    <div class="card fact-card">
+      <div class="fact-inner">
+        <span class="fact-label tiles tiles-sm" data-word="CIEKAWOSTKA" aria-label="Losowa ciekawostka"></span>
+        <p id="factText" class="fact-text" aria-live="polite"></p>
+        <div class="fact-nav"><button id="factNext" class="btn sim-btn" type="button">🎲 Kolejna</button></div>
       </div>
     </div>
     <div class="card fav-card">
@@ -174,7 +181,7 @@
 </footer>
 <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
 </div>
-<script src="app.js?v=25"></script>
+<script src="app.js?v=26"></script>
 <script src="bg.js?v=1" defer></script>
 </body>
 </html>

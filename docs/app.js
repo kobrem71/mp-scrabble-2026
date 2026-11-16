@@ -662,5 +662,64 @@
     $("#footer").innerHTML = `Dane: <a href="${DATA.source}" target="_blank" rel="noopener">scrabble.stats.org.pl</a> · stan na ${DATA.updated} · kursy wyłącznie rozrywkowe`;
   }
 
+
+  // ---------- Losowa ciekawostka ----------
+  const b = t => `<b>${esc(t)}</b>`;
+  const FACTS_FIXED = [
+    // od autora
+    `Mistrzostw w tym roku nie wygra ${b("Michał Alabrudziński")}.`,
+    `Mistrzostw w tym roku nie wygra ${b("Dariusz Kosz")}.`,
+    `Mistrzostw w tym roku nie wygra i nigdy wcześniej nie wygrał ${b("Kobrem")}.`,
+    `${b("Justynie")} zabrakło niewiele, ale przynajmniej zajmie się dziećmi w czasie finałów.`,
+    // z danych
+    `${b("Mariusz Skrobosz")} i ${b("Kamil Górka")} zagrali ze sobą aż 113 razy – bilans 57–56 dla Skrobosza. Najczęstszy pojedynek wśród finalistów.`,
+    `${b("Kamil Górka")} wygrał 10 ostatnich partii z ${b("Joanną Juszczak")} (bilans 18–3).`,
+    `${b("Kamil Górka")} zdobył przeciw ${b("Joannie Juszczak")} łącznie o 1947 małych punktów więcej – największa przewaga w historii par finalistów.`,
+    `${b("Artur Irzyk")} przegrał wszystkie 7 partii z ${b("Mariuszem Skroboszem")} – Skrobosz zdobywał w nich średnio 453 punkty.`,
+    `${b("Łukasz Bobowski")} wygrał wszystkie 6 partii z ${b("Karoliną Urbańską")}.`,
+    `${b("Wojciech Zemło")} ani razu nie przegrał z ${b("Karoliną Urbańską")} – 5:0.`,
+    `${b("Marcin Rogala")} wygrał wszystkie 4 partie z ${b("Dawidem Adamczykiem")}.`,
+    `${b("Łukasz Bobowski")} i ${b("Artur Irzyk")} grali ze sobą 28 razy – idealny remis 14–14.`,
+    `Remisowe bilanse: ${b("Bobowski")}–${b("Skrobosz")} 11–11 i ${b("Szymczak")}–${b("Górka")} 11–11.`,
+    `${b("Sławomir Piotrowski")} i ${b("Dariusz Ulatowski")} to jedyna para finalistów, która nigdy nie zagrała ze sobą w turnieju rankingowym.`,
+    `${b("Mariusz Skrobosz")} rozegrał 5742 partie turniejowe – najwięcej z finalistów i ponad pięć razy więcej niż ${b("Dawid Adamczyk")} (1112).`,
+    `${b("Dominik Urbacki")} ma najwyższą średnią małych punktów w karierze spośród finalistów: 428.3 na partię.`,
+    `${b("Dariusz Ulatowski")} ma najwyższy ranking z ostatnich 12 miesięcy (184.12), choć rozegrał dopiero 1150 partii.`,
+    `${b("Kacper Zegadło")} wygrał 9 z 10 ostatnich partii z rywalami z rankingiem 140+.`,
+    `${b("Bartosz Morawski")} wygrał 7 ostatnich partii z rywalami z rankingiem 140+.`,
+    `${b("Kamil Górka")} ma najlepszy bilans z rywalami 140+ w ostatnich 12 miesiącach: 107–36 (74.8%).`,
+    `${b("Kamil Górka")} wygrał 6 ostatnich pojedynków z ${b("Dominikiem Urbackim")} i prowadzi w ich historii 29–21.`,
+    `${b("Dariusz Ulatowski")} wygrał 5 ostatnich partii z ${b("Marcinem Rogalą")} (bilans 7–1).`,
+    `${b("Dawid Adamczyk")} wygrał 5 ostatnich partii z ${b("Wojciechem Zemło")}.`,
+    `${b("Przemysław Herdzina")} zdobywa przeciw ${b("Marcinowi Rogali")} średnio 460.7 punktu – najwyższa średnia wśród par finalistów.`,
+    `${b("Dominik Urbacki")} prowadzi z ${b("Marcinem Rogalą")} 14–5 i jest od niego lepszy o 1590 małych punktów.`,
+    `${b("Wojciech Zemło")} wygrał z ${b("Jakubem Szymczakiem")} 18 z 24 partii.`,
+    `${b("Kamil Górka")} i ${b("Bartosz Morawski")} zagrali 67 razy – Górka prowadzi 38–28 przy 1 remisie.`,
+    `${b("Joanna Juszczak")} po eliminacjach podniosła bilans z rywalami 140+ z 5–14 do 13–18.`,
+  ];
+  // ciekawostki generowane automatycznie z macierzy H2H (serie i komplety zwycięstw)
+  function autoFacts() {
+    const out = [];
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+      const x = H[i][j]; if (!x || i === j) continue;
+      const s = parseInt(x.streak, 10), g = x.w + x.l + x.d;
+      if (x.l === 0 && x.d === 0 && x.w >= 3) out.push(`${b(P[j].name)} nie wygrał ani jednej z ${x.w} partii z ${b(P[i].name)}.`);
+      else if (s >= 4) out.push(`${b(P[j].name)} nie wygrał z ${b(P[i].name)} w ostatnich ${s} pojedynkach (bilans ogółem ${x.l}–${x.w}).`);
+      if (i < j && g >= 10 && Math.abs(x.avg - x.oppAvg) < 3) out.push(`${b(P[i].name)} i ${b(P[j].name)} są niemal równi: w ${g} partiach średnio ${fmt(x.avg, 1)} do ${fmt(x.oppAvg, 1)} punktu.`);
+    }
+    return out;
+  }
+  const FACTS = [...FACTS_FIXED, ...autoFacts()];
+  let factOrder = [], factPos = 0, factTimer = null;
+  function nextFact() {
+    if (!factOrder.length || factPos >= factOrder.length) { factOrder = [...FACTS.keys()].sort(() => Math.random() - .5); factPos = 0; }
+    const el = $("#factText"); if (!el) return;
+    el.classList.remove("show"); void el.offsetWidth;
+    el.innerHTML = FACTS[factOrder[factPos++]];
+    el.classList.add("show");
+    clearInterval(factTimer); factTimer = setInterval(nextFact, 15000);
+  }
+  if ($("#factNext")) { $("#factNext").addEventListener("click", nextFact); nextFact(); }
+
   renderAll();
 })();

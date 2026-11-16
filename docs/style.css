@@ -555,3 +555,22 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
 .bgw.in .bgt, .bgw.out .bgt { transform: none; opacity: 1; }
 .bgw.static .bgt { transition: none; transform: none; opacity: 1; }
 @media (max-width: 700px) { .bgw.in { opacity: .16; } }
+
+
+/* --- Losowa ciekawostka --- */
+.fact-card { margin-top: 14px; background: linear-gradient(180deg, #fffbe0, var(--cream)); border: 1px solid #e0b860; }
+.fact-inner { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 14px 18px; }
+.fact-label .tile { --s: 21px; }
+.fact-text { margin: 0; font-size: 16px; line-height: 1.45; color: var(--text-primary); min-height: 2.9em; display: flex; align-items: center; opacity: 0; transform: translateY(4px); transition: opacity .5s ease, transform .5s ease; }
+.fact-text.show { opacity: 1; transform: none; }
+.fact-text b { color: var(--board); }
+.fact-nav { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.fact-nav .hint { margin: 0; font-size: 11px; }
+@media (max-width: 760px) {
+  .fact-inner { grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 12px; }
+  .fact-text { font-size: 14.5px; min-height: 0; }
+  .fact-nav { flex-direction: row; align-items: center; justify-content: space-between; }
+  .fact-label .tile { --s: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .fact-text { transition: none; } }
+.fact-text { display: block; min-height: 0; }
