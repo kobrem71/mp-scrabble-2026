@@ -698,14 +698,19 @@
     `${b("Joanna Juszczak")} po eliminacjach podniosła bilans z rywalami 140+ z 5–14 do 13–18.`,
   ];
   // ciekawostki generowane automatycznie z macierzy H2H (serie i komplety zwycięstw)
+  // odmiana: narzędnik („z kim”) i rodzaj czasownika
+  const INSTR = { "Kacper Zegadło": "Kacprem Zegadło", "Bartosz Morawski": "Bartoszem Morawskim", "Marcin Rogala": "Marcinem Rogalą", "Łukasz Bobowski": "Łukaszem Bobowskim", "Joanna Juszczak": "Joanną Juszczak", "Dawid Adamczyk": "Dawidem Adamczykiem", "Artur Irzyk": "Arturem Irzykiem", "Karolina Urbańska": "Karoliną Urbańską", "Jakub Szymczak": "Jakubem Szymczakiem", "Wojciech Zemło": "Wojciechem Zemło", "Mariusz Skrobosz": "Mariuszem Skroboszem", "Przemysław Herdzina": "Przemysławem Herdziną", "Sławomir Piotrowski": "Sławomirem Piotrowskim", "Kamil Górka": "Kamilem Górką", "Dominik Urbacki": "Dominikiem Urbackim", "Dariusz Ulatowski": "Dariuszem Ulatowskim" };
+  const FEMALE = new Set(["Joanna Juszczak", "Karolina Urbańska"]);
+  const instr = n => INSTR[n] || n;
+  const wygral = n => FEMALE.has(n) ? "wygrała" : "wygrał";
   function autoFacts() {
     const out = [];
     for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
       const x = H[i][j]; if (!x || i === j) continue;
       const s = parseInt(x.streak, 10), g = x.w + x.l + x.d;
-      if (x.l === 0 && x.d === 0 && x.w >= 3) out.push(`${b(P[j].name)} nie wygrał ani jednej z ${x.w} partii z ${b(P[i].name)}.`);
-      else if (s >= 4) out.push(`${b(P[j].name)} nie wygrał z ${b(P[i].name)} w ostatnich ${s} pojedynkach (bilans ogółem ${x.l}–${x.w}).`);
-      if (i < j && g >= 10 && Math.abs(x.avg - x.oppAvg) < 3) out.push(`${b(P[i].name)} i ${b(P[j].name)} są niemal równi: w ${g} partiach średnio ${fmt(x.avg, 1)} do ${fmt(x.oppAvg, 1)} punktu.`);
+      if (x.l === 0 && x.d === 0 && x.w >= 3) out.push(`${b(P[j].name)} nie ${wygral(P[j].name)} ani jednej z ${x.w} partii z ${b(instr(P[i].name))}.`);
+      else if (s >= 4) out.push(`${b(P[j].name)} nie ${wygral(P[j].name)} z ${b(instr(P[i].name))} w ostatnich ${s} pojedynkach (bilans ogółem ${x.l}–${x.w}).`);
+      if (i < j && g >= 10 && Math.abs(x.avg - x.oppAvg) < 3) out.push(`${b(P[i].name)} i ${b(P[j].name)} są niemal ${FEMALE.has(P[i].name) && FEMALE.has(P[j].name) ? "równe" : "równi"}: w ${g} partiach średnio ${fmt(x.avg, 1)} do ${fmt(x.oppAvg, 1)} punktu.`);
     }
     return out;
   }
