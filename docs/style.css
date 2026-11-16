@@ -65,7 +65,7 @@ h1, h2 { margin: 0; }
 .tiles-xl .tile { --s: 52px; }
 .tiles-xl .tile-gap { --s: 52px; }
 .tiles-sm { --gap: 2px; }
-.tiles-sm .tile { --s: 23px; box-shadow: inset 1px 1px 0 rgba(255,255,255,.9), inset -1px -1px 0 rgba(120,110,70,.35), 0 1px 2px rgba(0,0,0,.35); }
+.tiles-sm .tile { --s: 20px; box-shadow: inset 1px 1px 0 rgba(255,255,255,.9), inset -1px -1px 0 rgba(120,110,70,.35), 0 1px 2px rgba(0,0,0,.35); }
 @media (max-width: 700px) {
   .tiles-xl .tile, .tiles-xl .tile-gap { --s: 34px; }
   .tiles-sm .tile { --s: 17px; }
@@ -86,7 +86,7 @@ h1, h2 { margin: 0; }
 .tabbar { background: linear-gradient(180deg, var(--bar-1), #22404b); position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
 .tabs { display: flex; gap: 6px; overflow-x: auto; padding-top: 8px; padding-bottom: 8px; }
 .tabs button {
-  flex: none; border: 0; cursor: pointer; padding: 7px 10px; border-radius: 8px;
+  flex: none; border: 0; cursor: pointer; padding: 7px 8px; border-radius: 8px;
   background: linear-gradient(180deg, var(--nav-2), var(--nav-1));
   box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 1px 2px rgba(0,0,0,.4);
 }
@@ -239,3 +239,25 @@ label { color: var(--text-secondary); font-size: 13px; display: inline-flex; gap
 .score.simsc { color: #9a5a12; }
 .small-odds { font-size: 13px !important; color: var(--text-muted) !important; font-weight: normal !important; min-width: 40px !important; }
 #playersTbl { font-size: 13.5px; } #playersTbl td, #playersTbl th { padding-left: 6px; padding-right: 6px; }
+
+/* typer */
+.grid-typer { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 1000px) { .grid-typer { grid-template-columns: 1fr; } }
+input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; background: #fff; width: 200px; }
+.typer-list { list-style: none; margin: 8px 0 0; padding: 0; }
+.typer-row { display: grid; grid-template-columns: 34px 1fr 110px 62px auto 64px; gap: 10px; align-items: center; padding: 6px 8px; margin-bottom: 4px; background: #fdfde8; border: 1px solid rgba(21,118,174,.4); border-radius: 6px; cursor: grab; font-size: 15px; }
+.typer-row.dragging { opacity: .4; }
+.typer-row.over { border-color: var(--board); box-shadow: 0 0 0 2px var(--board) inset; }
+.tpos { font: 700 17px "Roboto Slab", Georgia, serif; color: var(--board); text-align: right; }
+.tname { font-weight: bold; }
+.tfc { color: var(--text-muted); font-size: 13px; }
+.tmult { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--text-muted); text-align: right; }
+.tmult.up { color: #9a5a12; font-weight: bold; }
+.tpts { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+.tbtns { display: flex; gap: 4px; justify-content: flex-end; }
+.tb { border: 1px solid var(--line); background: #fff; color: var(--line); border-radius: 4px; width: 28px; height: 26px; cursor: pointer; font-size: 12px; }
+.tb:disabled { opacity: .3; cursor: default; }
+.typer-score { font-size: 17px; margin: 6px 0; }
+.typer-score b { color: var(--board); font-size: 20px; }
+.typer-rules .tbl { max-width: 320px; margin-bottom: 12px; }
+@media (max-width: 700px) { .typer-row { grid-template-columns: 28px 1fr 56px 60px; } .tfc, .tpts { display: none; } }

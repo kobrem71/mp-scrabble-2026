@@ -93,17 +93,20 @@
       }
     }
     s.forEach(x => { x.pts = x.w + x.d / 2; x.spread = x.pf - x.pa; });
-    return s.sort((x, y) => y.pts - x.pts || y.spread - x.spread || P[y.i].rank - P[x.i].rank);
+    return s.sort((x, y) => y.pts - x.pts || y.spread - x.spread || (SIM ? SIM[y.i].title - SIM[x.i].title || SIM[x.i].avgPlace - SIM[y.i].avgPlace : 0) || P[y.i].rank - P[x.i].rank);
   }
 
   // ---------- Monte Carlo ----------
   const SIMS = 20000;
-  function simulate() {
+  function simulate(pre = false) {
     seed = 20261116; // stałe ziarno: te same kursy przy każdym odświeżeniu
     const base = new Float64Array(N), baseSpread = new Float64Array(N);
     const open = [];
     for (const m of matches) {
-      if (m.score) {
+      if (pre) {
+        const p = prob(m.a, m.b);
+        open.push([m.a, m.b, M.spreadSd * invNorm(Math.min(Math.max(p, 1e-6), 1 - 1e-6))]);
+      } else if (m.score) {
         const [x, y] = m.score;
         base[m.a] += x > y ? 1 : x === y ? .5 : 0; base[m.b] += y > x ? 1 : x === y ? .5 : 0;
         baseSpread[m.a] += x - y; baseSpread[m.b] += y - x;
@@ -197,7 +200,7 @@
   let SIM = null;
   function renderAll() {
     SIM = simulate();
-    renderStandings(); renderTitle(); renderForm(); renderMatches(); renderMatrix(); renderPair(); renderPlayers(); renderFaq();
+    renderStandings(); renderTitle(); renderForm(); renderMatches(); renderMatrix(); renderPair(); renderPlayers(); renderTyper(); renderFaq();
   }
 
   const formDots = str => [...str].map(c => c === "W" ? '<span class="form-dot w" title="wygrana"></span>' : c === "L" ? '<span class="form-dot l" title="porażka"></span>' : '<span class="form-dot d" title="remis"></span>').join("");
@@ -384,6 +387,72 @@
     $("#playersTbl").innerHTML = `<thead><tr><th>Gracz</th><th class="num">Siła</th><th class="num">Ranking PFS</th><th class="num">Rank. 12 mies.</th><th class="num">Vs 140+ W–P–R</th><th class="num">% vs 140+</th><th class="num">Śr. rank rywali</th><th class="num">Ranking formy</th><th>Ostatnie 10</th><th class="num">Śr. małe 12 mies.</th><th class="num">Gry (kariera)</th><th class="num">% wygr. (kariera)</th><th class="num">Vs finaliści</th><th class="num">% vs finaliści</th></tr></thead><tbody>${rows}</tbody>`;
   }
 
+  // ---------- TYPER ----------
+  // Prognoza przedturniejowa (zamrożona): kolejność wg szansy na tytuł bez żadnych wyników.
+  const PRE = simulate(true);
+  const FORECAST = [...PRE].sort((a, b) => b.title - a.title || a.avgPlace - b.avgPlace).map(x => x.i);
+  const forecastPlace = Object.fromEntries(FORECAST.map((i, k) => [i, k + 1]));
+  const BASE_PTS = [10, 6, 3, 1];           // trafione miejsce / o 1 / o 2 / o 3
+  const BONUS_STEP = 0.10, BONUS_MAX = 1.5; // +10% za każde miejsce powyżej prognozy, max ×1.5
+  const typerMult = (i, t) => Math.min(BONUS_MAX, 1 + BONUS_STEP * Math.max(0, forecastPlace[i] - t));
+  function typerScore(order, finalOrder) {
+    const actual = Object.fromEntries(finalOrder.map((i, k) => [i, k + 1]));
+    let total = 0;
+    const rows = order.map((i, k) => {
+      const t = k + 1, d = Math.abs(t - actual[i]), base = BASE_PTS[d] || 0, mult = typerMult(i, t);
+      const pts = Math.round(base * mult * 10) / 10; total += pts;
+      return { i, t, a: actual[i], base, mult, pts };
+    });
+    return { total: Math.round(total * 10) / 10, rows };
+  }
+  let typer = { nick: "", order: FORECAST.slice() };
+  try { const t = JSON.parse(safeGet("mp2026-typer") || "null"); if (t && Array.isArray(t.order) && t.order.length === N) typer = { nick: t.nick || "", order: t.order.map(n => IDX[n]).filter(i => i !== undefined) }; } catch (e) { }
+  if (typer.order.length !== N) typer.order = FORECAST.slice();
+  const saveTyperLocal = () => safeSet("mp2026-typer", JSON.stringify({ nick: typer.nick, order: typer.order.map(i => P[i].name) }));
+  let dragFrom = null;
+
+  function renderTyper() {
+    const st = standings(), anyPlayed = matches.some(isDone), done = finished();
+    const sc = anyPlayed ? typerScore(typer.order, st.map(x => x.i)) : null;
+    const byI = sc ? Object.fromEntries(sc.rows.map(r => [r.i, r])) : {};
+    $("#typerNick").value = typer.nick;
+    $("#typerList").innerHTML = typer.order.map((i, k) => {
+      const t = k + 1, f = forecastPlace[i], mult = typerMult(i, t), r = byI[i];
+      const diff = f - t;
+      return `<li class="typer-row" draggable="true" data-k="${k}">
+        <span class="tpos">${t}</span>
+        <span class="tname">${esc(P[i].name)}</span>
+        <span class="tfc">prognoza: ${f}.</span>
+        <span class="tmult ${mult > 1 ? "up" : ""}">${mult > 1 ? "×" + mult.toFixed(2) : "×1.00"}</span>
+        ${sc ? `<span class="tpts">${r.a}. → <b>${r.pts.toFixed(1)}</b></span>` : ""}
+        <span class="tbtns"><button type="button" class="tb" data-k="${k}" data-d="-1" ${k === 0 ? "disabled" : ""} aria-label="W górę">▲</button><button type="button" class="tb" data-k="${k}" data-d="1" ${k === N - 1 ? "disabled" : ""} aria-label="W dół">▼</button></span>
+      </li>`;
+    }).join("");
+    const maxBonus = typer.order.reduce((t, i, k) => t + BASE_PTS[0] * typerMult(i, k + 1), 0);
+    $("#typerSummary").innerHTML = (sc ? `<div class="typer-score"><span>${done ? "Twój wynik" : "Gdyby turniej skończył się teraz"}${matches.some(m => !m.score && whatIf[m.key]) ? " (z symulacją)" : ""}:</span> <b>${sc.total.toFixed(1)} pkt</b></div>` : "") +
+      `<p class="hint">Maksimum dla Twojego typu (wszystkie miejsca trafione): <b>${maxBonus.toFixed(1)} pkt</b>. Typ zgodny z prognozą daje maksymalnie ${(BASE_PTS[0] * N).toFixed(1)} pkt.</p>`;
+    $("#typerList").querySelectorAll(".tb").forEach(b => b.addEventListener("click", () => moveTyper(+b.dataset.k, +b.dataset.k + +b.dataset.d)));
+    $("#typerList").querySelectorAll(".typer-row").forEach(li => {
+      li.addEventListener("dragstart", e => { dragFrom = +li.dataset.k; li.classList.add("dragging"); e.dataTransfer.effectAllowed = "move"; });
+      li.addEventListener("dragend", () => li.classList.remove("dragging"));
+      li.addEventListener("dragover", e => { e.preventDefault(); li.classList.add("over"); });
+      li.addEventListener("dragleave", () => li.classList.remove("over"));
+      li.addEventListener("drop", e => { e.preventDefault(); li.classList.remove("over"); if (dragFrom !== null) moveTyper(dragFrom, +li.dataset.k); dragFrom = null; });
+    });
+  }
+  function moveTyper(from, to) {
+    if (to < 0 || to >= N || from === to) return;
+    const [x] = typer.order.splice(from, 1); typer.order.splice(to, 0, x);
+    saveTyperLocal(); renderTyper();
+  }
+  $("#typerNick").addEventListener("input", e => { typer.nick = e.target.value.slice(0, 30); saveTyperLocal(); });
+  $("#typerReset").addEventListener("click", () => { typer.order = FORECAST.slice(); saveTyperLocal(); renderTyper(); });
+  $("#typerSave").addEventListener("click", () => {
+    if (!typer.nick.trim()) { $("#typerMsg").textContent = "Wpisz nick."; return; }
+    saveTyperLocal();
+    $("#typerMsg").textContent = `Zapisano typ „${typer.nick.trim()}” w tej przeglądarce. Wysyłanie do wspólnego rankingu typerów zostanie uruchomione wkrótce.`;
+  });
+
   function renderFaq() {
     const ex = [IDX["Dominik Urbacki"], IDX["Joanna Juszczak"]];
     const nGames = H.flat().filter(Boolean).reduce((t, x) => t + x.w + x.d + x.l, 0) / 2;
@@ -398,6 +467,8 @@
       ["Skąd szanse na tytuł?", `Z symulacji Monte Carlo: ${SIMS.toLocaleString("pl-PL")} razy rozgrywamy wszystkie nierozegrane mecze, losując różnicę małych punktów z rozkładu normalnego (odchylenie ${M.spreadSd} pkt) dopasowanego do szansy na wygraną. Liczymy, jak często każdy gracz kończy na 1. miejscu i na podium.`],
       ["Jak działają przyciski symulacji?", `„Symuluj następną rundę” losuje dokładne wyniki (z małymi punktami) partii kolejnej nierozegranej rundy – można tak przejść turniej runda po rundzie i obserwować, jak zmieniają się kursy. „Symuluj cały turniej” losuje od nowa wszystkie nierozegrane partie. Zwycięzca wynika z kursów (różnica małych punktów losowana z rozkładu normalnego dopasowanego do szansy na wygraną), a suma punktów w partii – ze średnich obu graczy z ostatnich 12 miesięcy. Każde kliknięcie daje inny przebieg. Gdy wszystkie partie mają wynik, kolumny z szansami i kursami na tytuł są puste, a zamiast nich pokazujemy podium.`],
       ["Co robi kliknięcie nazwiska w Rozstawieniach?", `Kliknięcie nazwiska w nierozegranym meczu przyjmuje, że ten gracz wygrał (bez dokładnego wyniku). Tabela, forma i szanse na tytuł przeliczają się od razu. Symulacja zapisuje się tylko w Twojej przeglądarce i nie wpływa na to, co widzą inni. Przycisk „Wyczyść symulację” przywraca stan rzeczywisty.`],
+      ["Jak działa Typer?", `W zakładce Typer ustawiasz kolejność końcową wszystkich 16 graczy (przeciągając lub strzałkami ▲▼). Za każdego gracza dostajesz punkty zależnie od tego, jak blisko jego faktycznego miejsca trafiłeś: dokładnie – ${BASE_PTS[0]} pkt, o 1 miejsce – ${BASE_PTS[1]}, o 2 – ${BASE_PTS[2]}, o 3 – ${BASE_PTS[3]}, dalej – 0.`],
+      ["Co daje typowanie wbrew kursom?", `Każde miejsce, o które ustawisz gracza wyżej niż przedturniejowa prognoza (kolejność wg kursu na tytuł), zwiększa punkty za niego o ${Math.round(BONUS_STEP * 100)}% – maksymalnie ×${BONUS_MAX.toFixed(2)}. Mnożnik działa tylko wtedy, gdy za gracza zdobywasz punkty, więc odważny typ opłaca się tylko, jeśli jest trafiony. Ustawienie gracza niżej niż prognoza nie ma mnożnika.`],
       ["Jak często aktualizowane są wyniki?", `Wyniki są wpisywane w trakcie turnieju; po każdej aktualizacji strona przelicza tabelę, kursy i szanse automatycznie. Odśwież stronę, aby zobaczyć najnowszy stan.`],
     ];
     $("#faq").innerHTML = qa.map(([q, a], k) => `<details${k < 2 ? " open" : ""}><summary>${q}</summary><p>${a}</p></details>`).join("");
