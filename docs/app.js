@@ -231,14 +231,14 @@
 
   function renderForm() {
     const ord = [...P.keys()].sort((a, b) => formPct(P[b].form) - formPct(P[a].form));
-    $("#formNote").textContent = `partie od ${DATA.form.cutoff}, rywale z rankingiem ≥ ${DATA.form.minRank}`;
+    $("#formNote").textContent = `partie od ${DATA.form.cutoff}, rywale z rankingiem ≥ ${DATA.form.minRank} · * mniej niż ${DATA.form.minGames} partii – okno 30 mies. (od ${DATA.form.extCutoff})`;
     $("#formChart").innerHTML = ord.map(i => {
       const f = P[i].form, v = formPct(f);
-      return `<div class="form-row" data-i="${i}"><span class="name">${esc(P[i].name)}</span><span class="rec"><b>${rec(f)}</b></span><div class="bar-track"><div class="bar-fill" style="width:${v * 100}%"></div></div><span class="val"><b>${pct(v, 1)}</b></span><span class="dots">${formDots(f.last10)}</span></div>`;
+      return `<div class="form-row" data-i="${i}"><span class="name">${esc(P[i].name)}${f.months > 12 ? '<span class="ext" title="okno 30 miesięcy">*</span>' : ""}</span><span class="rec"><b>${rec(f)}</b></span><div class="bar-track"><div class="bar-fill" style="width:${v * 100}%"></div></div><span class="val"><b>${pct(v, 1)}</b></span><span class="dots">${formDots(f.last10)}</span></div>`;
     }).join("");
     $("#formChart").querySelectorAll(".form-row").forEach(r => bindTip(r, () => {
       const p = P[+r.dataset.i], f = p.form;
-      return `<div class="t">${esc(p.name)}</div>${tRow("Bilans (W–P–R)", rec(f))}${tRow("% wygranych", pct(formPct(f)))}${tRow("Śr. ranking rywali", fmt(f.oppRank))}${tRow("Śr. małe / rywala", `${fmt(f.avg, 1)} / ${fmt(f.oppAvg, 1)}`)}${tRow("Ranking formy", fmt(p.formRatingRaw, 1))}${tRow("Ranking formy (po ściągnięciu)", fmt(p.formRating, 1))}${tRow("Ostatnie 10", f.last10)}`;
+      return `<div class="t">${esc(p.name)}</div>${tRow("Okres", `${f.months} mies. (od ${f.cutoff})`)}${tRow("Bilans (W–P–R)", rec(f))}${tRow("% wygranych", pct(formPct(f)))}${tRow("Śr. ranking rywali", fmt(f.oppRank))}${tRow("Śr. małe / rywala", `${fmt(f.avg, 1)} / ${fmt(f.oppAvg, 1)}`)}${tRow("Ranking formy", fmt(p.formRatingRaw, 1))}${tRow("Ranking formy (po ściągnięciu)", fmt(p.formRating, 1))}${tRow("Ostatnie 10", f.last10)}`;
     }));
   }
 
@@ -382,7 +382,7 @@
       const p = P[i], c = p.career, cg = c.w + c.d + c.l;
       let hw = 0, hl = 0, hd = 0;
       for (let j = 0; j < N; j++) if (H[i][j]) { hw += H[i][j].w; hl += H[i][j].l; hd += H[i][j].d; }
-      return `<tr><td><a href="https://scrabble.stats.org.pl/zindex.php?p=${p.id}" target="_blank" rel="noopener">${esc(p.name)}</a></td><td class="num"><b>${fmt(p.strength)}</b></td><td class="num">${fmt(p.rank)} <span class="muted">(${p.rankPlace}.)</span></td><td class="num">${fmt(p.rank12m)}</td><td class="num"><b>${rec(p.form)}</b></td><td class="num"><b>${fmt(100 * formPct(p.form), 1)}%</b></td><td class="num">${fmt(p.form.oppRank, 1)}</td><td class="num">${fmt(p.formRating, 1)}</td><td>${formDots(p.form.last10)}</td><td class="num">${fmt(p.avg12m, 1)}</td><td class="num">${cg}</td><td class="num">${fmt(100 * (c.w + c.d / 2) / cg, 1)}%</td><td class="num">${hw}–${hl}</td><td class="num">${fmt(100 * (hw + hd / 2) / (hw + hl + hd), 1)}%</td></tr>`;
+      return `<tr><td><a href="https://scrabble.stats.org.pl/zindex.php?p=${p.id}" target="_blank" rel="noopener">${esc(p.name)}</a></td><td class="num"><b>${fmt(p.strength)}</b></td><td class="num">${fmt(p.rank)} <span class="muted">(${p.rankPlace}.)</span></td><td class="num">${fmt(p.rank12m)}</td><td class="num"><b>${rec(p.form)}</b>${p.form.months > 12 ? '<span class="ext" title="okno 30 miesięcy">*</span>' : ""}</td><td class="num"><b>${fmt(100 * formPct(p.form), 1)}%</b></td><td class="num">${fmt(p.form.oppRank, 1)}</td><td class="num">${fmt(p.formRating, 1)}</td><td>${formDots(p.form.last10)}</td><td class="num">${fmt(p.avg12m, 1)}</td><td class="num">${cg}</td><td class="num">${fmt(100 * (c.w + c.d / 2) / cg, 1)}%</td><td class="num">${hw}–${hl}</td><td class="num">${fmt(100 * (hw + hd / 2) / (hw + hl + hd), 1)}%</td></tr>`;
     }).join("");
     $("#playersTbl").innerHTML = `<thead><tr><th>Gracz</th><th class="num">Siła</th><th class="num">Ranking PFS</th><th class="num">Rank. 12 mies.</th><th class="num">Vs 140+ W–P–R</th><th class="num">% vs 140+</th><th class="num">Śr. rank rywali</th><th class="num">Ranking formy</th><th>Ostatnie 10</th><th class="num">Śr. małe 12 mies.</th><th class="num">Gry (kariera)</th><th class="num">% wygr. (kariera)</th><th class="num">Vs finaliści</th><th class="num">% vs finaliści</th></tr></thead><tbody>${rows}</tbody>`;
   }
@@ -390,7 +390,10 @@
   // ---------- TYPER ----------
   // Prognoza przedturniejowa (zamrożona): kolejność wg szansy na tytuł bez żadnych wyników.
   const PRE = simulate(true);
-  const FORECAST = [...PRE].sort((a, b) => b.title - a.title || a.avgPlace - b.avgPlace).map(x => x.i);
+  const FORECAST = Array.isArray(DATA.typerForecast) && DATA.typerForecast.length === N
+    ? DATA.typerForecast.map(n => IDX[n])   // prognoza zamrożona w data.json (nie zmienia się po aktualizacji danych)
+    : [...PRE].sort((a, b) => b.title - a.title || a.avgPlace - b.avgPlace).map(x => x.i);
+  window.MP_FORECAST = FORECAST.map(i => P[i].name);
   const forecastPlace = Object.fromEntries(FORECAST.map((i, k) => [i, k + 1]));
   const BASE_PTS = [10, 6, 3, 1];           // trafione miejsce / o 1 / o 2 / o 3
   const BONUS_STEP = 0.10, BONUS_MAX = 1.5; // +10% za każde miejsce powyżej prognozy, max ×1.5
@@ -535,11 +538,27 @@
       await fbReady;
       const { fsM, db } = fb;
       const qs = await fsM.getDocs(fsM.collection(db, "typy"));
-      allTypy = qs.docs.map(d => ({ uid: d.id, ...d.data() }));
+      allTypy = qs.docs.map(d => ({ uid: d.id, ...d.data() })).filter(t => Array.isArray(t.order));
       renderTypy();
-    } catch (e) { console.error(e); $("#typyList").innerHTML = `<p class="hint">Nie udało się wczytać typów.</p>`; }
+    } catch (e) { console.error(e); $("#typyList").innerHTML = `<p class="hint">Nie udało się wczytać typów.</p>`; if ($("#favList")) $("#favList").innerHTML = `<p class="hint">Nie udało się wczytać typów.</p>`; }
   }
+  function renderFavs() {
+    const el = $("#favList"); if (!el) return;
+    if (!allTypy) { el.innerHTML = `<p class="hint">Wczytuję typy…</p>`; return; }
+    const n = allTypy.length;
+    $("#favNote").textContent = `${n} ${n === 1 ? "typ" : n > 1 && n < 5 ? "typy" : "typów"} · typowanie do 21-11-2026 11:00`;
+    if (!n) { el.innerHTML = `<p class="hint">Nikt jeszcze nie typował – <a href="#typer" class="go-typer">bądź pierwszy w zakładce Typer</a>.</p>`; bindGoTyper(); return; }
+    const cnt = P.map((p, i) => ({ i, c: [0, 0, 0] }));
+    allTypy.forEach(t => t.order.slice(0, 3).forEach((name, k) => { const i = IDX[name]; if (i !== undefined) cnt[i].c[k]++; }));
+    const tot = x => x.c[0] + x.c[1] + x.c[2];
+    const rows = cnt.filter(x => tot(x) > 0).sort((a, b) => b.c[0] - a.c[0] || tot(b) - tot(a) || b.c[1] - a.c[1]);
+    const max = Math.max(...rows.map(x => x.c[0]), 1);
+    el.innerHTML = `<table class="tbl fav-tbl"><thead><tr><th>Gracz</th><th>Na mistrza</th><th class="num">🥇 1.</th><th class="num">🥈 2.</th><th class="num">🥉 3.</th><th class="num">Na podium</th></tr></thead><tbody>${rows.map(x => `<tr><td class="pname-cell">${esc(P[x.i].name)}</td><td class="fav-bar"><div class="bar-track"><div class="bar-fill gold" style="width:${x.c[0] / max * 100}%"></div></div></td><td class="num"><b>${x.c[0]}</b> <span class="muted">(${pct(x.c[0] / n, 0)})</span></td><td class="num">${x.c[1]}</td><td class="num">${x.c[2]}</td><td class="num"><b>${tot(x)}</b> <span class="muted">(${pct(tot(x) / n, 0)})</span></td></tr>`).join("")}</tbody></table>`;
+  }
+  function bindGoTyper() { document.querySelectorAll(".go-typer").forEach(a => { if (a.dataset.bound) return; a.dataset.bound = 1; a.addEventListener("click", e => { e.preventDefault(); document.querySelector('.tabs button[data-tab="typer"]').click(); scrollTo(0, 0); }); }); }
+
   function renderTypy() {
+    renderFavs();
     if (!allTypy) return;
     const st = standings(), anyPlayed = matches.some(isDone);
     const fin = st.map(x => x.i);
@@ -558,8 +577,9 @@
     }));
   }
   $("#typyRefresh").addEventListener("click", loadAllTypy);
-  document.querySelector('.tabs button[data-tab="typer"]').addEventListener("click", () => { if (!allTypy) loadAllTypy(); });
-  if (location.hash === "#typer") loadAllTypy();
+  $("#favRefresh").addEventListener("click", loadAllTypy);
+  bindGoTyper();
+  loadAllTypy(); // typy potrzebne od razu: karta „Typowani na mistrza” na stronie głównej
 
   function renderFaq() {
     const ex = [IDX["Dominik Urbacki"], IDX["Joanna Juszczak"]];
@@ -569,7 +589,7 @@
       ["Jak wygląda faza finałowa?", `16 graczy gra każdy z każdym po razie – 15 rund, po 8 partii w rundzie. O kolejności decydują duże punkty (wygrana = 1, remis = ½), a przy równej liczbie – różnica małych punktów.`],
       ["Czy rozstawienia są oficjalne?", `Nie. Do czasu publikacji oficjalnego terminarza pary w rundach są wygenerowane tablicami Bergera według rankingu PFS. Po ogłoszeniu oficjalnych par zostaną podmienione.`],
       ["Jak liczona jest szansa na wygraną w pojedynku?", `Najpierw siła gracza: średnia z trzech liczb – aktualnego rankingu PFS, rankingu z ostatnich 12 miesięcy i rankingu formy (patrz niżej). Różnica sił zamieniana jest na prawdopodobieństwo wzorem <code>p₀ = 1 / (1 + e^(−k·ΔS))</code>, gdzie <code>k = ${fmt(M.k, 4)}</code> dopasowano do ${nGames} historycznych partii rozegranych między finalistami. Różnica 10 punktów rankingu to ok. ${pct(1 / (1 + Math.exp(-M.k * 10)))} dla wyżej notowanego.`],
-      ["Jak liczona jest forma?", `Bierzemy wszystkie partie turniejowe z ostatnich 12 miesięcy (od ${DATA.form.cutoff}) rozegrane z rywalami, którzy mieli w chwili gry ranking co najmniej ${DATA.form.minRank} – słabsze partie mało mówią o grze na poziomie finału. Z bilansu i średniego rankingu rywali liczymy <b>ranking formy</b>: taki ranking, przy którym model przewidziałby dokładnie taki wynik. Przy małej liczbie partii ranking formy jest „ściągany” do aktualnego rankingu (waga ${DATA.form.prior} wirtualnych gier), żeby 10 udanych partii nie robiło z nikogo faworyta. Formę widać w zakładkach Tabela, Gracze i Head-to-head.`],
+      ["Jak liczona jest forma?", `Bierzemy wszystkie partie turniejowe z ostatnich 12 miesięcy (od ${DATA.form.cutoff}) rozegrane z rywalami, którzy mieli w chwili gry ranking co najmniej ${DATA.form.minRank} – słabsze partie mało mówią o grze na poziomie finału. Jeśli gracz ma takich partii mniej niż ${DATA.form.minGames}, okno wydłużamy do 30 miesięcy (od ${DATA.form.extCutoff}); takich graczy oznaczamy gwiazdką *. Z bilansu i średniego rankingu rywali liczymy <b>ranking formy</b>: taki ranking, przy którym model przewidziałby dokładnie taki wynik. Przy małej liczbie partii ranking formy jest „ściągany” do aktualnego rankingu (waga ${DATA.form.prior} wirtualnych gier), żeby 10 udanych partii nie robiło z nikogo faworyta. Formę widać w zakładkach Tabela, Gracze i Head-to-head.`],
       ["Czy bilans head-to-head ma znaczenie?", `Tak. Wynik z rankingu jest korygowany bilansem bezpośrednim: <code>p = (wygrane + remisy/2 + ${M.prior}·p₀) / (gry H2H + ${M.prior})</code>. Im więcej partii para rozegrała, tym mocniej bilans przesuwa prognozę. Przykład: ${esc(P[ex[0]].name)} vs ${esc(P[ex[1]].name)} – z samego rankingu ${pct(prior(ex[0], ex[1]))}, po uwzględnieniu H2H ${pct(prob(ex[0], ex[1]))}.`],
       ["Jak powstają kursy?", `Kurs dziesiętny = <code>1 / (p · (1 + marża))</code>. Marża na pojedynki wynosi ${pct(M.marginMatch, 0)}, na tytuł i podium ${pct(M.marginOutright, 0)}. Najniższy kurs to 1.01; kursy podajemy zawsze z dwoma miejscami po kropce. Kursy mają charakter wyłącznie rozrywkowy.`],
       ["Skąd szanse na tytuł?", `Z symulacji Monte Carlo: ${SIMS.toLocaleString("pl-PL")} razy rozgrywamy wszystkie nierozegrane mecze, losując różnicę małych punktów z rozkładu normalnego (odchylenie ${M.spreadSd} pkt) dopasowanego do szansy na wygraną. Liczymy, jak często każdy gracz kończy na 1. miejscu i na podium.`],

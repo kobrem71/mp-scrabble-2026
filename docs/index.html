@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
 <div class="viz-root">
@@ -28,7 +28,7 @@
     <button role="tab" data-tab="rozstawienia" aria-label="Rozstawienia"><span class="tiles tiles-sm" data-word="ROZSTAWIENIA"></span></button>
     <button role="tab" data-tab="h2h" aria-label="Head-to-head"><span class="tiles tiles-sm" data-word="HEAD-TO-HEAD"></span></button>
     <button role="tab" data-tab="gracze" aria-label="Gracze"><span class="tiles tiles-sm" data-word="GRACZE"></span></button>
-    <button role="tab" data-tab="typer" aria-label="Typer"><span class="tiles tiles-sm" data-word="TYPER"></span></button>
+    <button role="tab" data-tab="typer" aria-label="Typer" class="tab-typer"><span class="tiles tiles-sm" data-word="TYPER"></span></button>
     <button role="tab" data-tab="faq" aria-label="FAQ"><span class="tiles tiles-sm" data-word="FAQ"></span></button>
   </div>
 </nav>
@@ -44,6 +44,13 @@
       <div class="card">
         <div class="card-head"><h2 id="titleHead">Szanse na tytuł</h2><span class="note" id="simNote"></span></div>
         <div class="card-body"><div id="titleChart" class="barlist"></div></div>
+      </div>
+    </div>
+    <div class="card fav-card">
+      <div class="card-head"><h2 class="tiles tiles-sm fav-title" data-word="TYPOWANI NA MISTRZA" aria-label="Typowani na mistrza"></h2><span class="note" id="favNote"></span></div>
+      <div class="card-body">
+        <div class="fav-top"><a href="#typer" class="btn typer-cta go-typer">🎰 Wytypuj swoje podium</a><button id="favRefresh" class="btn ghost" type="button">Odśwież</button></div>
+        <div id="favList"></div>
       </div>
     </div>
     <div class="card form-card">
@@ -141,9 +148,18 @@
   </section>
 </main>
 
-<footer class="wrap foot" id="footer"></footer>
+<footer class="authorbar">
+  <div class="wrap author-inner">
+    <div class="foot" id="footer"></div>
+    <a class="author" href="https://github.com/kobrem71" target="_blank" rel="noopener">
+      <span class="author-label">autor:</span>
+      <span class="tiles tiles-sm" data-word="KOBREM" aria-label="Kobrem"></span>
+      <img class="avatar" src="kobrem.jpg" alt="Kobrem" width="36" height="36" loading="lazy">
+    </a>
+  </div>
+</footer>
 <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
 </div>
-<script src="app.js?v=9"></script>
+<script src="app.js?v=11"></script>
 </body>
 </html>
