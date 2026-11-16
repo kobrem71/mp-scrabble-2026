@@ -377,7 +377,7 @@
       <p class="hint">${fm ? (fm.score ? `W finale: ${esc(short(P[fm.a].name))} ${fm.score[0]} : ${fm.score[1]} ${esc(short(P[fm.b].name))} (runda ${fm.round}).` : `Mecz w finale: runda ${fm.round}.`) : ""}</p>`;
   }
 
-  // Tabela graczy – transponowana: wiersze = statystyki, kolumny = gracze; klik w nazwę statystyki sortuje graczy
+  // Tabela graczy: gracze w wierszach, statystyki w kolumnach (sortowanie po kliknięciu w nagłówek, objaśnienia w podpowiedziach)
   let plSort = { key: "strength", dir: -1 };
   function playerStats(i) {
     const p = P[i], c = p.career, cg = c.w + c.d + c.l, f = p.form;
@@ -386,41 +386,52 @@
     return { i, p, cg, hw, hl, hd, c, f };
   }
   const dots2 = str => `<span class="dots2">${formDots(str.slice(0, 5))}<br>${formDots(str.slice(5))}</span>`;
-  const PL_ROWS = [
-    { key: "strength", label: "Siła w modelu", val: s => s.p.strength, fmt: s => `<b>${fmt(s.p.strength)}</b>`, best: "max", strong: true },
-    { key: "rank", label: "Ranking PFS", val: s => s.p.rank, fmt: s => fmt(s.p.rank), best: "max" },
-    { key: "rankPlace", label: "Miejsce w rankingu", val: s => -s.p.rankPlace, fmt: s => `${s.p.rankPlace}.`, best: "max" },
-    { key: "rank12m", label: "Ranking 12 mies.", val: s => s.p.rank12m, fmt: s => fmt(s.p.rank12m), best: "max" },
-    { key: "formRec", label: "Vs 140+ W–P–R", val: s => s.f.w - s.f.l, fmt: s => `<b>${s.f.w}–${s.f.l}–${s.f.d}</b>${s.f.months > 12 ? '<span class="ext" title="okno 30 miesięcy">*</span>' : ""}`, best: "max", group: "Forma (rywale 140+)" },
-    { key: "formPct", label: "% wygranych vs 140+", val: s => formPct(s.f), fmt: s => `<b>${fmt(100 * formPct(s.f), 1)}%</b>`, best: "max" },
-    { key: "oppRank", label: "Śr. ranking rywali", val: s => s.f.oppRank, fmt: s => fmt(s.f.oppRank, 1), best: "max" },
-    { key: "formRating", label: "Ranking formy", val: s => s.p.formRating, fmt: s => fmt(s.p.formRating, 1), best: "max" },
-    { key: "last10", label: "Ostatnie 10 partii", val: s => [...s.f.last10].filter(x => x === "W").length, fmt: s => dots2(s.f.last10), best: null },
-    { key: "avg12m", label: "Śr. małe pkt (12 mies.)", val: s => s.p.avg12m, fmt: s => fmt(s.p.avg12m, 1), best: "max", group: "Ogólnie" },
-    { key: "careerGames", label: "Gry w karierze", val: s => s.cg, fmt: s => s.cg, best: "max" },
-    { key: "careerPct", label: "% wygranych (kariera)", val: s => (s.c.w + s.c.d / 2) / s.cg, fmt: s => fmt(100 * (s.c.w + s.c.d / 2) / s.cg, 1) + "%", best: "max" },
-    { key: "h2h", label: "Vs finaliści W–P", val: s => s.hw - s.hl, fmt: s => `${s.hw}–${s.hl}`, best: "max", group: "Przeciw finalistom" },
-    { key: "h2hPct", label: "% vs finaliści", val: s => (s.hw + s.hd / 2) / (s.hw + s.hl + s.hd), fmt: s => fmt(100 * (s.hw + s.hd / 2) / (s.hw + s.hl + s.hd), 1) + "%", best: "max" },
+  const PL_GROUPS = [["", 1], ["Ranking", 4], ["Forma – rywale z rankingiem 140+", 5], ["Ogólnie", 3], ["Przeciw finalistom", 2]];
+  const PL_COLS = [
+    { key: "name", label: "Gracz", tip: "Kliknij nazwisko, by otworzyć profil na scrabble.stats.org.pl", val: s => s.p.name.split(" ").slice(-1)[0], cls: "left",
+      fmt: s => `<a href="https://scrabble.stats.org.pl/zindex.php?p=${s.p.id}" target="_blank" rel="noopener">${esc(s.p.name)}</a>` },
+    { key: "strength", label: "Siła", tip: "Siła w modelu kursów: średnia z rankingu PFS, rankingu z 12 miesięcy i rankingu formy", val: s => s.p.strength, fmt: s => `<b>${fmt(s.p.strength)}</b>`, grpStart: true },
+    { key: "rank", label: "Ranking<br>PFS", tip: "Aktualny ranking PFS (w nawiasie miejsce na liście)", val: s => s.p.rank, fmt: s => `${fmt(s.p.rank)}<small>${s.p.rankPlace}.</small>` },
+    { key: "rank12m", label: "Ranking<br>12 mies.", tip: "Ranking z ostatnich 12 miesięcy (PFS)", val: s => s.p.rank12m, fmt: s => fmt(s.p.rank12m) },
+    { key: "formRating", label: "Ranking<br>formy", tip: "Ranking osiągnięty w partiach z rywalami 140+ (przy małej liczbie gier przyciągnięty do rankingu PFS)", val: s => s.p.formRating, fmt: s => fmt(s.p.formRating, 1) },
+    { key: "formRec", label: "W–P–R", tip: "Bilans wygrane–porażki–remisy z rywalami 140+ w ostatnich 12 mies. (z eliminacjami MP). * = okno 30 miesięcy", val: s => s.f.w - s.f.l, fmt: s => `<b>${s.f.w}–${s.f.l}–${s.f.d}</b>${s.f.months > 12 ? '<span class="ext">*</span>' : ""}`, grpStart: true },
+    { key: "formPct", label: "%<br>wygr.", tip: "Procent wygranych z rywalami 140+", val: s => formPct(s.f), fmt: s => `<b>${fmt(100 * formPct(s.f), 1)}%</b>` },
+    { key: "oppRank", label: "Ranking<br>rywali", tip: "Średni ranking rywali w tych partiach – im wyżej, tym trudniejsi przeciwnicy", val: s => s.f.oppRank, fmt: s => fmt(s.f.oppRank, 1) },
+    { key: "formAvg", label: "Małe<br>pkt", tip: "Średnia małych punktów w partiach z rywalami 140+ (obok: średnia rywali)", val: s => s.f.avg, fmt: s => `${fmt(s.f.avg, 1)}<small>${fmt(s.f.oppAvg, 1)}</small>` },
+    { key: "last10", label: "Ostatnie<br>10", tip: "Wyniki 10 ostatnich partii z rywalami 140+ (zielony = wygrana, czerwony = porażka; od lewej najstarsza)", val: s => [...s.f.last10].filter(x => x === "W").length, fmt: s => dots2(s.f.last10) },
+    { key: "avg12m", label: "Małe pkt<br>12 mies.", tip: "Średnia małych punktów we wszystkich partiach z ostatnich 12 miesięcy", val: s => s.p.avg12m, fmt: s => fmt(s.p.avg12m, 1), grpStart: true },
+    { key: "careerGames", label: "Gry", tip: "Liczba partii turniejowych w karierze", val: s => s.cg, fmt: s => s.cg },
+    { key: "careerPct", label: "%<br>wygr.", tip: "Procent wygranych w karierze", val: s => (s.c.w + s.c.d / 2) / s.cg, fmt: s => fmt(100 * (s.c.w + s.c.d / 2) / s.cg, 1) + "%" },
+    { key: "h2h", label: "W–P", tip: "Łączny bilans partii z pozostałymi 15 finalistami (historia + eliminacje MP)", val: s => s.hw - s.hl, fmt: s => `${s.hw}–${s.hl}`, grpStart: true },
+    { key: "h2hPct", label: "%", tip: "Procent wygranych z pozostałymi finalistami", val: s => (s.hw + s.hd / 2) / (s.hw + s.hl + s.hd), fmt: s => fmt(100 * (s.hw + s.hd / 2) / (s.hw + s.hl + s.hd), 1) + "%" },
   ];
   function renderPlayers() {
     const st = [...P.keys()].map(playerStats);
-    const row = PL_ROWS.find(r => r.key === plSort.key) || PL_ROWS[0];
-    st.sort((a, b) => plSort.dir * (row.val(a) - row.val(b)) || b.p.strength - a.p.strength);
-    const head = `<thead><tr><th class="corner">kliknij statystykę,<br>by posortować</th>${st.map(s => `<th class="pcol"><a href="https://scrabble.stats.org.pl/zindex.php?p=${s.p.id}" target="_blank" rel="noopener" title="${esc(s.p.name)}">${esc(short(s.p.name))}</a></th>`).join("")}</tr></thead>`;
-    const body = PL_ROWS.map(r => {
-      const vals = st.map(s => r.val(s));
-      const bestV = r.best === "max" ? Math.max(...vals) : null;
-      const on = r.key === plSort.key;
-      const grp = r.group ? `<tr class="grp"><td colspan="${N + 1}">${r.group}</td></tr>` : "";
-      return grp + `<tr class="${on ? "sorted" : ""}${r.strong ? " strong" : ""}${r.key === "formRec" || r.key === "h2h" ? " tight" : ""}"><th class="rlabel" data-key="${r.key}" title="Sortuj po tej statystyce">${r.label}<span class="arr">${on ? (plSort.dir < 0 ? "▼" : "▲") : "↕"}</span></th>${st.map((s, k) => `<td class="${bestV !== null && vals[k] === bestV ? "best" : ""}">${r.fmt(s)}</td>`).join("")}</tr>`;
-    }).join("");
-    $("#playersTbl").innerHTML = head + `<tbody>${body}</tbody>`;
-    $("#playersTbl").querySelectorAll("th.rlabel").forEach(th => th.addEventListener("click", () => {
-      const k = th.dataset.key;
-      plSort = plSort.key === k ? { key: k, dir: -plSort.dir } : { key: k, dir: -1 };
-      renderPlayers();
+    const col = PL_COLS.find(c => c.key === plSort.key) || PL_COLS[1];
+    st.sort((a, b) => {
+      const x = col.val(a), y = col.val(b);
+      return plSort.dir * (typeof x === "string" ? x.localeCompare(y, "pl") : x - y) || b.p.strength - a.p.strength;
+    });
+    const best = PL_COLS.map(c => c.key === "name" || c.key === "last10" ? null : Math.max(...st.map(s => c.val(s))));
+    const grp = `<tr class="grp">${PL_GROUPS.map(([g, span], k) => `<th colspan="${span}" class="${k ? "gs" : ""}">${g}</th>`).join("")}</tr>`;
+    const head = `<tr>${PL_COLS.map(c => { const on = c.key === plSort.key; return `<th class="sortable ${c.cls || ""}${c.grpStart ? " gs" : ""}${on ? " sorted" : ""}" data-key="${c.key}"><span class="th-in">${c.label}<span class="arr">${on ? (plSort.dir < 0 ? "▼" : "▲") : "↕"}</span></span></th>`; }).join("")}</tr>`;
+    const body = st.map((s, r) => `<tr data-i="${s.i}">${PL_COLS.map((c, k) => `<td class="${c.cls || ""}${c.grpStart ? " gs" : ""}${c.key === plSort.key ? " sorted" : ""}${best[k] !== null && c.val(s) === best[k] ? " best" : ""}">${c.fmt(s)}</td>`).join("")}</tr>`).join("");
+    $("#playersTbl").innerHTML = `<thead>${grp}${head}</thead><tbody>${body}</tbody>`;
+    $("#playersTbl").querySelectorAll("th.sortable").forEach(th => {
+      const c = PL_COLS.find(x => x.key === th.dataset.key);
+      bindTip(th, () => `<div class="t">${c.label.replace("<br>", " ")}</div><div>${c.tip}</div><div class="muted" style="margin-top:4px">Kliknij, by posortować</div>`);
+      th.addEventListener("click", () => {
+        const k = th.dataset.key;
+        plSort = plSort.key === k ? { key: k, dir: -plSort.dir } : { key: k, dir: k === "name" ? 1 : -1 };
+        hideTip(); renderPlayers();
+      });
+    });
+    $("#playersTbl").querySelectorAll("tbody tr").forEach(tr => bindTip(tr, () => {
+      const s = playerStats(+tr.dataset.i), p = s.p, f = s.f;
+      return `<div class="t">${esc(p.name)}</div>${tRow("Siła w modelu", fmt(p.strength))}${tRow("Ranking PFS", `${fmt(p.rank)} (${p.rankPlace}. miejsce)`)}${tRow("Forma vs 140+", `${f.w}–${f.l}–${f.d} · ${pct(formPct(f))}`)}${tRow("Okres formy", `${f.months} mies. (od ${f.cutoff})${f.elim ? ` + ${f.elim} z eliminacji` : ""}`)}${tRow("Ostatnie 10", f.last10)}${tRow("Vs finaliści", `${s.hw}–${s.hl}`)}${tRow("Szansa na tytuł", pct(SIM[s.i].title))}`;
     }));
   }
+
 
 
 
@@ -594,25 +605,35 @@
   }
   function bindGoTyper() { document.querySelectorAll(".go-typer").forEach(a => { if (a.dataset.bound) return; a.dataset.bound = 1; a.addEventListener("click", e => { e.preventDefault(); document.querySelector('.tabs button[data-tab="typer"]').click(); scrollTo(0, 0); }); }); }
 
+  let REAL_EXP = null;
   function renderTypy() {
     renderFavs();
     if (!allTypy) return;
     const st = standings(), anyPlayed = matches.some(isDone);
+    const simOn = matches.some(m => !m.score && whatIf[m.key]);
     const fin = st.map(x => x.i);
+    // kolejność „oczekiwana” wg modelu (średnie miejsce z Monte Carlo) – punkty prognozowane
+    // liczona tylko z prawdziwych wyników (bez symulacji użytkownika) – raz na sesję
+    if (!REAL_EXP) { const keep = whatIf; whatIf = {}; REAL_EXP = [...simulate()].sort((a, b) => a.avgPlace - b.avgPlace).map(x => x.i); whatIf = keep; }
+    const expOrder = REAL_EXP;
     const rows = allTypy.map(t => {
       const order = t.order.map(n => IDX[n]).filter(i => i !== undefined);
-      const sc = anyPlayed && order.length === N ? typerScore(order, fin).total : null;
-      return { ...t, order, sc };
-    }).sort((a, b) => (b.sc ?? 0) - (a.sc ?? 0) || a.nick.localeCompare(b.nick, "pl"));
-    const simOn = matches.some(m => !m.score && whatIf[m.key]);
-    $("#typyNote").textContent = `${rows.length} ${rows.length === 1 ? "typ" : "typów"}` + (anyPlayed ? (simOn ? " · punkty wg symulacji" : finished() ? " · wynik końcowy" : " · punkty wg obecnej tabeli") : "");
-    $("#typyList").innerHTML = rows.length ? `<table class="tbl typy-tbl"><thead><tr><th>#</th><th>Nick</th><th>Podium w typie</th><th class="num">Pkt</th></tr></thead><tbody>${rows.map((r, k) => `
-      <tr class="typ-row${fbUser && r.uid === fbUser.uid ? " mine" : ""}" data-k="${k}"><td class="pos">${anyPlayed ? k + 1 : "–"}</td><td><b>${esc(r.nick)}</b></td><td class="small">${r.order.slice(0, 3).map(i => esc(short(P[i].name))).join(", ")}</td><td class="num"><b>${r.sc == null ? "–" : r.sc.toFixed(1)}</b></td></tr>
-      <tr class="typ-detail" data-k="${k}" hidden><td></td><td colspan="3"><ol class="typ-ol">${r.order.map(i => `<li>${esc(P[i].name)} <span class="muted">(prognoza ${forecastPlace[i]}.)</span></li>`).join("")}</ol></td></tr>`).join("")}</tbody></table>` : `<p class="hint">Nikt jeszcze nie zapisał typu – bądź pierwszy!</p>`;
+      const ok = order.length === N;
+      return { ...t, order, sc: anyPlayed && ok ? typerScore(order, fin).total : null, exp: ok ? typerScore(order, expOrder).total : null };
+    }).sort((a, b) => (anyPlayed ? (b.sc ?? 0) - (a.sc ?? 0) : 0) || (b.exp ?? 0) - (a.exp ?? 0) || a.nick.localeCompare(b.nick, "pl"));
+    const scLabel = !anyPlayed ? "" : simOn ? (finished() ? "wg symulacji" : "wg symulacji (częściowej)") : finished() ? "wynik końcowy" : "wg obecnej tabeli";
+    $("#typyNote").textContent = `${rows.length} ${rows.length === 1 ? "typ" : rows.length > 1 && rows.length < 5 ? "typy" : "typów"}`;
+    $("#typySimInfo").innerHTML = anyPlayed
+      ? `Kolumna <b>${scLabel}</b> pokazuje punkty każdego typera przy ${simOn ? "Twojej aktualnej symulacji" : "obecnych wynikach"}. Kliknij „Symuluj cały turniej” jeszcze raz, by zobaczyć inny scenariusz.`
+      : `Kliknij <b>🎲 Symuluj cały turniej</b>, a obok prognozy pojawią się punkty każdego typera w wylosowanym przebiegu turnieju.`;
+    $("#typyList").innerHTML = rows.length ? `<table class="tbl typy-tbl"><thead><tr><th>#</th><th>Nick</th><th>Podium w typie</th><th class="num" title="Punkty, gdyby turniej skończył się w kolejności oczekiwanej przez model (średnie miejsce z symulacji Monte Carlo)">Prognoza</th>${anyPlayed ? `<th class="num sim-col" title="${scLabel}">${simOn ? "Symulacja" : finished() ? "Wynik" : "Teraz"}</th>` : ""}</tr></thead><tbody>${rows.map((r, k) => `
+      <tr class="typ-row${fbUser && r.uid === fbUser.uid ? " mine" : ""}" data-k="${k}"><td class="pos">${k + 1}</td><td><b>${esc(r.nick)}</b></td><td class="small">${r.order.slice(0, 3).map(i => esc(short(P[i].name))).join(", ")}</td><td class="num">${r.exp == null ? "–" : r.exp.toFixed(1)}</td>${anyPlayed ? `<td class="num sim-col"><b>${r.sc == null ? "–" : r.sc.toFixed(1)}</b></td>` : ""}</tr>
+      <tr class="typ-detail" data-k="${k}" hidden><td></td><td colspan="${anyPlayed ? 4 : 3}"><ol class="typ-ol">${r.order.map(i => `<li>${esc(P[i].name)} <span class="muted">(prognoza ${forecastPlace[i]}.${anyPlayed ? `, teraz ${fin.indexOf(i) + 1}.` : ""})</span></li>`).join("")}</ol></td></tr>`).join("")}</tbody></table>` : `<p class="hint">Nikt jeszcze nie zapisał typu – bądź pierwszy!</p>`;
     $("#typyList").querySelectorAll(".typ-row").forEach(tr => tr.addEventListener("click", () => {
       const d = $(`#typyList .typ-detail[data-k="${tr.dataset.k}"]`); d.hidden = !d.hidden;
     }));
   }
+
   $("#typyRefresh").addEventListener("click", loadAllTypy);
   $("#favRefresh").addEventListener("click", loadAllTypy);
   bindGoTyper();
@@ -632,7 +653,7 @@
       ["Skąd szanse na tytuł?", `Z symulacji Monte Carlo: ${SIMS.toLocaleString("pl-PL")} razy rozgrywamy wszystkie nierozegrane mecze, losując różnicę małych punktów z rozkładu normalnego (odchylenie ${M.spreadSd} pkt) dopasowanego do szansy na wygraną. Liczymy, jak często każdy gracz kończy na 1. miejscu i na podium.`],
       ["Jak działają przyciski symulacji?", `„Symuluj następną rundę” losuje dokładne wyniki (z małymi punktami) partii kolejnej nierozegranej rundy – można tak przejść turniej runda po rundzie i obserwować, jak zmieniają się kursy. „Symuluj cały turniej” losuje od nowa wszystkie nierozegrane partie. Zwycięzca wynika z kursów (różnica małych punktów losowana z rozkładu normalnego dopasowanego do szansy na wygraną), a suma punktów w partii – ze średnich obu graczy z ostatnich 12 miesięcy. Każde kliknięcie daje inny przebieg. Gdy wszystkie partie mają wynik, kolumny z szansami i kursami na tytuł są puste, a zamiast nich pokazujemy podium.`],
       ["Co robi kliknięcie nazwiska w zakładce Mecze?", `Kliknięcie nazwiska w nierozegranym meczu przyjmuje, że ten gracz wygrał (bez dokładnego wyniku). Tabela, forma i szanse na tytuł przeliczają się od razu. Symulacja zapisuje się tylko w Twojej przeglądarce i nie wpływa na to, co widzą inni. Przycisk „Wyczyść symulację” przywraca stan rzeczywisty.`],
-      ["Jak działa Typer?", `W zakładce Typer ustawiasz kolejność końcową wszystkich 16 graczy (przeciągając lub strzałkami ▲▼). Za każdego gracza dostajesz punkty zależnie od tego, jak blisko jego faktycznego miejsca trafiłeś: dokładnie – ${BASE_PTS[0]} pkt, o 1 miejsce – ${BASE_PTS[1]}, o 2 – ${BASE_PTS[2]}, o 3 – ${BASE_PTS[3]}, dalej – 0.`],
+      ["Jak działa Typer?", `W zakładce Typer ustawiasz kolejność końcową wszystkich 16 graczy (przeciągając lub strzałkami ▲▼). Za każdego gracza dostajesz punkty zależnie od tego, jak blisko jego faktycznego miejsca trafiłeś: dokładnie – ${BASE_PTS[0]} pkt, o 1 miejsce – ${BASE_PTS[1]}, o 2 – ${BASE_PTS[2]}, o 3 – ${BASE_PTS[3]}, dalej – 0. W liście „Typy uczestników” kolumna Prognoza pokazuje punkty przy kolejności oczekiwanej przez model, a po kliknięciu „Symuluj cały turniej” – punkty każdego typera w wylosowanym przebiegu.`],
       ["Jak zapisać typ i do kiedy?", `W zakładce Typer zaloguj się kontem Google, wpisz nick, ustaw kolejność i kliknij „Zapisz typ”. Każde konto ma jeden typ, który możesz zmieniać do soboty 21 listopada 2026, 11:00 – potem zapis blokuje serwer. Typy wszystkich uczestników są jawne (lista w zakładce Typer), ale nikt nie może zmienić cudzego typu. Zapisujemy tylko nick i kolejność – bez adresu e-mail.`],
       ["Co daje typowanie wbrew kursom?", `Każde miejsce, o które ustawisz gracza wyżej niż przedturniejowa prognoza (kolejność wg kursu na tytuł), zwiększa punkty za niego o ${Math.round(BONUS_STEP * 100)}% – maksymalnie ×${BONUS_MAX.toFixed(2)}. Mnożnik działa tylko wtedy, gdy za gracza zdobywasz punkty, więc odważny typ opłaca się tylko, jeśli jest trafiony. Ustawienie gracza niżej niż prognoza nie ma mnożnika.`],
       ["Jak często aktualizowane są wyniki?", `Wyniki są wpisywane w trakcie turnieju; po każdej aktualizacji strona przelicza tabelę, kursy i szanse automatycznie. Odśwież stronę, aby zobaczyć najnowszy stan.`],

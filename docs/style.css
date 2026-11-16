@@ -407,3 +407,37 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
 #playersTbl.ptbl .ext { margin-left: 1px; }
 #playersTbl.ptbl tr.tight td { font-size: 11px; letter-spacing: -.03em; padding-left: 1px; padding-right: 1px; }
 #playersTbl.ptbl tr.tight td .ext { font-size: 10px; }
+/* --- Gracze: przejrzysta tabela (gracze w wierszach) --- */
+#playersTbl.ptbl2 { width: 100%; font-size: 13px; border-collapse: collapse; }
+#playersTbl.ptbl2 th, #playersTbl.ptbl2 td { padding: 6px 6px; text-align: right; white-space: nowrap; border-left: 1px dashed rgba(21,118,174,.35); }
+#playersTbl.ptbl2 th:first-child, #playersTbl.ptbl2 td:first-child { border-left: 0; }
+#playersTbl.ptbl2 .gs { border-left: 2px solid rgba(26,90,50,.55) !important; }
+#playersTbl.ptbl2 .left { text-align: left; }
+#playersTbl.ptbl2 tr.grp th { background: #0f3d22; color: #cfe3ea; font-weight: normal; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; text-align: center; padding: 4px; }
+#playersTbl.ptbl2 th.sortable { background: var(--board); color: var(--board-text); cursor: pointer; user-select: none; white-space: normal; line-height: 1.15; vertical-align: bottom; font-size: 12px; }
+#playersTbl.ptbl2 th.sortable:hover { background: #2c7a4a; }
+#playersTbl.ptbl2 th.sorted { background: #0b2e19; color: #fff; }
+#playersTbl.ptbl2 .th-in { display: inline-flex; align-items: flex-end; gap: 3px; }
+#playersTbl.ptbl2 .arr { font-size: 9px; opacity: .5; }
+#playersTbl.ptbl2 th.sorted .arr { opacity: 1; color: #ffd95a; }
+#playersTbl.ptbl2 td.sorted { background: rgba(26,90,50,.08); }
+#playersTbl.ptbl2 td.best { background: #fbe7a6 !important; font-weight: bold; }
+#playersTbl.ptbl2 td small { display: block; font-size: 10.5px; color: var(--text-muted); line-height: 1.1; }
+#playersTbl.ptbl2 td a { font-weight: bold; }
+#playersTbl.ptbl2 tbody tr:hover td { background: var(--cream-3); }
+#playersTbl.ptbl2 .dots2 { display: inline-block; line-height: 9px; text-align: left; }
+#playersTbl.ptbl2 .dots2 .form-dot { width: 7px; height: 7px; margin: 0 1px 0 0; }
+#playersTbl.ptbl2 td:nth-child(10) { text-align: center; }
+#playersTbl.ptbl2 { font-size: 12.5px; }
+#playersTbl.ptbl2 th, #playersTbl.ptbl2 td { padding: 5px 5px; }
+#playersTbl.ptbl2 th.sortable { white-space: normal; }
+#playersTbl.ptbl2 .th-in { display: inline; }
+#playersTbl.ptbl2 th.sortable .arr { margin-left: 2px; white-space: nowrap; }
+#playersTbl.ptbl2 th.sortable[data-key="rank"], #playersTbl.ptbl2 th.sortable[data-key="formRating"], #playersTbl.ptbl2 th.sortable[data-key="oppRank"], #playersTbl.ptbl2 th.sortable[data-key="avg12m"], #playersTbl.ptbl2 th.sortable[data-key="rank12m"] { max-width: 64px; }
+#playersTbl.ptbl2 td:first-child a { font-size: 13px; }
+#playersTbl.ptbl2 th.sortable { white-space: nowrap; }
+.typy-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.typy-tbl th.sim-col, .typy-tbl td.sim-col { background: #fff3d6; }
+.typy-tbl thead th.sim-col { background: #b9780a; color: #fff; }
+.typy-tbl td.small { white-space: normal; line-height: 1.25; font-size: 12px; }
+.typy-tbl th, .typy-tbl td { padding-left: 6px; padding-right: 6px; }

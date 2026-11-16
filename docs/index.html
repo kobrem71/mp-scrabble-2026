@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=16">
+<link rel="stylesheet" href="style.css?v=22">
 </head>
 <body>
 <div class="viz-root">
@@ -109,8 +109,8 @@
 
   <section class="panel" data-panel="gracze" hidden>
     <div class="card">
-      <div class="card-head"><h2>Gracze</h2><span class="note">kliknij nazwę statystyki, żeby uszeregować graczy · złote pole = najlepszy wynik</span></div>
-      <div class="card-body"><div class="table-scroll"><table id="playersTbl" class="tbl ptbl"></table></div></div>
+      <div class="card-head"><h2>Gracze</h2><span class="note">kliknij nagłówek, żeby posortować · najedź, by zobaczyć objaśnienie · złote pole = najlepszy wynik</span></div>
+      <div class="card-body"><div class="table-scroll"><table id="playersTbl" class="tbl ptbl2"></table></div></div>
     </div>
   </section>
 
@@ -144,7 +144,8 @@
       <div class="card typy-card">
         <div class="card-head"><h2>Typy uczestników</h2><span class="note" id="typyNote"></span></div>
         <div class="card-body">
-          <button id="typyRefresh" class="btn ghost" type="button">Odśwież</button>
+          <div class="typy-bar"><button class="btn sim-btn" type="button">🎲 Symuluj cały turniej</button><button class="btn ghost clear-btn" type="button">Wyczyść</button><button id="typyRefresh" class="btn ghost" type="button">Odśwież typy</button></div>
+          <p class="hint" id="typySimInfo"></p>
           <span class="hint">Kliknij wiersz, żeby zobaczyć cały typ.</span>
           <div id="typyList"></div>
         </div>
@@ -172,6 +173,6 @@
 </footer>
 <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
 </div>
-<script src="app.js?v=16"></script>
+<script src="app.js?v=22"></script>
 </body>
 </html>
