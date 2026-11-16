@@ -466,3 +466,57 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
   [data-panel="gracze"] .card-body { padding: 10px; }
   [data-panel="gracze"] .table-scroll { overscroll-behavior-inline: contain; }
 }
+
+
+/* Czytelne karty Typera, wynik symulacji i H2H na telefonach. */
+@media (max-width: 1000px) {
+  .grid-h2h { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+  .typer-row {
+    grid-template-columns: 24px minmax(0, 1fr) 54px 60px;
+    grid-template-areas: "pos name mult buttons" "pos points points buttons";
+    gap: 2px 5px;
+    padding: 6px;
+  }
+  .typer-row .tpos { grid-area: pos; align-self: center; }
+  .typer-row .tname {
+    grid-area: name; min-width: 0; overflow: visible; overflow-wrap: anywhere;
+    text-overflow: clip; white-space: normal; line-height: 1.25;
+  }
+  .typer-row .tfc { display: none; }
+  .typer-row .tmult { grid-area: mult; justify-self: end; white-space: nowrap; font-size: 12px; }
+  .typer-row .tpts { grid-area: points; display: block; white-space: normal; font-size: 11px; line-height: 1.2; }
+  .typer-row .tbtns { grid-area: buttons; align-self: center; }
+
+  .typy-tbl { table-layout: fixed; font-size: 11px; }
+  .typy-tbl th, .typy-tbl td { padding: 4px 3px; }
+  .typy-tbl th:nth-child(1), .typy-tbl td:nth-child(1) { width: 24px; }
+  .typy-tbl th:nth-child(2), .typy-tbl td:nth-child(2) { width: 62px; }
+  .typy-tbl th:nth-child(4), .typy-tbl td:nth-child(4) { width: 48px; }
+  .typy-tbl th:nth-child(5), .typy-tbl td:nth-child(5) { width: 56px; }
+  .typy-tbl td.nick { overflow-wrap: anywhere; }
+  .typy-tbl td.small { overflow-wrap: anywhere; font-size: 10.5px; }
+  .typy-tbl td.num, .typy-tbl th.num { white-space: nowrap; }
+
+  .grid-h2h { grid-template-columns: minmax(0, 1fr); }
+  .grid-h2h > .card { min-width: 0; }
+  [data-panel="h2h"] .card-head { align-items: flex-start; gap: 6px; padding: 9px 12px; }
+  [data-panel="h2h"] .card-head h2 { font-size: 15px; }
+  #h2hLegend { flex-wrap: wrap; justify-content: flex-end; font-size: 10px; }
+  #h2hLegend .ramp { width: 70px; }
+  #h2hMatrix { border-spacing: 1px; padding: 3px; font-size: 10px; }
+  #h2hMatrix th { padding: 1px 2px; font-size: 10px; }
+  #h2hMatrix thead th { height: 100px; }
+  #h2hMatrix td { width: 29px; min-width: 29px; height: 26px; padding: 0 1px; font-size: 9px; }
+  #h2hMatrix tbody th { position: sticky; left: 0; z-index: 1; background: var(--board); }
+  #h2hMatrix thead th:first-child { position: sticky; left: 0; z-index: 2; background: var(--board); }
+  [data-panel="h2h"] .table-scroll { max-width: 100%; overscroll-behavior-inline: contain; }
+  .pair-sel { flex-wrap: nowrap; gap: 5px; }
+  .pair-sel select { min-width: 0; max-width: none; flex: 1 1 0; font-size: 12px; }
+  .pair-head { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 5px; }
+  .pair-head .small { overflow-wrap: anywhere; font-size: 11px; }
+  .kv { grid-template-columns: minmax(0, 1fr) minmax(82px, 1.2fr) minmax(0, 1fr); gap: 6px 4px; font-size: 12px; }
+  .kv .l, .kv .r { white-space: normal; overflow-wrap: anywhere; }
+  .kv .k { font-size: 10px; }
+}
