@@ -1,0 +1,26 @@
+rules_version = '2';
+// MP 2026 – Typer. Typy widzi każdy; zapisać/zmienić można tylko własny typ, do 21-11-2026 11:00 (Warszawa).
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function beforeDeadline() {
+      return request.time < timestamp.value(1795255200000);
+    }
+    function validTyp() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['nick', 'order', 'updatedAt'])
+        && d.nick is string && d.nick.size() >= 1 && d.nick.size() <= 30
+        && d.order is list && d.order.size() == 16 && d.order.toSet().size() == 16
+        && d.order.hasOnly(["Kacper Zegadło", "Bartosz Morawski", "Marcin Rogala", "Łukasz Bobowski", "Joanna Juszczak", "Dawid Adamczyk", "Artur Irzyk", "Karolina Urbańska", "Jakub Szymczak", "Wojciech Zemło", "Mariusz Skrobosz", "Przemysław Herdzina", "Sławomir Piotrowski", "Kamil Górka", "Dominik Urbacki", "Dariusz Ulatowski"])
+        && d.updatedAt == request.time;
+    }
+    match /typy/{uid} {
+      allow read: if true;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+                            && beforeDeadline() && validTyp();
+      allow delete: if false;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
