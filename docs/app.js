@@ -7,18 +7,21 @@
   const fmt = (x, d = 2) => Number(x).toFixed(d).replace(".", ",");
   const short = n => { const [f, ...l] = n.split(" "); return f[0] + ". " + l.join(" "); };
 
-  // ---------- motyw ----------
-  const root = document.documentElement;
-  const savedTheme = safeGet("mp2026-theme");
-  if (savedTheme) root.dataset.theme = savedTheme;
-  $("#themeToggle").addEventListener("click", () => {
-    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-    root.dataset.theme = dark ? "light" : "dark";
-    safeSet("mp2026-theme", root.dataset.theme);
-    renderAll();
-  });
   function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { } }
+
+  // ---------- płytki ----------
+  const VAL = { A: 1, Ą: 5, B: 3, C: 2, Ć: 6, D: 2, E: 1, Ę: 5, F: 5, G: 3, H: 3, I: 1, J: 3, K: 2, L: 2, Ł: 3, M: 2, N: 1, Ń: 7, O: 1, Ó: 5, P: 2, R: 1, S: 1, Ś: 5, T: 2, U: 3, W: 1, Y: 2, Z: 1, Ź: 9, Ż: 5 };
+  function tilesHTML(word, wobble) {
+    return [...word.toUpperCase()].map((ch, k) => {
+      if (ch === " ") return '<span class="tile-gap"></span>';
+      const v = VAL[ch];
+      const cls = ch === "-" ? " dash" : v === undefined && !/[0-9]/.test(ch) ? " blank" : "";
+      const st = wobble ? ` style="--rot:${(((k * 37) % 7) - 3) * 0.9}deg;--dy:${(((k * 53) % 5) - 2)}px"` : "";
+      return `<span class="tile${cls}"${st} aria-hidden="true">${esc(ch)}${v ? `<sub>${v}</sub>` : ""}</span>`;
+    }).join("");
+  }
+  document.querySelectorAll("[data-word]").forEach(el => { el.innerHTML = tilesHTML(el.dataset.word, el.classList.contains("tiles-xl")); });
 
   // ---------- dane ----------
   const bust = "?v=" + Date.now();
@@ -151,7 +154,7 @@
   let SIM = null;
   function renderAll() {
     SIM = simulate();
-    renderKpis(); renderStandings(); renderTitle(); renderMatches(); renderMatrix(); renderPair(); renderPlayers(); renderMethod();
+    renderKpis(); renderStandings(); renderTitle(); renderMatches(); renderMatrix(); renderPair(); renderPlayers(); renderFaq();
   }
 
   function renderKpis() {
@@ -213,7 +216,7 @@
     const list = matches.filter(m => (!r || m.round == r) && (pf === "" || m.a == pf || m.b == pf));
     const byRound = {};
     list.forEach(m => (byRound[m.round] = byRound[m.round] || []).push(m));
-    $("#matches").innerHTML = Object.entries(byRound).map(([rd, ms]) => `<div class="round"><h3>Runda ${rd}</h3><div class="round-grid">${ms.map(matchCard).join("")}</div></div>`).join("") || `<p class="muted">Brak meczów.</p>`;
+    $("#matches").innerHTML = Object.entries(byRound).map(([rd, ms]) => `<div class="round"><h3 class="tiles tiles-sm" aria-label="Runda ${rd}">${tilesHTML("RUNDA " + rd)}</h3><div class="round-grid">${ms.map(matchCard).join("")}</div></div>`).join("") || `<p class="muted">Brak meczów.</p>`;
     $("#matches").querySelectorAll("button.pname").forEach(b => b.addEventListener("click", () => {
       const key = b.dataset.key, side = b.dataset.side;
       if (whatIf[key] === side) delete whatIf[key]; else whatIf[key] = side;
@@ -317,24 +320,22 @@
     $("#playersTbl").innerHTML = `<thead><tr><th>Gracz</th><th class="num">Ranking</th><th class="num">Miejsce</th><th class="num">Rank. 12 mies.</th><th class="num">Gry 12 mies.</th><th class="num">% wygr. 12 mies.</th><th class="num">Śr. małe</th><th class="num">Śr. rywala</th><th class="num">Gry (kariera)</th><th class="num">% wygr. (kariera)</th><th class="num">Vs finaliści</th><th class="num">% vs finaliści</th></tr></thead><tbody>${rows}</tbody>`;
   }
 
-  function renderMethod() {
+  function renderFaq() {
     const ex = [IDX["Dominik Urbacki"], IDX["Joanna Juszczak"]];
-    $("#method").innerHTML = `
-      <h2>Jak liczone są kursy</h2>
-      <h3>1. Siła gracza</h3>
-      <p>Siła = średnia z aktualnego rankingu PFS i rankingu z ostatnich 12 miesięcy (dane: <a href="${DATA.source}" target="_blank" rel="noopener">scrabble.stats.org.pl</a>, stan na ${DATA.updated}).</p>
-      <h3>2. Prawdopodobieństwo z rankingu</h3>
-      <p><code>p₀ = 1 / (1 + e^(−k·(S₁ − S₂)))</code>, gdzie <code>k = ${fmt(M.k, 4)}</code> dopasowano metodą największej wiarygodności do wszystkich ${H.flat().filter(Boolean).reduce((s, x) => s + x.w + x.d + x.l, 0) / 2} historycznych partii rozegranych między finalistami. Różnica 10 punktów rankingu ≈ ${pct(1 / (1 + Math.exp(-M.k * 10)))} szans dla wyżej notowanego.</p>
-      <h3>3. Korekta head-to-head</h3>
-      <p><code>p = (wygrane + remisy/2 + ${M.prior}·p₀) / (gry H2H + ${M.prior})</code> – bilans bezpośredni „przesuwa” prognozę z rankingu tym mocniej, im więcej partii para rozegrała (prior waży tyle co ${M.prior} wirtualnych gier). Przykład: ${esc(P[ex[0]].name)} vs ${esc(P[ex[1]].name)} – z rankingu ${pct(prior(ex[0], ex[1]))}, po korekcie H2H ${pct(prob(ex[0], ex[1]))}.</p>
-      <h3>4. Kursy</h3>
-      <p>Kurs dziesiętny = <code>1 / (p · (1 + marża))</code>. Marża na pojedynki: ${pct(M.marginMatch, 0)}, na tytuł/podium: ${pct(M.marginOutright, 0)}. Minimalny kurs 1,01.</p>
-      <h3>5. Szanse na tytuł</h3>
-      <p>Symulacja Monte Carlo (${SIMS.toLocaleString("pl-PL")} przebiegów) wszystkich nierozegranych meczów. Różnica małych punktów w meczu ~ N(μ, ${M.spreadSd}), gdzie μ dobrane tak, by P(wygranej) = p. Kolejność: duże punkty, potem różnica małych. Rozegrane mecze i Twoje symulowane wyniki są brane jako pewne.</p>
-      <h3>Aktualizacja wyników</h3>
-      <p>Wyniki wpisuje się w pliku <code>docs/results.json</code> w repozytorium (pole <code>score: [małe pkt A, małe pkt B]</code>) – po commicie strona przelicza wszystko sama. Pary w terminarzu są wygenerowane tablicami Bergera wg rankingu; jeśli organizator poda inne, wystarczy podmienić pary w tym pliku.</p>
-      <p class="muted small">Kursy mają charakter wyłącznie rozrywkowy/statystyczny.</p>`;
-    $("#footer").innerHTML = `Dane: <a href="${DATA.source}" target="_blank" rel="noopener">scrabble.stats.org.pl</a> · stan na ${DATA.updated}`;
+    const nGames = H.flat().filter(Boolean).reduce((t, x) => t + x.w + x.d + x.l, 0) / 2;
+    const qa = [
+      ["Skąd pochodzą dane?", `Rankingi, bilanse head-to-head i statystyki graczy pochodzą z serwisu <a href="${DATA.source}" target="_blank" rel="noopener">scrabble.stats.org.pl</a> (turnieje rankingowe PFS), stan na ${DATA.updated}. Bilans H2H to wszystkie partie turniejowe rozegrane przez daną parę.`],
+      ["Jak wygląda faza finałowa?", `16 graczy gra każdy z każdym po razie – 15 rund, po 8 partii w rundzie. O kolejności decydują duże punkty (wygrana = 1, remis = ½), a przy równej liczbie – różnica małych punktów.`],
+      ["Czy rozstawienia są oficjalne?", `Nie. Do czasu publikacji oficjalnego terminarza pary w rundach są wygenerowane tablicami Bergera według rankingu PFS. Po ogłoszeniu oficjalnych par zostaną podmienione.`],
+      ["Jak liczona jest szansa na wygraną w pojedynku?", `Najpierw siła gracza: średnia z aktualnego rankingu PFS i rankingu z ostatnich 12 miesięcy. Różnica sił zamieniana jest na prawdopodobieństwo wzorem <code>p₀ = 1 / (1 + e^(−k·ΔS))</code>, gdzie <code>k = ${fmt(M.k, 4)}</code> dopasowano do ${nGames} historycznych partii rozegranych między finalistami. Różnica 10 punktów rankingu to ok. ${pct(1 / (1 + Math.exp(-M.k * 10)))} dla wyżej notowanego.`],
+      ["Czy bilans head-to-head ma znaczenie?", `Tak. Wynik z rankingu jest korygowany bilansem bezpośrednim: <code>p = (wygrane + remisy/2 + ${M.prior}·p₀) / (gry H2H + ${M.prior})</code>. Im więcej partii para rozegrała, tym mocniej bilans przesuwa prognozę. Przykład: ${esc(P[ex[0]].name)} vs ${esc(P[ex[1]].name)} – z samego rankingu ${pct(prior(ex[0], ex[1]))}, po uwzględnieniu H2H ${pct(prob(ex[0], ex[1]))}.`],
+      ["Jak powstają kursy?", `Kurs dziesiętny = <code>1 / (p · (1 + marża))</code>. Marża na pojedynki wynosi ${pct(M.marginMatch, 0)}, na tytuł i podium ${pct(M.marginOutright, 0)}. Najniższy kurs to 1,01. Kursy mają charakter wyłącznie rozrywkowy.`],
+      ["Skąd szanse na tytuł?", `Z symulacji Monte Carlo: ${SIMS.toLocaleString("pl-PL")} razy rozgrywamy wszystkie nierozegrane mecze, losując różnicę małych punktów z rozkładu normalnego (odchylenie ${M.spreadSd} pkt) dopasowanego do szansy na wygraną. Liczymy, jak często każdy gracz kończy na 1. miejscu i na podium.`],
+      ["Co robi symulacja w zakładce Rozstawienia?", `Kliknięcie nazwiska w nierozegranym meczu przyjmuje, że ten gracz wygrał. Tabela, forma i szanse na tytuł przeliczają się od razu. Symulacja zapisuje się tylko w Twojej przeglądarce i nie wpływa na to, co widzą inni. Przycisk „Wyczyść symulację” przywraca stan rzeczywisty.`],
+      ["Jak często aktualizowane są wyniki?", `Wyniki są wpisywane w trakcie turnieju; po każdej aktualizacji strona przelicza tabelę, kursy i szanse automatycznie. Odśwież stronę, aby zobaczyć najnowszy stan.`],
+    ];
+    $("#faq").innerHTML = qa.map(([q, a], k) => `<details${k < 2 ? " open" : ""}><summary>${q}</summary><p>${a}</p></details>`).join("");
+    $("#footer").innerHTML = `Dane: <a href="${DATA.source}" target="_blank" rel="noopener">scrabble.stats.org.pl</a> · stan na ${DATA.updated} · kursy wyłącznie rozrywkowe`;
   }
 
   renderAll();

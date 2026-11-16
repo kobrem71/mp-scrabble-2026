@@ -3,99 +3,101 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mistrzostwa Polski w Scrabble 2026 – finał</title>
-<meta name="description" content="Faza finałowa MP w Scrabble 2026: tabela, terminarz, bilanse head-to-head i kursy.">
+<title>Finały MP w Scrabble 2026</title>
+<meta name="description" content="Faza finałowa Mistrzostw Polski w Scrabble 2026: tabela, rozstawienia, bilanse head-to-head i kursy.">
+<link rel="icon" href="pfs-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="viz-root">
-<header class="top">
-  <div class="wrap top-inner">
-    <div>
-      <p class="eyebrow">Mistrzostwa Polski w Scrabble 2026</p>
-      <h1>Faza finałowa · 16 graczy · każdy z każdym</h1>
+<header class="masthead">
+  <div class="wrap mast-inner">
+    <img src="pfs-logo.png" alt="Polska Federacja Scrabble" class="logo" width="125" height="80">
+    <div class="mast-title">
+      <h1 class="tiles tiles-xl" data-word="FINAŁY MP" aria-label="Finały MP"></h1>
+      <p class="mast-sub">Mistrzostwa Polski w Scrabble 2026 · faza finałowa · 16 graczy · każdy z każdym</p>
     </div>
-    <button id="themeToggle" class="ghost" type="button" aria-label="Przełącz motyw">Jasny / ciemny</button>
   </div>
-  <nav class="wrap tabs" role="tablist">
-    <button role="tab" data-tab="tabela" aria-selected="true">Tabela</button>
-    <button role="tab" data-tab="terminarz">Terminarz i kursy</button>
-    <button role="tab" data-tab="h2h">Head-to-head</button>
-    <button role="tab" data-tab="gracze">Gracze</button>
-    <button role="tab" data-tab="metoda">Metodologia</button>
-  </nav>
 </header>
+<nav class="tabbar" aria-label="Sekcje">
+  <div class="wrap tabs" role="tablist">
+    <button role="tab" data-tab="tabela" aria-selected="true" aria-label="Tabela"><span class="tiles tiles-sm" data-word="TABELA"></span></button>
+    <button role="tab" data-tab="rozstawienia" aria-label="Rozstawienia"><span class="tiles tiles-sm" data-word="ROZSTAWIENIA"></span></button>
+    <button role="tab" data-tab="h2h" aria-label="Head-to-head"><span class="tiles tiles-sm" data-word="HEAD-TO-HEAD"></span></button>
+    <button role="tab" data-tab="gracze" aria-label="Gracze"><span class="tiles tiles-sm" data-word="GRACZE"></span></button>
+    <button role="tab" data-tab="faq" aria-label="FAQ"><span class="tiles tiles-sm" data-word="FAQ"></span></button>
+  </div>
+</nav>
 
-<main class="wrap">
+<main class="wrap content">
   <section id="kpis" class="kpis" aria-label="Podsumowanie"></section>
 
   <section class="panel" data-panel="tabela">
     <div class="grid-2">
       <div class="card">
-        <div class="card-head">
-          <h2>Tabela</h2>
-          <span class="muted small" id="tiebreakNote"></span>
-        </div>
-        <div class="table-scroll"><table id="standings" class="tbl"></table></div>
+        <div class="card-head"><h2>Tabela</h2><span class="note" id="tiebreakNote"></span></div>
+        <div class="card-body"><div class="table-scroll"><table id="standings" class="tbl"></table></div></div>
       </div>
       <div class="card">
-        <div class="card-head">
-          <h2>Szanse na tytuł</h2>
-          <span class="muted small" id="simNote"></span>
-        </div>
-        <div id="titleChart" class="barlist"></div>
+        <div class="card-head"><h2>Szanse na tytuł</h2><span class="note" id="simNote"></span></div>
+        <div class="card-body"><div id="titleChart" class="barlist"></div></div>
       </div>
     </div>
   </section>
 
-  <section class="panel" data-panel="terminarz" hidden>
+  <section class="panel" data-panel="rozstawienia" hidden>
     <div class="card">
-      <div class="card-head">
-        <h2>Terminarz i kursy na pojedynki</h2>
+      <div class="card-head"><h2>Rozstawienia i kursy na pojedynki</h2></div>
+      <div class="card-body">
         <div class="controls">
           <label>Runda <select id="roundSel"></select></label>
           <label>Gracz <select id="playerFilter"><option value="">wszyscy</option></select></label>
-          <button id="clearWhatIf" class="ghost small" type="button">Wyczyść symulację</button>
+          <button id="clearWhatIf" class="btn" type="button">Wyczyść symulację</button>
         </div>
+        <p class="hint">Kliknij nazwisko w nierozegranym meczu, żeby zasymulować jego wygraną – tabela i szanse na tytuł przeliczą się na żywo (tylko w Twojej przeglądarce).</p>
+        <div id="matches" class="matches"></div>
       </div>
-      <p class="muted small">Kliknij nazwisko w nierozegranym meczu, żeby zasymulować jego wygraną – tabela i szanse na tytuł przeliczą się na żywo (tylko w Twojej przeglądarce).</p>
-      <div id="matches" class="matches"></div>
     </div>
   </section>
 
   <section class="panel" data-panel="h2h" hidden>
     <div class="grid-h2h">
       <div class="card">
-        <div class="card-head">
-          <h2>Macierz head-to-head</h2>
-          <div class="legend" id="h2hLegend"></div>
+        <div class="card-head"><h2>Macierz head-to-head</h2><div class="legend" id="h2hLegend"></div></div>
+        <div class="card-body">
+          <p class="hint">Wiersz vs kolumna: bilans wygranych–porażek z turniejów rankingowych PFS; kolor = odsetek wygranych gracza z wiersza. Kliknij komórkę, by zobaczyć szczegóły.</p>
+          <div class="table-scroll"><table id="h2hMatrix" class="matrix"></table></div>
         </div>
-        <p class="muted small">Wiersz vs kolumna: bilans wygranych–porażek z turniejów rankingowych PFS; kolor = odsetek wygranych gracza z wiersza. Kliknij komórkę, by zobaczyć szczegóły.</p>
-        <div class="table-scroll"><table id="h2hMatrix" class="matrix"></table></div>
       </div>
       <div class="card" id="pairCard">
         <div class="card-head"><h2>Porównanie pary</h2></div>
-        <div class="controls">
-          <select id="pairA"></select><span class="muted">vs</span><select id="pairB"></select>
+        <div class="card-body">
+          <div class="controls pair-sel"><select id="pairA"></select><span class="hint">vs</span><select id="pairB"></select></div>
+          <div id="pairDetail"></div>
         </div>
-        <div id="pairDetail"></div>
       </div>
     </div>
   </section>
 
   <section class="panel" data-panel="gracze" hidden>
     <div class="card">
-      <div class="card-head"><h2>Gracze</h2><span class="muted small">Ranking PFS i forma z ostatnich 12 miesięcy</span></div>
-      <div class="table-scroll"><table id="playersTbl" class="tbl"></table></div>
+      <div class="card-head"><h2>Gracze</h2><span class="note">Ranking PFS i forma z ostatnich 12 miesięcy</span></div>
+      <div class="card-body"><div class="table-scroll"><table id="playersTbl" class="tbl"></table></div></div>
     </div>
   </section>
 
-  <section class="panel" data-panel="metoda" hidden>
-    <div class="card prose" id="method"></div>
+  <section class="panel" data-panel="faq" hidden>
+    <div class="card">
+      <div class="card-head"><h2>FAQ</h2></div>
+      <div class="card-body prose" id="faq"></div>
+    </div>
   </section>
 </main>
 
-<footer class="wrap foot muted small" id="footer"></footer>
+<footer class="wrap foot" id="footer"></footer>
 <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
 </div>
 <script src="app.js"></script>
