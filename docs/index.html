@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mistrzostwa Polski w Scrabble 2026 – finał</title>
+<meta name="description" content="Faza finałowa MP w Scrabble 2026: tabela, terminarz, bilanse head-to-head i kursy.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="viz-root">
+<header class="top">
+  <div class="wrap top-inner">
+    <div>
+      <p class="eyebrow">Mistrzostwa Polski w Scrabble 2026</p>
+      <h1>Faza finałowa · 16 graczy · każdy z każdym</h1>
+    </div>
+    <button id="themeToggle" class="ghost" type="button" aria-label="Przełącz motyw">Jasny / ciemny</button>
+  </div>
+  <nav class="wrap tabs" role="tablist">
+    <button role="tab" data-tab="tabela" aria-selected="true">Tabela</button>
+    <button role="tab" data-tab="terminarz">Terminarz i kursy</button>
+    <button role="tab" data-tab="h2h">Head-to-head</button>
+    <button role="tab" data-tab="gracze">Gracze</button>
+    <button role="tab" data-tab="metoda">Metodologia</button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section id="kpis" class="kpis" aria-label="Podsumowanie"></section>
+
+  <section class="panel" data-panel="tabela">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head">
+          <h2>Tabela</h2>
+          <span class="muted small" id="tiebreakNote"></span>
+        </div>
+        <div class="table-scroll"><table id="standings" class="tbl"></table></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h2>Szanse na tytuł</h2>
+          <span class="muted small" id="simNote"></span>
+        </div>
+        <div id="titleChart" class="barlist"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="terminarz" hidden>
+    <div class="card">
+      <div class="card-head">
+        <h2>Terminarz i kursy na pojedynki</h2>
+        <div class="controls">
+          <label>Runda <select id="roundSel"></select></label>
+          <label>Gracz <select id="playerFilter"><option value="">wszyscy</option></select></label>
+          <button id="clearWhatIf" class="ghost small" type="button">Wyczyść symulację</button>
+        </div>
+      </div>
+      <p class="muted small">Kliknij nazwisko w nierozegranym meczu, żeby zasymulować jego wygraną – tabela i szanse na tytuł przeliczą się na żywo (tylko w Twojej przeglądarce).</p>
+      <div id="matches" class="matches"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="h2h" hidden>
+    <div class="grid-h2h">
+      <div class="card">
+        <div class="card-head">
+          <h2>Macierz head-to-head</h2>
+          <div class="legend" id="h2hLegend"></div>
+        </div>
+        <p class="muted small">Wiersz vs kolumna: bilans wygranych–porażek z turniejów rankingowych PFS; kolor = odsetek wygranych gracza z wiersza. Kliknij komórkę, by zobaczyć szczegóły.</p>
+        <div class="table-scroll"><table id="h2hMatrix" class="matrix"></table></div>
+      </div>
+      <div class="card" id="pairCard">
+        <div class="card-head"><h2>Porównanie pary</h2></div>
+        <div class="controls">
+          <select id="pairA"></select><span class="muted">vs</span><select id="pairB"></select>
+        </div>
+        <div id="pairDetail"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="gracze" hidden>
+    <div class="card">
+      <div class="card-head"><h2>Gracze</h2><span class="muted small">Ranking PFS i forma z ostatnich 12 miesięcy</span></div>
+      <div class="table-scroll"><table id="playersTbl" class="tbl"></table></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="metoda" hidden>
+    <div class="card prose" id="method"></div>
+  </section>
+</main>
+
+<footer class="wrap foot muted small" id="footer"></footer>
+<div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
