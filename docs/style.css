@@ -520,3 +520,12 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
   .kv .l, .kv .r { white-space: normal; overflow-wrap: anywhere; }
   .kv .k { font-size: 10px; }
 }
+
+
+@media (max-width: 700px) {
+  .typy-tbl th:nth-child(1), .typy-tbl td:nth-child(1) { width: 20px; }
+  .typy-tbl th:nth-child(2), .typy-tbl td:nth-child(2) { width: 54px; }
+  .typy-tbl th:nth-child(4), .typy-tbl td:nth-child(4) { width: 52px; }
+  .typy-tbl th:nth-child(5), .typy-tbl td:nth-child(5) { width: 52px; }
+  .typy-tbl th:nth-child(4), .typy-tbl th:nth-child(5) { white-space: normal; overflow-wrap: anywhere; line-height: 1.1; }
+}
