@@ -377,47 +377,51 @@
       <p class="hint">${fm ? (fm.score ? `W finale: ${esc(short(P[fm.a].name))} ${fm.score[0]} : ${fm.score[1]} ${esc(short(P[fm.b].name))} (runda ${fm.round}).` : `Mecz w finale: runda ${fm.round}.`) : ""}</p>`;
   }
 
-  // Tabela graczy z sortowaniem po kliknięciu w nagłówek
-  let plSort = { col: "strength", dir: -1 };
-  function playerRow(i) {
-    const p = P[i], c = p.career, cg = c.w + c.d + c.l;
+  // Tabela graczy – transponowana: wiersze = statystyki, kolumny = gracze; klik w nazwę statystyki sortuje graczy
+  let plSort = { key: "strength", dir: -1 };
+  function playerStats(i) {
+    const p = P[i], c = p.career, cg = c.w + c.d + c.l, f = p.form;
     let hw = 0, hl = 0, hd = 0;
     for (let j = 0; j < N; j++) if (H[i][j]) { hw += H[i][j].w; hl += H[i][j].l; hd += H[i][j].d; }
-    const last10w = [...p.form.last10].filter(x => x === "W").length;
-    return { i, p, cg, hw, hl, hd, last10w,
-      v: { name: p.name.split(" ").slice(-1)[0], strength: p.strength, rank: p.rank, rank12m: p.rank12m, formRec: p.form.w - p.form.l,
-           formPct: formPct(p.form), oppRank: p.form.oppRank, formRating: p.formRating, last10: last10w, avg12m: p.avg12m,
-           careerGames: cg, careerPct: (c.w + c.d / 2) / cg, h2h: hw - hl, h2hPct: (hw + hd / 2) / (hw + hl + hd) } };
+    return { i, p, cg, hw, hl, hd, c, f };
   }
-  const PL_COLS = [
-    ["name", "Gracz", false], ["strength", "Siła", true], ["rank", "Ranking PFS", true], ["rank12m", "Rank. 12 mies.", true],
-    ["formRec", "Vs 140+ W–P–R", true], ["formPct", "% vs 140+", true], ["oppRank", "Śr. rank rywali", true], ["formRating", "Ranking formy", true],
-    ["last10", "Ostatnie 10", false], ["avg12m", "Śr. małe 12 mies.", true], ["careerGames", "Gry (kariera)", true], ["careerPct", "% wygr. (kariera)", true],
-    ["h2h", "Vs finaliści", true], ["h2hPct", "% vs finaliści", true],
+  const dots2 = str => `<span class="dots2">${formDots(str.slice(0, 5))}<br>${formDots(str.slice(5))}</span>`;
+  const PL_ROWS = [
+    { key: "strength", label: "Siła w modelu", val: s => s.p.strength, fmt: s => `<b>${fmt(s.p.strength)}</b>`, best: "max", strong: true },
+    { key: "rank", label: "Ranking PFS", val: s => s.p.rank, fmt: s => fmt(s.p.rank), best: "max" },
+    { key: "rankPlace", label: "Miejsce w rankingu", val: s => -s.p.rankPlace, fmt: s => `${s.p.rankPlace}.`, best: "max" },
+    { key: "rank12m", label: "Ranking 12 mies.", val: s => s.p.rank12m, fmt: s => fmt(s.p.rank12m), best: "max" },
+    { key: "formRec", label: "Vs 140+ W–P–R", val: s => s.f.w - s.f.l, fmt: s => `<b>${s.f.w}–${s.f.l}–${s.f.d}</b>${s.f.months > 12 ? '<span class="ext" title="okno 30 miesięcy">*</span>' : ""}`, best: "max", group: "Forma (rywale 140+)" },
+    { key: "formPct", label: "% wygranych vs 140+", val: s => formPct(s.f), fmt: s => `<b>${fmt(100 * formPct(s.f), 1)}%</b>`, best: "max" },
+    { key: "oppRank", label: "Śr. ranking rywali", val: s => s.f.oppRank, fmt: s => fmt(s.f.oppRank, 1), best: "max" },
+    { key: "formRating", label: "Ranking formy", val: s => s.p.formRating, fmt: s => fmt(s.p.formRating, 1), best: "max" },
+    { key: "last10", label: "Ostatnie 10 partii", val: s => [...s.f.last10].filter(x => x === "W").length, fmt: s => dots2(s.f.last10), best: null },
+    { key: "avg12m", label: "Śr. małe pkt (12 mies.)", val: s => s.p.avg12m, fmt: s => fmt(s.p.avg12m, 1), best: "max", group: "Ogólnie" },
+    { key: "careerGames", label: "Gry w karierze", val: s => s.cg, fmt: s => s.cg, best: "max" },
+    { key: "careerPct", label: "% wygranych (kariera)", val: s => (s.c.w + s.c.d / 2) / s.cg, fmt: s => fmt(100 * (s.c.w + s.c.d / 2) / s.cg, 1) + "%", best: "max" },
+    { key: "h2h", label: "Vs finaliści W–P", val: s => s.hw - s.hl, fmt: s => `${s.hw}–${s.hl}`, best: "max", group: "Przeciw finalistom" },
+    { key: "h2hPct", label: "% vs finaliści", val: s => (s.hw + s.hd / 2) / (s.hw + s.hl + s.hd), fmt: s => fmt(100 * (s.hw + s.hd / 2) / (s.hw + s.hl + s.hd), 1) + "%", best: "max" },
   ];
   function renderPlayers() {
-    const rows = [...P.keys()].map(playerRow);
-    const { col, dir } = plSort;
-    rows.sort((a, b) => {
-      const x = a.v[col], y = b.v[col];
-      const r = typeof x === "string" ? x.localeCompare(y, "pl") : x - y;
-      return dir * r || b.p.strength - a.p.strength;
-    });
-    const body = rows.map(r => {
-      const p = r.p, c = p.career;
-      return `<tr><td><a href="https://scrabble.stats.org.pl/zindex.php?p=${p.id}" target="_blank" rel="noopener">${esc(p.name)}</a></td><td class="num"><b>${fmt(p.strength)}</b></td><td class="num">${fmt(p.rank)} <span class="muted">(${p.rankPlace}.)</span></td><td class="num">${fmt(p.rank12m)}</td><td class="num"><b>${rec(p.form)}</b>${p.form.months > 12 ? '<span class="ext" title="okno 30 miesięcy">*</span>' : ""}</td><td class="num"><b>${fmt(100 * formPct(p.form), 1)}%</b></td><td class="num">${fmt(p.form.oppRank, 1)}</td><td class="num">${fmt(p.formRating, 1)}</td><td>${formDots(p.form.last10)}</td><td class="num">${fmt(p.avg12m, 1)}</td><td class="num">${r.cg}</td><td class="num">${fmt(100 * (c.w + c.d / 2) / r.cg, 1)}%</td><td class="num">${r.hw}–${r.hl}</td><td class="num">${fmt(100 * r.v.h2hPct, 1)}%</td></tr>`;
+    const st = [...P.keys()].map(playerStats);
+    const row = PL_ROWS.find(r => r.key === plSort.key) || PL_ROWS[0];
+    st.sort((a, b) => plSort.dir * (row.val(a) - row.val(b)) || b.p.strength - a.p.strength);
+    const head = `<thead><tr><th class="corner">kliknij statystykę,<br>by posortować</th>${st.map(s => `<th class="pcol"><a href="https://scrabble.stats.org.pl/zindex.php?p=${s.p.id}" target="_blank" rel="noopener" title="${esc(s.p.name)}">${esc(short(s.p.name))}</a></th>`).join("")}</tr></thead>`;
+    const body = PL_ROWS.map(r => {
+      const vals = st.map(s => r.val(s));
+      const bestV = r.best === "max" ? Math.max(...vals) : null;
+      const on = r.key === plSort.key;
+      const grp = r.group ? `<tr class="grp"><td colspan="${N + 1}">${r.group}</td></tr>` : "";
+      return grp + `<tr class="${on ? "sorted" : ""}${r.strong ? " strong" : ""}${r.key === "formRec" || r.key === "h2h" ? " tight" : ""}"><th class="rlabel" data-key="${r.key}" title="Sortuj po tej statystyce">${r.label}<span class="arr">${on ? (plSort.dir < 0 ? "▼" : "▲") : "↕"}</span></th>${st.map((s, k) => `<td class="${bestV !== null && vals[k] === bestV ? "best" : ""}">${r.fmt(s)}</td>`).join("")}</tr>`;
     }).join("");
-    const head = PL_COLS.map(([k, label, num]) => {
-      const on = k === col, arrow = on ? (dir < 0 ? "▼" : "▲") : "↕";
-      return `<th class="sortable${num ? " num" : ""}${on ? " sorted" : ""}" data-col="${k}" title="Sortuj"><span class="th-in">${label}<span class="arr">${arrow}</span></span></th>`;
-    }).join("");
-    $("#playersTbl").innerHTML = `<thead><tr>${head}</tr></thead><tbody>${body}</tbody>`;
-    $("#playersTbl").querySelectorAll("th.sortable").forEach(th => th.addEventListener("click", () => {
-      const k = th.dataset.col;
-      plSort = plSort.col === k ? { col: k, dir: -plSort.dir } : { col: k, dir: k === "name" ? 1 : -1 };
+    $("#playersTbl").innerHTML = head + `<tbody>${body}</tbody>`;
+    $("#playersTbl").querySelectorAll("th.rlabel").forEach(th => th.addEventListener("click", () => {
+      const k = th.dataset.key;
+      plSort = plSort.key === k ? { key: k, dir: -plSort.dir } : { key: k, dir: -1 };
       renderPlayers();
     }));
   }
+
 
 
   // ---------- TYPER ----------

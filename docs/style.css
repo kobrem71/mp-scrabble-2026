@@ -386,3 +386,24 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
 .kv { grid-template-columns: max-content minmax(0, 1fr) max-content; gap: 7px 8px; }
 .kv .k { font-size: 11px; line-height: 1.2; }
 .kv .form-dot { width: 7px; height: 7px; margin-right: 1px; }
+/* --- Gracze: tabela transponowana --- */
+#playersTbl.ptbl { table-layout: fixed; width: 100%; font-size: 12.5px; }
+#playersTbl.ptbl th, #playersTbl.ptbl td { padding: 5px 3px; text-align: center; white-space: nowrap; }
+#playersTbl.ptbl thead th { background: var(--board); color: var(--board-text); vertical-align: bottom; height: 112px; }
+#playersTbl.ptbl thead th.corner { width: 168px; text-align: left; vertical-align: bottom; font-weight: normal; font-size: 11px; color: #cfe3ea; white-space: normal; line-height: 1.25; padding-left: 10px; }
+#playersTbl.ptbl thead th.pcol a { color: #fff; text-decoration: none; writing-mode: vertical-rl; transform: rotate(180deg); display: inline-block; font-size: 12.5px; }
+#playersTbl.ptbl thead th.pcol a:hover { color: #ffd95a; }
+#playersTbl.ptbl th.rlabel { text-align: left; padding-left: 10px; background: var(--cream-2); color: var(--text-primary); font-weight: bold; font-size: 12.5px; cursor: pointer; user-select: none; white-space: normal; line-height: 1.2; }
+#playersTbl.ptbl th.rlabel:hover { background: #e2e6c4; color: var(--board); }
+#playersTbl.ptbl .arr { font-size: 10px; opacity: .5; margin-left: 4px; }
+#playersTbl.ptbl tr.sorted th.rlabel { background: var(--board); color: #fff; }
+#playersTbl.ptbl tr.sorted th.rlabel .arr { opacity: 1; color: #ffd95a; }
+#playersTbl.ptbl tr.sorted td { background: #eef5e8; }
+#playersTbl.ptbl tr.strong td { font-size: 13.5px; }
+#playersTbl.ptbl td.best { background: #fbe7a6 !important; font-weight: bold; }
+#playersTbl.ptbl tr.grp td { background: transparent; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; text-align: left; padding: 10px 10px 3px; border-bottom: 0; }
+#playersTbl.ptbl .dots2 { display: inline-block; line-height: 9px; }
+#playersTbl.ptbl .dots2 .form-dot { width: 7px; height: 7px; margin: 0 1px 0 0; }
+#playersTbl.ptbl .ext { margin-left: 1px; }
+#playersTbl.ptbl tr.tight td { font-size: 11px; letter-spacing: -.03em; padding-left: 1px; padding-right: 1px; }
+#playersTbl.ptbl tr.tight td .ext { font-size: 10px; }
