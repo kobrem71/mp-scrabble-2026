@@ -1,7 +1,9 @@
 """Buduje docs/data.json z surowych danych + kalibruje model kursów.
 
 Model:
-  1. Siła gracza R = średnia z rankingu aktualnego i rankingu z ostatnich 12 mies. (PFS).
+  1. Siła gracza S = średnia z: rankingu aktualnego, rankingu z ostatnich 12 mies. (PFS)
+     oraz „rankingu formy” – rankingu osiągniętego w ostatnich 12 mies. w partiach
+     z rywalami z rankingiem >= 140 (ściągniętego do rankingu przy małej liczbie gier).
   2. Prior: p0 = 1 / (1 + exp(-k * (R_i - R_j))); k dopasowane metodą największej
      wiarygodności do wszystkich historycznych pojedynków między finalistami.
   3. Korekta H2H (shrinkage bayesowski): p = (wygrane + remisy/2 + M * p0) / (gry + M).
@@ -9,9 +11,10 @@ Model:
 """
 import json, math, os, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from raw_data import PLAYERS, SUMMARY, CAREER, H2H, STREAK
+from raw_data import PLAYERS, SUMMARY, CAREER, H2H, STREAK, FORM12, FORM_CUTOFF, FORM_MIN_RANK
 
 M_PRIOR = 20
+FORM_PRIOR = 30   # ile „wirtualnych gier” na poziomie aktualnego rankingu dokładamy do formy
 OUT = os.path.join(os.path.dirname(__file__), "..", "docs", "data.json")
 
 names = [p[0] for p in PLAYERS]
@@ -32,6 +35,19 @@ for name, pid in PLAYERS:
         "avg12m": float(s[8]), "oppAvg12m": float(s[9]),
         "career": {"w": c[0], "d": c[1], "l": c[2], "avg": c[3], "oppAvg": c[4]},
     })
+
+for p in players:
+    f = FORM12[p["name"]].split("|")
+    p["form"] = {"n": int(f[0]), "w": int(f[1]), "d": int(f[2]), "l": int(f[3]),
+                 "oppRank": float(f[4]), "avg": float(f[5]), "oppAvg": float(f[6]), "last10": f[7]}
+
+def form_rating(p, k):
+    """Ranking osiągnięty: F takie, że n·σ(k·(F − śr.rank rywali)) = wynik (+1 W i +1 P dla stabilności),
+    potem ściągnięty do aktualnego rankingu wagą FORM_PRIOR gier."""
+    f = p["form"]
+    score = (f["w"] + f["d"] / 2 + 1) / (f["n"] + 2)
+    raw = f["oppRank"] + math.log(score / (1 - score)) / k
+    return raw, (f["n"] * raw + FORM_PRIOR * p["rank"]) / (f["n"] + FORM_PRIOR)
 
 streak_rows = STREAK.strip().split("\n")
 h2h = [[None] * n for _ in range(n)]
@@ -54,8 +70,7 @@ for i in range(n):
         if a:
             assert (a["w"], a["d"], a["l"], a["diff"]) == (b["l"], b["d"], b["w"], -b["diff"]), (names[i], names[j])
 
-# dopasowanie k (MLE, przeszukiwanie siatki)
-S = [p["strength"] for p in players]
+# dopasowanie k (MLE) – iteracyjnie, bo ranking formy zależy od k
 def loglik(k):
     ll = 0.0
     for i in range(n):
@@ -68,7 +83,16 @@ def loglik(k):
             sl = x["l"] + x["d"] / 2
             ll += sw * math.log(p) + sl * math.log(1 - p)
     return ll
-best_k = max((k / 10000 for k in range(1, 2000)), key=loglik)
+best_k = 0.025
+for _ in range(6):
+    for p in players:
+        raw, shr = form_rating(p, best_k)
+        p["formRatingRaw"], p["formRating"] = round(raw, 2), round(shr, 2)
+        p["strength"] = round((p["rank"] + p["rank12m"] + shr) / 3, 2)
+    S = [p["strength"] for p in players]
+    best_k = max((k / 10000 for k in range(1, 2000)), key=loglik)
+for p in players:
+    print(f'{p["name"]:22s} rank {p["rank"]:6.2f}  12m {p["rank12m"]:6.2f}  forma {p["formRatingRaw"]:6.1f} -> {p["formRating"]:6.1f}  siła {p["strength"]:6.2f}')
 total_games = sum(h2h[i][j]["w"] + h2h[i][j]["d"] + h2h[i][j]["l"]
                   for i in range(n) for j in range(i + 1, n) if h2h[i][j])
 print(f"k = {best_k:.4f}  (gier H2H między finalistami: {total_games})")
@@ -78,6 +102,7 @@ data = {
     "source": "https://scrabble.stats.org.pl/",
     "players": players,
     "h2h": h2h,
+    "form": {"cutoff": FORM_CUTOFF, "minRank": FORM_MIN_RANK, "prior": FORM_PRIOR},
     "model": {"k": best_k, "prior": M_PRIOR, "spreadSd": 100,
               "marginMatch": 0.06, "marginOutright": 0.15},
 }
