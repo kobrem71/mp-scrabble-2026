@@ -225,7 +225,13 @@ label { color: var(--text-secondary); font-size: 13px; display: inline-flex; gap
 .muted { color: var(--text-muted); }
 #standings td, #standings th { padding-left: 6px; padding-right: 6px; }
 .sim-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 12px 16px 0; }
-.sim-btn { font-weight: bold; font-size: 14px; padding: 7px 14px; background: linear-gradient(180deg, #2c7a4a, var(--board)); }
+.sim-btn, .next-btn { font-weight: bold; font-size: 14px; padding: 7px 14px; }
+.sim-btn { background: linear-gradient(180deg, #2c7a4a, var(--board)); }
+.btn:disabled { opacity: .45; cursor: default; }
+.podium-row { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--line); font-size: 17px; }
+.podium-row .name { font-weight: bold; }
+.medal { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font: 700 17px "Roboto Slab", Georgia, serif; color: #222; box-shadow: inset 0 -2px 0 rgba(0,0,0,.2); }
+.medal.m1 { background: #e8c547; } .medal.m2 { background: #c9ccd1; } .medal.m3 { background: #d39a63; }
 .btn.ghost { background: #fff; color: var(--line); border: 1px solid var(--line); }
 .sim-bar .hint { margin: 0; }
 .match.simulated { background: #fff7e6; border-style: dashed; }

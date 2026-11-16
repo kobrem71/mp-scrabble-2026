@@ -53,7 +53,7 @@
     return (x.w + x.d / 2 + M.prior * p0) / (g + M.prior);
   }
   const odds = (p, margin) => p <= 0 ? null : Math.max(1.01, 1 / (p * (1 + margin)));
-  const fmtOdds = o => o == null ? "—" : o >= 100 ? Math.round(o).toString() : fmt(o, 2);
+  const fmtOdds = o => o == null ? "—" : o.toFixed(2); // zawsze z kropką i 2 miejscami
 
   function invNorm(p) { // Acklam
     const a = [-39.6968302866538, 220.946098424521, -275.928510446969, 138.357751867269, -30.6647980661472, 2.50662827745924];
@@ -147,13 +147,23 @@
     if (x === y) { if (d >= 0) x++; else y++; }
     return [x, y];
   }
+  const isDone = m => !!m.score || Array.isArray(whatIf[m.key]);
+  const finished = () => matches.every(isDone);
+  function saveSim() { safeSet("mp2026-whatif", JSON.stringify(whatIf)); renderAll(); }
   function simulateTournament() {
     for (const m of matches) if (!m.score) whatIf[m.key] = simScore(m.a, m.b);
-    safeSet("mp2026-whatif", JSON.stringify(whatIf));
-    renderAll();
+    saveSim();
+  }
+  function simulateNextRound() {
+    const r = RES.rounds.find(r => matches.some(m => m.round === r.round && !isDone(m)));
+    if (!r) return;
+    for (const m of matches) if (m.round === r.round && !isDone(m)) whatIf[m.key] = simScore(m.a, m.b);
+    roundSel.value = r.round;
+    saveSim();
   }
   function clearSim() { whatIf = {}; safeSet("mp2026-whatif", "{}"); renderAll(); }
   document.querySelectorAll(".sim-btn").forEach(b => b.addEventListener("click", simulateTournament));
+  document.querySelectorAll(".next-btn").forEach(b => b.addEventListener("click", simulateNextRound));
   document.querySelectorAll(".clear-btn").forEach(b => b.addEventListener("click", clearSim));
 
   // ---------- tooltip ----------
@@ -198,15 +208,20 @@
     $("#tiebreakNote").textContent = "Kolejność: duże punkty → różnica małych punktów";
     const nSim = matches.filter(m => !m.score && whatIf[m.key]).length, nReal = matches.filter(m => m.score).length;
     $("#simState").innerHTML = nSim ? `<b>Symulacja:</b> ${nSim} partii symulowanych, ${nReal} rozegranych` + (nSim + nReal === matches.length ? " – tabela pokazuje wynik końcowy symulowanego turnieju" : "") : `${nReal} z ${matches.length} partii rozegranych`;
+    const done = finished();
+    const nextR = RES.rounds.find(r => matches.some(m => m.round === r.round && !isDone(m)));
+    document.querySelectorAll(".next-btn").forEach(b => { b.disabled = !nextR; b.textContent = nextR ? `⏭ Symuluj rundę ${nextR.round}` : "⏭ Symuluj następną rundę"; });
+    document.querySelectorAll(".sim-btn").forEach(b => { b.disabled = matches.every(m => m.score); });
     const rows = st.map((s, k) => {
       const p = P[s.i], sm = simBy[s.i];
+      const tail = done ? `<td></td><td></td><td></td>` : `<td class="num"><b>${pct(sm.title)}</b></td><td class="num"><b class="odds-ink">${fmtOdds(odds(sm.title, M.marginOutright))}</b></td><td class="num">${pct(sm.podium, 0)}</td>`;
       const form = s.form.slice(-5).map(f => f === "w" ? '<span class="form-dot w" title="wygrana"></span>' : f === "l" ? '<span class="form-dot l" title="porażka"></span>' : f === "hw" ? '<span class="form-dot w h" title="wygrana (symulacja)"></span>' : f === "hl" ? '<span class="form-dot l h" title="porażka (symulacja)"></span>' : '<span class="form-dot" title="remis" style="background:var(--text-muted)"></span>').join("");
-      return `<tr data-i="${s.i}"><td class="pos">${k + 1}</td><td class="pname-cell">${esc(p.name)}</td><td class="num">${s.played}</td><td class="num"><b>${fmt(s.pts, 1).replace(",0", "")}</b></td><td class="num">${s.pf || "–"}</td><td class="num">${s.spread > 0 ? "+" : ""}${s.spread}</td><td>${form}</td><td class="num"><b>${pct(sm.title)}</b></td><td class="num"><b class="odds-ink">${fmtOdds(odds(sm.title, M.marginOutright))}</b></td><td class="num">${pct(sm.podium, 0)}</td></tr>`;
+      return `<tr data-i="${s.i}"><td class="pos">${k + 1}</td><td class="pname-cell">${esc(p.name)}</td><td class="num">${s.played}</td><td class="num"><b>${fmt(s.pts, 1).replace(",0", "")}</b></td><td class="num">${s.pf || "–"}</td><td class="num">${s.spread > 0 ? "+" : ""}${s.spread}</td><td>${form}</td>${tail}</tr>`;
     }).join("");
     $("#standings").innerHTML = `<thead><tr><th>#</th><th>Gracz</th><th class="num">M</th><th class="num">Pkt</th><th class="num">Małe</th><th class="num">+/−</th><th>Forma</th><th class="num">Tytuł</th><th class="num">Kurs</th><th class="num">Podium</th></tr></thead><tbody>${rows}</tbody>`;
     $("#standings").querySelectorAll("tbody tr").forEach(tr => bindTip(tr, () => {
       const i = +tr.dataset.i, sm = SIM.find(s => s.i === i), p = P[i];
-      return `<div class="t">${esc(p.name)}</div>${tRow("Ranking PFS", fmt(p.rank) + ` (${p.rankPlace}.)`)}${tRow("Forma vs 140+ (12 mies.)", `${p.form.w}–${p.form.l} (${pct(formPct(p.form), 0)})`)}${tRow("Siła w modelu", fmt(p.strength))}${tRow("Szansa na tytuł", pct(sm.title))}${tRow("Szansa na podium", pct(sm.podium))}${tRow("Średnie miejsce (sym.)", fmt(sm.avgPlace, 1))}`;
+      return `<div class="t">${esc(p.name)}</div>${tRow("Ranking PFS", fmt(p.rank) + ` (${p.rankPlace}.)`)}${tRow("Forma vs 140+ (12 mies.)", `${p.form.w}–${p.form.l} (${pct(formPct(p.form), 0)})`)}${tRow("Siła w modelu", fmt(p.strength))}${finished() ? "" : tRow("Szansa na tytuł", pct(sm.title)) + tRow("Szansa na podium", pct(sm.podium)) + tRow("Średnie miejsce (sym.)", fmt(sm.avgPlace, 1))}`;
     }));
   }
 
@@ -224,6 +239,14 @@
   }
 
   function renderTitle() {
+    if (finished()) {
+      const st = standings(), sim = matches.some(m => !m.score);
+      $("#titleHead").textContent = sim ? "Wynik symulacji" : "Klasyfikacja końcowa";
+      $("#simNote").textContent = sim ? "turniej rozegrany w symulacji" : "turniej zakończony";
+      $("#titleChart").innerHTML = st.slice(0, 3).map((x, k) => `<div class="podium-row"><span class="medal m${k + 1}">${k + 1}</span><span class="name">${esc(P[x.i].name)}</span><span class="val"><b>${fmt(x.pts, 1).replace(",0", "")} pkt</b> · ${x.spread > 0 ? "+" : ""}${x.spread}</span></div>`).join("") + `<p class="hint">Szanse i kursy na tytuł nie mają sensu po ostatniej rundzie – kliknij „Wyczyść symulację”, by wrócić do prognozy.</p>`;
+      return;
+    }
+    $("#titleHead").textContent = "Szanse na tytuł";
     const s = [...SIM].sort((a, b) => b.title - a.title || a.avgPlace - b.avgPlace);
     const max = Math.max(...s.map(x => x.title), 0.0001);
     $("#simNote").textContent = `symulacja Monte Carlo, ${SIMS.toLocaleString("pl-PL")} przebiegów`;
@@ -370,9 +393,9 @@
       ["Jak liczona jest szansa na wygraną w pojedynku?", `Najpierw siła gracza: średnia z trzech liczb – aktualnego rankingu PFS, rankingu z ostatnich 12 miesięcy i rankingu formy (patrz niżej). Różnica sił zamieniana jest na prawdopodobieństwo wzorem <code>p₀ = 1 / (1 + e^(−k·ΔS))</code>, gdzie <code>k = ${fmt(M.k, 4)}</code> dopasowano do ${nGames} historycznych partii rozegranych między finalistami. Różnica 10 punktów rankingu to ok. ${pct(1 / (1 + Math.exp(-M.k * 10)))} dla wyżej notowanego.`],
       ["Jak liczona jest forma?", `Bierzemy wszystkie partie turniejowe z ostatnich 12 miesięcy (od ${DATA.form.cutoff}) rozegrane z rywalami, którzy mieli w chwili gry ranking co najmniej ${DATA.form.minRank} – słabsze partie mało mówią o grze na poziomie finału. Z bilansu i średniego rankingu rywali liczymy <b>ranking formy</b>: taki ranking, przy którym model przewidziałby dokładnie taki wynik. Przy małej liczbie partii ranking formy jest „ściągany” do aktualnego rankingu (waga ${DATA.form.prior} wirtualnych gier), żeby 10 udanych partii nie robiło z nikogo faworyta. Formę widać w zakładkach Tabela, Gracze i Head-to-head.`],
       ["Czy bilans head-to-head ma znaczenie?", `Tak. Wynik z rankingu jest korygowany bilansem bezpośrednim: <code>p = (wygrane + remisy/2 + ${M.prior}·p₀) / (gry H2H + ${M.prior})</code>. Im więcej partii para rozegrała, tym mocniej bilans przesuwa prognozę. Przykład: ${esc(P[ex[0]].name)} vs ${esc(P[ex[1]].name)} – z samego rankingu ${pct(prior(ex[0], ex[1]))}, po uwzględnieniu H2H ${pct(prob(ex[0], ex[1]))}.`],
-      ["Jak powstają kursy?", `Kurs dziesiętny = <code>1 / (p · (1 + marża))</code>. Marża na pojedynki wynosi ${pct(M.marginMatch, 0)}, na tytuł i podium ${pct(M.marginOutright, 0)}. Najniższy kurs to 1,01. Kursy mają charakter wyłącznie rozrywkowy.`],
+      ["Jak powstają kursy?", `Kurs dziesiętny = <code>1 / (p · (1 + marża))</code>. Marża na pojedynki wynosi ${pct(M.marginMatch, 0)}, na tytuł i podium ${pct(M.marginOutright, 0)}. Najniższy kurs to 1.01; kursy podajemy zawsze z dwoma miejscami po kropce. Kursy mają charakter wyłącznie rozrywkowy.`],
       ["Skąd szanse na tytuł?", `Z symulacji Monte Carlo: ${SIMS.toLocaleString("pl-PL")} razy rozgrywamy wszystkie nierozegrane mecze, losując różnicę małych punktów z rozkładu normalnego (odchylenie ${M.spreadSd} pkt) dopasowanego do szansy na wygraną. Liczymy, jak często każdy gracz kończy na 1. miejscu i na podium.`],
-      ["Jak działa przycisk „Symuluj turniej”?", `Losuje dokładny wynik każdej nierozegranej partii – z małymi punktami. Zwycięzca wynika z kursów (różnica małych punktów losowana z rozkładu normalnego dopasowanego do szansy na wygraną), a suma punktów w partii – ze średnich obu graczy z ostatnich 12 miesięcy. Każde kliknięcie daje inny przebieg turnieju; tabela pokazuje wtedy symulowaną klasyfikację końcową, a w Rozstawieniach widać wyniki wszystkich partii.`],
+      ["Jak działają przyciski symulacji?", `„Symuluj następną rundę” losuje dokładne wyniki (z małymi punktami) partii kolejnej nierozegranej rundy – można tak przejść turniej runda po rundzie i obserwować, jak zmieniają się kursy. „Symuluj cały turniej” losuje od nowa wszystkie nierozegrane partie. Zwycięzca wynika z kursów (różnica małych punktów losowana z rozkładu normalnego dopasowanego do szansy na wygraną), a suma punktów w partii – ze średnich obu graczy z ostatnich 12 miesięcy. Każde kliknięcie daje inny przebieg. Gdy wszystkie partie mają wynik, kolumny z szansami i kursami na tytuł są puste, a zamiast nich pokazujemy podium.`],
       ["Co robi kliknięcie nazwiska w Rozstawieniach?", `Kliknięcie nazwiska w nierozegranym meczu przyjmuje, że ten gracz wygrał (bez dokładnego wyniku). Tabela, forma i szanse na tytuł przeliczają się od razu. Symulacja zapisuje się tylko w Twojej przeglądarce i nie wpływa na to, co widzą inni. Przycisk „Wyczyść symulację” przywraca stan rzeczywisty.`],
       ["Jak często aktualizowane są wyniki?", `Wyniki są wpisywane w trakcie turnieju; po każdej aktualizacji strona przelicza tabelę, kursy i szanse automatycznie. Odśwież stronę, aby zobaczyć najnowszy stan.`],
     ];

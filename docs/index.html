@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 <div class="viz-root">
@@ -37,11 +37,11 @@
     <div class="grid-2">
       <div class="card">
         <div class="card-head"><h2>Tabela</h2><span class="note" id="tiebreakNote"></span></div>
-        <div class="sim-bar"><button class="btn sim-btn" type="button">🎲 Symuluj turniej</button><button class="btn ghost clear-btn" type="button">Wyczyść symulację</button><span class="hint" id="simState"></span></div>
+        <div class="sim-bar"><button class="btn next-btn" type="button">⏭ Symuluj następną rundę</button><button class="btn sim-btn" type="button">🎲 Symuluj cały turniej</button><button class="btn ghost clear-btn" type="button">Wyczyść symulację</button><span class="hint" id="simState"></span></div>
         <div class="card-body"><div class="table-scroll"><table id="standings" class="tbl"></table></div></div>
       </div>
       <div class="card">
-        <div class="card-head"><h2>Szanse na tytuł</h2><span class="note" id="simNote"></span></div>
+        <div class="card-head"><h2 id="titleHead">Szanse na tytuł</h2><span class="note" id="simNote"></span></div>
         <div class="card-body"><div id="titleChart" class="barlist"></div></div>
       </div>
     </div>
@@ -58,10 +58,11 @@
         <div class="controls">
           <label>Runda <select id="roundSel"></select></label>
           <label>Gracz <select id="playerFilter"><option value="">wszyscy</option></select></label>
-          <button class="btn sim-btn" type="button">🎲 Symuluj turniej</button>
+          <button class="btn next-btn" type="button">⏭ Symuluj następną rundę</button>
+          <button class="btn sim-btn" type="button">🎲 Symuluj cały turniej</button>
           <button class="btn ghost clear-btn" type="button">Wyczyść symulację</button>
         </div>
-        <p class="hint">„Symuluj turniej” losuje dokładny wynik (małe punkty) każdej nierozegranej partii zgodnie z kursami – każde kliknięcie to inny przebieg. Możesz też kliknąć nazwisko, by ręcznie ustawić zwycięzcę. Symulacja działa tylko w Twojej przeglądarce.</p>
+        <p class="hint">„Symuluj następną rundę” losuje dokładne wyniki (małe punkty) kolejnej rundy, „Symuluj cały turniej” – wszystkich nierozegranych partii; każde kliknięcie to inny przebieg. Możesz też kliknąć nazwisko, by ręcznie ustawić zwycięzcę. Symulacja działa tylko w Twojej przeglądarce.</p>
         <div id="matches" class="matches"></div>
       </div>
     </div>
@@ -104,6 +105,6 @@
 <footer class="wrap foot" id="footer"></footer>
 <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
 </div>
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>
