@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=11">
+<link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
 <div class="viz-root">
@@ -24,12 +24,24 @@
 </header>
 <nav class="tabbar" aria-label="Sekcje">
   <div class="wrap tabs" role="tablist">
-    <button role="tab" data-tab="tabela" aria-selected="true" aria-label="Tabela"><span class="tiles tiles-sm" data-word="TABELA"></span></button>
-    <button role="tab" data-tab="rozstawienia" aria-label="Rozstawienia"><span class="tiles tiles-sm" data-word="ROZSTAWIENIA"></span></button>
-    <button role="tab" data-tab="h2h" aria-label="Head-to-head"><span class="tiles tiles-sm" data-word="HEAD-TO-HEAD"></span></button>
-    <button role="tab" data-tab="gracze" aria-label="Gracze"><span class="tiles tiles-sm" data-word="GRACZE"></span></button>
-    <button role="tab" data-tab="typer" aria-label="Typer" class="tab-typer"><span class="tiles tiles-sm" data-word="TYPER"></span></button>
-    <button role="tab" data-tab="faq" aria-label="FAQ"><span class="tiles tiles-sm" data-word="FAQ"></span></button>
+    <button role="tab" data-tab="tabela" class="navbtn" aria-selected="true" aria-label="Tabela: tabela i szanse">
+      <span class="tiles tiles-nav" data-word="TABELA"></span><span class="navsub">tabela i szanse</span>
+    </button>
+    <button role="tab" data-tab="rozstawienia" class="navbtn" aria-label="Mecze: rozstawienia i kursy">
+      <span class="tiles tiles-nav" data-word="MECZE"></span><span class="navsub">rozstawienia i kursy</span>
+    </button>
+    <button role="tab" data-tab="h2h" class="navbtn" aria-label="Head-to-head: bilanse bezpośrednie">
+      <span class="tiles tiles-nav" data-word="H2H"></span><span class="navsub">bilanse bezpośrednie</span>
+    </button>
+    <button role="tab" data-tab="gracze" class="navbtn" aria-label="Gracze: ranking i forma">
+      <span class="tiles tiles-nav" data-word="GRACZE"></span><span class="navsub">ranking i forma</span>
+    </button>
+    <button role="tab" data-tab="typer" class="navbtn tab-typer" aria-label="Typer: zagraj o podium!">
+      <span class="tiles tiles-nav" data-word="TYPER"></span><span class="navsub">zagraj o podium!</span>
+    </button>
+    <button role="tab" data-tab="faq" class="navbtn" aria-label="Faq: jak to działa">
+      <span class="tiles tiles-nav" data-word="FAQ"></span><span class="navsub">jak to działa</span>
+    </button>
   </div>
 </nav>
 
@@ -160,6 +172,6 @@
 </footer>
 <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
 </div>
-<script src="app.js?v=11"></script>
+<script src="app.js?v=12"></script>
 </body>
 </html>
