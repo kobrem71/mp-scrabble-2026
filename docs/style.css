@@ -529,3 +529,29 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
   .typy-tbl th:nth-child(5), .typy-tbl td:nth-child(5) { width: 52px; }
   .typy-tbl th:nth-child(4), .typy-tbl th:nth-child(5) { white-space: normal; overflow-wrap: anywhere; line-height: 1.1; }
 }
+
+
+/* --- Tło: siódemki tygodnia z płytek --- */
+.viz-root { position: relative; }
+#bgWords { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.viz-root > header, .viz-root > nav, .viz-root > main, .viz-root > footer { position: relative; z-index: 1; }
+.viz-root > nav.tabbar { position: sticky; z-index: 10; }
+.bgw { position: absolute; display: flex; gap: calc(var(--cell) * .17); opacity: 0; transition: opacity 1.4s ease; }
+.bgw.v { flex-direction: column; }
+.bgw.in { opacity: .3; }
+.bgw.out { opacity: 0; }
+.bgw.static { opacity: .22; }
+.bgt {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: calc(var(--cell) * .83); height: calc(var(--cell) * .83); border-radius: 2px;
+  background: linear-gradient(160deg, #fbfbec, var(--tile) 50%, #dcdabd);
+  color: var(--tile-ink); font: 700 calc(var(--cell) * .5)/1 "Roboto Slab", Georgia, serif;
+  box-shadow: 0 1px 2px rgba(0,0,0,.35);
+  transform: translateY(-6px) scale(.9); opacity: 0;
+  transition: transform .45s cubic-bezier(.2,.8,.3,1.2), opacity .45s ease;
+  transition-delay: calc(var(--k) * 110ms);
+}
+.bgt sub { position: absolute; right: 1px; bottom: 0; font: 600 calc(var(--cell) * .2)/1 Verdana, sans-serif; }
+.bgw.in .bgt, .bgw.out .bgt { transform: none; opacity: 1; }
+.bgw.static .bgt { transition: none; transform: none; opacity: 1; }
+@media (max-width: 700px) { .bgw.in { opacity: .16; } }
