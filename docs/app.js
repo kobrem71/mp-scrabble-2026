@@ -376,16 +376,48 @@
       <p class="hint">${fm ? (fm.score ? `W finale: ${esc(short(P[fm.a].name))} ${fm.score[0]} : ${fm.score[1]} ${esc(short(P[fm.b].name))} (runda ${fm.round}).` : `Mecz w finale: runda ${fm.round}.`) : ""}</p>`;
   }
 
-  function renderPlayers() {
-    const ord = [...P.keys()].sort((a, b) => P[b].strength - P[a].strength);
-    const rows = ord.map(i => {
-      const p = P[i], c = p.career, cg = c.w + c.d + c.l;
-      let hw = 0, hl = 0, hd = 0;
-      for (let j = 0; j < N; j++) if (H[i][j]) { hw += H[i][j].w; hl += H[i][j].l; hd += H[i][j].d; }
-      return `<tr><td><a href="https://scrabble.stats.org.pl/zindex.php?p=${p.id}" target="_blank" rel="noopener">${esc(p.name)}</a></td><td class="num"><b>${fmt(p.strength)}</b></td><td class="num">${fmt(p.rank)} <span class="muted">(${p.rankPlace}.)</span></td><td class="num">${fmt(p.rank12m)}</td><td class="num"><b>${rec(p.form)}</b>${p.form.months > 12 ? '<span class="ext" title="okno 30 miesięcy">*</span>' : ""}</td><td class="num"><b>${fmt(100 * formPct(p.form), 1)}%</b></td><td class="num">${fmt(p.form.oppRank, 1)}</td><td class="num">${fmt(p.formRating, 1)}</td><td>${formDots(p.form.last10)}</td><td class="num">${fmt(p.avg12m, 1)}</td><td class="num">${cg}</td><td class="num">${fmt(100 * (c.w + c.d / 2) / cg, 1)}%</td><td class="num">${hw}–${hl}</td><td class="num">${fmt(100 * (hw + hd / 2) / (hw + hl + hd), 1)}%</td></tr>`;
-    }).join("");
-    $("#playersTbl").innerHTML = `<thead><tr><th>Gracz</th><th class="num">Siła</th><th class="num">Ranking PFS</th><th class="num">Rank. 12 mies.</th><th class="num">Vs 140+ W–P–R</th><th class="num">% vs 140+</th><th class="num">Śr. rank rywali</th><th class="num">Ranking formy</th><th>Ostatnie 10</th><th class="num">Śr. małe 12 mies.</th><th class="num">Gry (kariera)</th><th class="num">% wygr. (kariera)</th><th class="num">Vs finaliści</th><th class="num">% vs finaliści</th></tr></thead><tbody>${rows}</tbody>`;
+  // Tabela graczy z sortowaniem po kliknięciu w nagłówek
+  let plSort = { col: "strength", dir: -1 };
+  function playerRow(i) {
+    const p = P[i], c = p.career, cg = c.w + c.d + c.l;
+    let hw = 0, hl = 0, hd = 0;
+    for (let j = 0; j < N; j++) if (H[i][j]) { hw += H[i][j].w; hl += H[i][j].l; hd += H[i][j].d; }
+    const last10w = [...p.form.last10].filter(x => x === "W").length;
+    return { i, p, cg, hw, hl, hd, last10w,
+      v: { name: p.name.split(" ").slice(-1)[0], strength: p.strength, rank: p.rank, rank12m: p.rank12m, formRec: p.form.w - p.form.l,
+           formPct: formPct(p.form), oppRank: p.form.oppRank, formRating: p.formRating, last10: last10w, avg12m: p.avg12m,
+           careerGames: cg, careerPct: (c.w + c.d / 2) / cg, h2h: hw - hl, h2hPct: (hw + hd / 2) / (hw + hl + hd) } };
   }
+  const PL_COLS = [
+    ["name", "Gracz", false], ["strength", "Siła", true], ["rank", "Ranking PFS", true], ["rank12m", "Rank. 12 mies.", true],
+    ["formRec", "Vs 140+ W–P–R", true], ["formPct", "% vs 140+", true], ["oppRank", "Śr. rank rywali", true], ["formRating", "Ranking formy", true],
+    ["last10", "Ostatnie 10", false], ["avg12m", "Śr. małe 12 mies.", true], ["careerGames", "Gry (kariera)", true], ["careerPct", "% wygr. (kariera)", true],
+    ["h2h", "Vs finaliści", true], ["h2hPct", "% vs finaliści", true],
+  ];
+  function renderPlayers() {
+    const rows = [...P.keys()].map(playerRow);
+    const { col, dir } = plSort;
+    rows.sort((a, b) => {
+      const x = a.v[col], y = b.v[col];
+      const r = typeof x === "string" ? x.localeCompare(y, "pl") : x - y;
+      return dir * r || b.p.strength - a.p.strength;
+    });
+    const body = rows.map(r => {
+      const p = r.p, c = p.career;
+      return `<tr><td><a href="https://scrabble.stats.org.pl/zindex.php?p=${p.id}" target="_blank" rel="noopener">${esc(p.name)}</a></td><td class="num"><b>${fmt(p.strength)}</b></td><td class="num">${fmt(p.rank)} <span class="muted">(${p.rankPlace}.)</span></td><td class="num">${fmt(p.rank12m)}</td><td class="num"><b>${rec(p.form)}</b>${p.form.months > 12 ? '<span class="ext" title="okno 30 miesięcy">*</span>' : ""}</td><td class="num"><b>${fmt(100 * formPct(p.form), 1)}%</b></td><td class="num">${fmt(p.form.oppRank, 1)}</td><td class="num">${fmt(p.formRating, 1)}</td><td>${formDots(p.form.last10)}</td><td class="num">${fmt(p.avg12m, 1)}</td><td class="num">${r.cg}</td><td class="num">${fmt(100 * (c.w + c.d / 2) / r.cg, 1)}%</td><td class="num">${r.hw}–${r.hl}</td><td class="num">${fmt(100 * r.v.h2hPct, 1)}%</td></tr>`;
+    }).join("");
+    const head = PL_COLS.map(([k, label, num]) => {
+      const on = k === col, arrow = on ? (dir < 0 ? "▼" : "▲") : "↕";
+      return `<th class="sortable${num ? " num" : ""}${on ? " sorted" : ""}" data-col="${k}" title="Sortuj"><span class="th-in">${label}<span class="arr">${arrow}</span></span></th>`;
+    }).join("");
+    $("#playersTbl").innerHTML = `<thead><tr>${head}</tr></thead><tbody>${body}</tbody>`;
+    $("#playersTbl").querySelectorAll("th.sortable").forEach(th => th.addEventListener("click", () => {
+      const k = th.dataset.col;
+      plSort = plSort.col === k ? { col: k, dir: -plSort.dir } : { col: k, dir: k === "name" ? 1 : -1 };
+      renderPlayers();
+    }));
+  }
+
 
   // ---------- TYPER ----------
   // Prognoza przedturniejowa (zamrożona): kolejność wg szansy na tytuł bez żadnych wyników.

@@ -369,3 +369,20 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
 }
 .tabs button.navbtn.tab-typer[aria-selected="true"] { background: linear-gradient(180deg, #ffe58a, #d99a12); box-shadow: inset 0 2px 6px rgba(0,0,0,.25), 0 0 14px rgba(255,210,80,.8); animation: none; }
 @media (prefers-reduced-motion: reduce) { .tabs button.navbtn.tab-typer { animation: none; } }
+/* sortowanie tabeli graczy */
+#playersTbl th.sortable { cursor: pointer; user-select: none; }
+#playersTbl th.sortable:hover { background: #2c7a4a; }
+#playersTbl th.sorted { background: #0f3d22; color: #fff; }
+#playersTbl .th-in { display: inline-flex; gap: 4px; align-items: center; white-space: nowrap; }
+#playersTbl .arr { font-size: 10px; opacity: .55; }
+#playersTbl th.sorted .arr { opacity: 1; color: #ffd95a; }
+/* macierz H2H – wyniki dwucyfrowe w jednej linii */
+.matrix td { white-space: nowrap; min-width: 46px; width: 46px; padding: 0 3px; font-size: 12px; letter-spacing: -.02em; }
+.matrix td { min-width: 41px; width: 41px; font-size: 11.5px; padding: 0 2px; }
+.matrix tbody th { font-size: 12px; }
+.grid-h2h { grid-template-columns: minmax(0, 1fr) 310px; }
+.kv .l, .kv .r { white-space: nowrap; }
+.kv { font-size: 13.5px; }
+.kv { grid-template-columns: max-content minmax(0, 1fr) max-content; gap: 7px 8px; }
+.kv .k { font-size: 11px; line-height: 1.2; }
+.kv .form-dot { width: 7px; height: 7px; margin-right: 1px; }
