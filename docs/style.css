@@ -241,7 +241,8 @@ label { color: var(--text-secondary); font-size: 13px; display: inline-flex; gap
 #playersTbl { font-size: 13.5px; } #playersTbl td, #playersTbl th { padding-left: 6px; padding-right: 6px; }
 
 /* typer */
-.grid-typer { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+.grid-typer { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); grid-template-rows: auto 1fr; gap: 14px; align-items: start; }
+.grid-typer > .card:first-child { grid-row: span 2; }
 @media (max-width: 1000px) { .grid-typer { grid-template-columns: 1fr; } }
 input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; background: #fff; width: 200px; }
 .typer-list { list-style: none; margin: 8px 0 0; padding: 0; }
@@ -261,3 +262,15 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
 .typer-score b { color: var(--board); font-size: 20px; }
 .typer-rules .tbl { max-width: 320px; margin-bottom: 12px; }
 @media (max-width: 700px) { .typer-row { grid-template-columns: 28px 1fr 56px 60px; } .tfc, .tpts { display: none; } }
+.deadline { margin: 0 0 10px; padding: 8px 12px; background: #fff3d6; border: 1px solid #e0b860; border-radius: 6px; font-size: 14px; }
+.auth-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.auth-row .hint { margin: 0; }
+.google-btn { background: #fff; color: #3c4043; border: 1px solid #c5c8cc; font-weight: bold; display: inline-flex; gap: 8px; align-items: center; }
+.google-btn .g { font: 700 16px Arial, sans-serif; color: #4285f4; }
+.typer-row.locked { cursor: default; }
+.typy-tbl { margin-top: 10px; }
+.typ-row { cursor: pointer; }
+.typ-row.mine td { background: #e6f2e9 !important; }
+.typ-ol { margin: 4px 0; padding-left: 22px; columns: 2; font-size: 13px; }
+.typ-detail td { background: #fffff0; }
+.small { font-size: 12.5px; }

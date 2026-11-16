@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 <div class="viz-root">
@@ -100,9 +100,11 @@
       <div class="card">
         <div class="card-head"><h2>Twój typ – kolejność końcowa</h2><span class="note">przeciągnij gracza lub użyj ▲▼</span></div>
         <div class="card-body">
+          <p class="deadline" id="typerDeadline"></p>
+          <div class="auth-row" id="typerAuth"><span class="hint">Łączenie z bazą typów…</span></div>
           <div class="controls">
             <label>Nick <input id="typerNick" type="text" maxlength="30" placeholder="np. Kobrem" autocomplete="nickname"></label>
-            <button id="typerSave" class="btn sim-btn" type="button">Zapisz typ</button>
+            <button id="typerSave" class="btn sim-btn" type="button" disabled>Zaloguj się, by zapisać</button>
             <button id="typerReset" class="btn ghost" type="button">Ustaw wg prognozy</button>
           </div>
           <p class="hint" id="typerMsg"></p>
@@ -117,7 +119,15 @@
           <table class="tbl"><thead><tr><th>Trafienie miejsca</th><th class="num">Punkty</th></tr></thead>
           <tbody><tr><td>dokładnie</td><td class="num"><b>10</b></td></tr><tr><td>o 1 miejsce</td><td class="num"><b>6</b></td></tr><tr><td>o 2 miejsca</td><td class="num"><b>3</b></td></tr><tr><td>o 3 miejsca</td><td class="num"><b>1</b></td></tr><tr><td>dalej</td><td class="num">0</td></tr></tbody></table>
           <p><b>Bonus za odwagę:</b> każde miejsce, o które ustawisz gracza <b>wyżej niż prognoza</b> wg kursu na tytuł, to <b>+10%</b> punktów za niego (maks. ×1.50). Przykład: gracz prognozowany na 8. miejsce, typujesz go na 5. (×1.30) i kończy na 5. → 13.0 pkt zamiast 10.</p>
-          <p class="hint">Maksimum przy typie zgodnym z prognozą: 160 pkt. Ranking typerów pojawi się tutaj po uruchomieniu wspólnego zapisu.</p>
+          <p class="hint">Maksimum przy typie zgodnym z prognozą: 160 pkt.</p>
+        </div>
+      </div>
+      <div class="card typy-card">
+        <div class="card-head"><h2>Typy uczestników</h2><span class="note" id="typyNote"></span></div>
+        <div class="card-body">
+          <button id="typyRefresh" class="btn ghost" type="button">Odśwież</button>
+          <span class="hint">Kliknij wiersz, żeby zobaczyć cały typ.</span>
+          <div id="typyList"></div>
         </div>
       </div>
     </div>
@@ -134,6 +144,6 @@
 <footer class="wrap foot" id="footer"></footer>
 <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
 </div>
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

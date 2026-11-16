@@ -414,18 +414,22 @@
   function renderTyper() {
     const st = standings(), anyPlayed = matches.some(isDone), done = finished();
     const sc = anyPlayed ? typerScore(typer.order, st.map(x => x.i)) : null;
+    const lock = typerLocked();
+    $("#typerDeadline").innerHTML = lock ? `<b>Typowanie zamknięte</b> (21 listopada 2026, 11:00).` : `Typy można zapisywać i zmieniać do <b>soboty 21 listopada 2026, 11:00</b>. Typy wszystkich uczestników są jawne.`;
+    $("#typerReset").disabled = lock;
+    if (typeof renderTypy === "function") renderTypy();
     const byI = sc ? Object.fromEntries(sc.rows.map(r => [r.i, r])) : {};
     $("#typerNick").value = typer.nick;
     $("#typerList").innerHTML = typer.order.map((i, k) => {
       const t = k + 1, f = forecastPlace[i], mult = typerMult(i, t), r = byI[i];
       const diff = f - t;
-      return `<li class="typer-row" draggable="true" data-k="${k}">
+      return `<li class="typer-row${lock ? " locked" : ""}" draggable="${!lock}" data-k="${k}">
         <span class="tpos">${t}</span>
         <span class="tname">${esc(P[i].name)}</span>
         <span class="tfc">prognoza: ${f}.</span>
         <span class="tmult ${mult > 1 ? "up" : ""}">${mult > 1 ? "×" + mult.toFixed(2) : "×1.00"}</span>
         ${sc ? `<span class="tpts">${r.a}. → <b>${r.pts.toFixed(1)}</b></span>` : ""}
-        <span class="tbtns"><button type="button" class="tb" data-k="${k}" data-d="-1" ${k === 0 ? "disabled" : ""} aria-label="W górę">▲</button><button type="button" class="tb" data-k="${k}" data-d="1" ${k === N - 1 ? "disabled" : ""} aria-label="W dół">▼</button></span>
+        <span class="tbtns"><button type="button" class="tb" data-k="${k}" data-d="-1" ${k === 0 || lock ? "disabled" : ""} aria-label="W górę">▲</button><button type="button" class="tb" data-k="${k}" data-d="1" ${k === N - 1 || lock ? "disabled" : ""} aria-label="W dół">▼</button></span>
       </li>`;
     }).join("");
     const maxBonus = typer.order.reduce((t, i, k) => t + BASE_PTS[0] * typerMult(i, k + 1), 0);
@@ -441,17 +445,121 @@
     });
   }
   function moveTyper(from, to) {
+    if (typerLocked()) return;
     if (to < 0 || to >= N || from === to) return;
     const [x] = typer.order.splice(from, 1); typer.order.splice(to, 0, x);
     saveTyperLocal(); renderTyper();
   }
   $("#typerNick").addEventListener("input", e => { typer.nick = e.target.value.slice(0, 30); saveTyperLocal(); });
-  $("#typerReset").addEventListener("click", () => { typer.order = FORECAST.slice(); saveTyperLocal(); renderTyper(); });
-  $("#typerSave").addEventListener("click", () => {
-    if (!typer.nick.trim()) { $("#typerMsg").textContent = "Wpisz nick."; return; }
-    saveTyperLocal();
-    $("#typerMsg").textContent = `Zapisano typ „${typer.nick.trim()}” w tej przeglądarce. Wysyłanie do wspólnego rankingu typerów zostanie uruchomione wkrótce.`;
+  $("#typerReset").addEventListener("click", () => { if (typerLocked()) return; typer.order = FORECAST.slice(); saveTyperLocal(); renderTyper(); });
+
+  // ---------- Firebase: logowanie Google + wspólna baza typów ----------
+  const DEADLINE = Date.UTC(2026, 10, 21, 10, 0); // 21-11-2026 11:00 czasu polskiego (musi zgadzać się z regułami Firestore)
+  const typerLocked = () => Date.now() >= DEADLINE;
+  const FB_CONFIG = {
+    apiKey: "AIzaSyD0T8vRrOGx7LiS-J-0lHmmCR4rl92-rjM",
+    authDomain: "mp-scrabble-2026.firebaseapp.com",
+    projectId: "mp-scrabble-2026",
+    storageBucket: "mp-scrabble-2026.firebasestorage.app",
+    messagingSenderId: "1039874240900",
+    appId: "1:1039874240900:web:a29d61174d752501ea2dd1",
+  };
+  const FBV = "13.3.0";
+  let fb = null, fbUser = null, allTypy = null;
+  const fbReady = (async () => {
+    const [appM, authM, fsM] = await Promise.all([
+      import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-app.js`),
+      import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-auth.js`),
+      import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-firestore.js`),
+    ]);
+    const app = appM.initializeApp(FB_CONFIG);
+    fb = { auth: authM.getAuth(app), db: fsM.getFirestore(app), authM, fsM };
+    authM.onAuthStateChanged(fb.auth, async u => {
+      fbUser = u;
+      if (u) {
+        try {
+          const snap = await fsM.getDoc(fsM.doc(fb.db, "typy", u.uid));
+          if (snap.exists()) {
+            const d = snap.data();
+            const ord = d.order.map(n => IDX[n]).filter(i => i !== undefined);
+            if (ord.length === N) typer.order = ord;
+            typer.nick = d.nick;
+            $("#typerMsg").textContent = `Wczytano Twój zapisany typ (ostatnia zmiana: ${d.updatedAt ? d.updatedAt.toDate().toLocaleString("pl-PL") : "—"}).`;
+          } else if (!typer.nick) typer.nick = (u.displayName || "").slice(0, 30);
+          saveTyperLocal();
+        } catch (e) { console.error(e); }
+      }
+      renderAuth(); renderTyper();
+    });
+    return fb;
+  })().catch(e => { console.error(e); $("#typerAuth").innerHTML = `<span class="hint">Nie udało się połączyć z bazą typów – odśwież stronę.</span>`; });
+
+  function renderAuth() {
+    const el = $("#typerAuth");
+    if (fbUser) {
+      el.innerHTML = `<span class="who">Zalogowano: <b>${esc(fbUser.displayName || fbUser.email || "")}</b></span> <button id="fbOut" class="btn ghost" type="button">Wyloguj</button>`;
+      $("#fbOut").addEventListener("click", () => fb.authM.signOut(fb.auth));
+    } else {
+      el.innerHTML = `<button id="fbIn" class="btn google-btn" type="button"><span class="g">G</span> Zaloguj przez Google</button><span class="hint">Logowanie jest potrzebne tylko do zapisania typu.</span>`;
+      $("#fbIn").addEventListener("click", async () => {
+        try { await fbReady; await fb.authM.signInWithPopup(fb.auth, new fb.authM.GoogleAuthProvider()); }
+        catch (e) { $("#typerMsg").textContent = "Logowanie przerwane lub zablokowane (sprawdź, czy przeglądarka nie blokuje okienek)."; }
+      });
+    }
+    $("#typerSave").disabled = typerLocked() || !fbUser;
+    $("#typerSave").textContent = fbUser ? "Zapisz typ" : "Zaloguj się, by zapisać";
+  }
+
+  $("#typerSave").addEventListener("click", async () => {
+    const nick = typer.nick.trim();
+    if (!nick) { $("#typerMsg").textContent = "Wpisz nick."; return; }
+    if (typerLocked()) { $("#typerMsg").textContent = "Typowanie jest już zamknięte."; return; }
+    if (!fbUser) return;
+    $("#typerSave").disabled = true; $("#typerMsg").textContent = "Zapisuję…";
+    try {
+      const { fsM, db } = fb;
+      await fsM.setDoc(fsM.doc(db, "typy", fbUser.uid), { nick, order: typer.order.map(i => P[i].name), updatedAt: fsM.serverTimestamp() });
+      saveTyperLocal();
+      $("#typerMsg").innerHTML = `<b>Zapisano typ „${esc(nick)}”.</b> Możesz go zmieniać do ${new Date(DEADLINE).toLocaleString("pl-PL", { dateStyle: "long", timeStyle: "short" })}.`;
+      loadAllTypy();
+    } catch (e) {
+      console.error(e);
+      $("#typerMsg").textContent = typerLocked() ? "Typowanie jest już zamknięte." : "Nie udało się zapisać typu – spróbuj ponownie.";
+    }
+    $("#typerSave").disabled = typerLocked() || !fbUser;
   });
+
+  async function loadAllTypy() {
+    $("#typyList").innerHTML = `<p class="hint">Wczytuję typy…</p>`;
+    try {
+      await fbReady;
+      const { fsM, db } = fb;
+      const qs = await fsM.getDocs(fsM.collection(db, "typy"));
+      allTypy = qs.docs.map(d => ({ uid: d.id, ...d.data() }));
+      renderTypy();
+    } catch (e) { console.error(e); $("#typyList").innerHTML = `<p class="hint">Nie udało się wczytać typów.</p>`; }
+  }
+  function renderTypy() {
+    if (!allTypy) return;
+    const st = standings(), anyPlayed = matches.some(isDone);
+    const fin = st.map(x => x.i);
+    const rows = allTypy.map(t => {
+      const order = t.order.map(n => IDX[n]).filter(i => i !== undefined);
+      const sc = anyPlayed && order.length === N ? typerScore(order, fin).total : null;
+      return { ...t, order, sc };
+    }).sort((a, b) => (b.sc ?? 0) - (a.sc ?? 0) || a.nick.localeCompare(b.nick, "pl"));
+    const simOn = matches.some(m => !m.score && whatIf[m.key]);
+    $("#typyNote").textContent = `${rows.length} ${rows.length === 1 ? "typ" : "typów"}` + (anyPlayed ? (simOn ? " · punkty wg symulacji" : finished() ? " · wynik końcowy" : " · punkty wg obecnej tabeli") : "");
+    $("#typyList").innerHTML = rows.length ? `<table class="tbl typy-tbl"><thead><tr><th>#</th><th>Nick</th><th>Podium w typie</th><th class="num">Pkt</th></tr></thead><tbody>${rows.map((r, k) => `
+      <tr class="typ-row${fbUser && r.uid === fbUser.uid ? " mine" : ""}" data-k="${k}"><td class="pos">${anyPlayed ? k + 1 : "–"}</td><td><b>${esc(r.nick)}</b></td><td class="small">${r.order.slice(0, 3).map(i => esc(short(P[i].name))).join(", ")}</td><td class="num"><b>${r.sc == null ? "–" : r.sc.toFixed(1)}</b></td></tr>
+      <tr class="typ-detail" data-k="${k}" hidden><td></td><td colspan="3"><ol class="typ-ol">${r.order.map(i => `<li>${esc(P[i].name)} <span class="muted">(prognoza ${forecastPlace[i]}.)</span></li>`).join("")}</ol></td></tr>`).join("")}</tbody></table>` : `<p class="hint">Nikt jeszcze nie zapisał typu – bądź pierwszy!</p>`;
+    $("#typyList").querySelectorAll(".typ-row").forEach(tr => tr.addEventListener("click", () => {
+      const d = $(`#typyList .typ-detail[data-k="${tr.dataset.k}"]`); d.hidden = !d.hidden;
+    }));
+  }
+  $("#typyRefresh").addEventListener("click", loadAllTypy);
+  document.querySelector('.tabs button[data-tab="typer"]').addEventListener("click", () => { if (!allTypy) loadAllTypy(); });
+  if (location.hash === "#typer") loadAllTypy();
 
   function renderFaq() {
     const ex = [IDX["Dominik Urbacki"], IDX["Joanna Juszczak"]];
@@ -468,6 +576,7 @@
       ["Jak działają przyciski symulacji?", `„Symuluj następną rundę” losuje dokładne wyniki (z małymi punktami) partii kolejnej nierozegranej rundy – można tak przejść turniej runda po rundzie i obserwować, jak zmieniają się kursy. „Symuluj cały turniej” losuje od nowa wszystkie nierozegrane partie. Zwycięzca wynika z kursów (różnica małych punktów losowana z rozkładu normalnego dopasowanego do szansy na wygraną), a suma punktów w partii – ze średnich obu graczy z ostatnich 12 miesięcy. Każde kliknięcie daje inny przebieg. Gdy wszystkie partie mają wynik, kolumny z szansami i kursami na tytuł są puste, a zamiast nich pokazujemy podium.`],
       ["Co robi kliknięcie nazwiska w Rozstawieniach?", `Kliknięcie nazwiska w nierozegranym meczu przyjmuje, że ten gracz wygrał (bez dokładnego wyniku). Tabela, forma i szanse na tytuł przeliczają się od razu. Symulacja zapisuje się tylko w Twojej przeglądarce i nie wpływa na to, co widzą inni. Przycisk „Wyczyść symulację” przywraca stan rzeczywisty.`],
       ["Jak działa Typer?", `W zakładce Typer ustawiasz kolejność końcową wszystkich 16 graczy (przeciągając lub strzałkami ▲▼). Za każdego gracza dostajesz punkty zależnie od tego, jak blisko jego faktycznego miejsca trafiłeś: dokładnie – ${BASE_PTS[0]} pkt, o 1 miejsce – ${BASE_PTS[1]}, o 2 – ${BASE_PTS[2]}, o 3 – ${BASE_PTS[3]}, dalej – 0.`],
+      ["Jak zapisać typ i do kiedy?", `W zakładce Typer zaloguj się kontem Google, wpisz nick, ustaw kolejność i kliknij „Zapisz typ”. Każde konto ma jeden typ, który możesz zmieniać do soboty 21 listopada 2026, 11:00 – potem zapis blokuje serwer. Typy wszystkich uczestników są jawne (lista w zakładce Typer), ale nikt nie może zmienić cudzego typu. Zapisujemy tylko nick i kolejność – bez adresu e-mail.`],
       ["Co daje typowanie wbrew kursom?", `Każde miejsce, o które ustawisz gracza wyżej niż przedturniejowa prognoza (kolejność wg kursu na tytuł), zwiększa punkty za niego o ${Math.round(BONUS_STEP * 100)}% – maksymalnie ×${BONUS_MAX.toFixed(2)}. Mnożnik działa tylko wtedy, gdy za gracza zdobywasz punkty, więc odważny typ opłaca się tylko, jeśli jest trafiony. Ustawienie gracza niżej niż prognoza nie ma mnożnika.`],
       ["Jak często aktualizowane są wyniki?", `Wyniki są wpisywane w trakcie turnieju; po każdej aktualizacji strona przelicza tabelę, kursy i szanse automatycznie. Odśwież stronę, aby zobaczyć najnowszy stan.`],
     ];
