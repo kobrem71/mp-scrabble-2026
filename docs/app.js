@@ -3,8 +3,9 @@
   "use strict";
   const $ = (s, el = document) => el.querySelector(s);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const pct = (p, d = 1) => (p * 100).toFixed(d).replace(".", ",") + "%";
-  const fmt = (x, d = 2) => Number(x).toFixed(d).replace(".", ",");
+  const pct = (p, d = 1) => (p * 100).toFixed(d) + "%";
+  const fmt = (x, d = 2) => Number(x).toFixed(d);
+  const rec = f => `${f.w}–${f.l}–${f.d}`; // wygrane–porażki–remisy, zawsze z remisami
   const short = n => { const [f, ...l] = n.split(" "); return f[0] + ". " + l.join(" "); };
 
   function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -216,12 +217,12 @@
       const p = P[s.i], sm = simBy[s.i];
       const tail = done ? `<td></td><td></td><td></td>` : `<td class="num"><b>${pct(sm.title)}</b></td><td class="num"><b class="odds-ink">${fmtOdds(odds(sm.title, M.marginOutright))}</b></td><td class="num">${pct(sm.podium, 0)}</td>`;
       const form = s.form.slice(-5).map(f => f === "w" ? '<span class="form-dot w" title="wygrana"></span>' : f === "l" ? '<span class="form-dot l" title="porażka"></span>' : f === "hw" ? '<span class="form-dot w h" title="wygrana (symulacja)"></span>' : f === "hl" ? '<span class="form-dot l h" title="porażka (symulacja)"></span>' : '<span class="form-dot" title="remis" style="background:var(--text-muted)"></span>').join("");
-      return `<tr data-i="${s.i}"><td class="pos">${k + 1}</td><td class="pname-cell">${esc(p.name)}</td><td class="num">${s.played}</td><td class="num"><b>${fmt(s.pts, 1).replace(",0", "")}</b></td><td class="num">${s.pf || "–"}</td><td class="num">${s.spread > 0 ? "+" : ""}${s.spread}</td><td>${form}</td>${tail}</tr>`;
+      return `<tr data-i="${s.i}"><td class="pos">${k + 1}</td><td class="pname-cell">${esc(p.name)}</td><td class="num">${s.played}</td><td class="num"><b>${fmt(s.pts, 1).replace(/\.0$/, "")}</b></td><td class="num">${s.pf || "–"}</td><td class="num">${s.spread > 0 ? "+" : ""}${s.spread}</td><td>${form}</td>${tail}</tr>`;
     }).join("");
     $("#standings").innerHTML = `<thead><tr><th>#</th><th>Gracz</th><th class="num">M</th><th class="num">Pkt</th><th class="num">Małe</th><th class="num">+/−</th><th>Forma</th><th class="num">Tytuł</th><th class="num">Kurs</th><th class="num">Podium</th></tr></thead><tbody>${rows}</tbody>`;
     $("#standings").querySelectorAll("tbody tr").forEach(tr => bindTip(tr, () => {
       const i = +tr.dataset.i, sm = SIM.find(s => s.i === i), p = P[i];
-      return `<div class="t">${esc(p.name)}</div>${tRow("Ranking PFS", fmt(p.rank) + ` (${p.rankPlace}.)`)}${tRow("Forma vs 140+ (12 mies.)", `${p.form.w}–${p.form.l} (${pct(formPct(p.form), 0)})`)}${tRow("Siła w modelu", fmt(p.strength))}${finished() ? "" : tRow("Szansa na tytuł", pct(sm.title)) + tRow("Szansa na podium", pct(sm.podium)) + tRow("Średnie miejsce (sym.)", fmt(sm.avgPlace, 1))}`;
+      return `<div class="t">${esc(p.name)}</div>${tRow("Ranking PFS", fmt(p.rank) + ` (${p.rankPlace}.)`)}${tRow("Forma vs 140+ W–P–R", `${rec(p.form)} (${pct(formPct(p.form), 0)})`)}${tRow("Siła w modelu", fmt(p.strength))}${finished() ? "" : tRow("Szansa na tytuł", pct(sm.title)) + tRow("Szansa na podium", pct(sm.podium)) + tRow("Średnie miejsce (sym.)", fmt(sm.avgPlace, 1))}`;
     }));
   }
 
@@ -230,11 +231,11 @@
     $("#formNote").textContent = `partie od ${DATA.form.cutoff}, rywale z rankingiem ≥ ${DATA.form.minRank}`;
     $("#formChart").innerHTML = ord.map(i => {
       const f = P[i].form, v = formPct(f);
-      return `<div class="form-row" data-i="${i}"><span class="name">${esc(P[i].name)}</span><span class="rec"><b>${f.w}–${f.l}</b>${f.d ? `<span class="muted">–${f.d}</span>` : ""}</span><div class="bar-track"><div class="bar-fill" style="width:${v * 100}%"></div></div><span class="val"><b>${pct(v, 1)}</b></span><span class="dots">${formDots(f.last10)}</span></div>`;
+      return `<div class="form-row" data-i="${i}"><span class="name">${esc(P[i].name)}</span><span class="rec"><b>${rec(f)}</b></span><div class="bar-track"><div class="bar-fill" style="width:${v * 100}%"></div></div><span class="val"><b>${pct(v, 1)}</b></span><span class="dots">${formDots(f.last10)}</span></div>`;
     }).join("");
     $("#formChart").querySelectorAll(".form-row").forEach(r => bindTip(r, () => {
       const p = P[+r.dataset.i], f = p.form;
-      return `<div class="t">${esc(p.name)}</div>${tRow("Bilans (W–P–R)", `${f.w}–${f.l}–${f.d}`)}${tRow("% wygranych", pct(formPct(f)))}${tRow("Śr. ranking rywali", fmt(f.oppRank))}${tRow("Śr. małe / rywala", `${fmt(f.avg, 1)} / ${fmt(f.oppAvg, 1)}`)}${tRow("Ranking formy", fmt(p.formRatingRaw, 1))}${tRow("Ranking formy (po ściągnięciu)", fmt(p.formRating, 1))}${tRow("Ostatnie 10", f.last10)}`;
+      return `<div class="t">${esc(p.name)}</div>${tRow("Bilans (W–P–R)", rec(f))}${tRow("% wygranych", pct(formPct(f)))}${tRow("Śr. ranking rywali", fmt(f.oppRank))}${tRow("Śr. małe / rywala", `${fmt(f.avg, 1)} / ${fmt(f.oppAvg, 1)}`)}${tRow("Ranking formy", fmt(p.formRatingRaw, 1))}${tRow("Ranking formy (po ściągnięciu)", fmt(p.formRating, 1))}${tRow("Ostatnie 10", f.last10)}`;
     }));
   }
 
@@ -243,7 +244,7 @@
       const st = standings(), sim = matches.some(m => !m.score);
       $("#titleHead").textContent = sim ? "Wynik symulacji" : "Klasyfikacja końcowa";
       $("#simNote").textContent = sim ? "turniej rozegrany w symulacji" : "turniej zakończony";
-      $("#titleChart").innerHTML = st.slice(0, 3).map((x, k) => `<div class="podium-row"><span class="medal m${k + 1}">${k + 1}</span><span class="name">${esc(P[x.i].name)}</span><span class="val"><b>${fmt(x.pts, 1).replace(",0", "")} pkt</b> · ${x.spread > 0 ? "+" : ""}${x.spread}</span></div>`).join("") + `<p class="hint">Szanse i kursy na tytuł nie mają sensu po ostatniej rundzie – kliknij „Wyczyść symulację”, by wrócić do prognozy.</p>`;
+      $("#titleChart").innerHTML = st.slice(0, 3).map((x, k) => `<div class="podium-row"><span class="medal m${k + 1}">${k + 1}</span><span class="name">${esc(P[x.i].name)}</span><span class="val"><b>${fmt(x.pts, 1).replace(/\.0$/, "")} pkt</b> · ${x.spread > 0 ? "+" : ""}${x.spread}</span></div>`).join("") + `<p class="hint">Szanse i kursy na tytuł nie mają sensu po ostatniej rundzie – kliknij „Wyczyść symulację”, by wrócić do prognozy.</p>`;
       return;
     }
     $("#titleHead").textContent = "Szanse na tytuł";
@@ -363,7 +364,7 @@
         ${x ? line(x.streak, "passa", x.streak.startsWith("+") ? "−" + x.streak.slice(1) : x.streak.startsWith("-") ? "+" + x.streak.slice(1) : x.streak) : ""}
         ${x && x.d ? line(x.d, "remisy", x.d) : ""}
         ${line(fmt(a.rank), "ranking PFS", fmt(b.rank))}
-        ${line(`<b>${a.form.w}–${a.form.l}</b>`, "forma vs 140+ (12 mies.)", `<b>${b.form.w}–${b.form.l}</b>`)}
+        ${line(`<b>${rec(a.form)}</b>`, "forma vs 140+ W–P–R", `<b>${rec(b.form)}</b>`)}
         ${line(pct(formPct(a.form), 1), "% wygr. vs 140+", pct(formPct(b.form), 1))}
         ${line(formDots(a.form.last10), "ostatnie 10 vs 140+", formDots(b.form.last10))}
         ${line(fmt(a.strength), "siła w modelu", fmt(b.strength))}
@@ -378,9 +379,9 @@
       const p = P[i], c = p.career, cg = c.w + c.d + c.l;
       let hw = 0, hl = 0, hd = 0;
       for (let j = 0; j < N; j++) if (H[i][j]) { hw += H[i][j].w; hl += H[i][j].l; hd += H[i][j].d; }
-      return `<tr><td><a href="https://scrabble.stats.org.pl/zindex.php?p=${p.id}" target="_blank" rel="noopener">${esc(p.name)}</a></td><td class="num"><b>${fmt(p.strength)}</b></td><td class="num">${fmt(p.rank)} <span class="muted">(${p.rankPlace}.)</span></td><td class="num">${fmt(p.rank12m)}</td><td class="num"><b>${p.form.w}–${p.form.l}</b>${p.form.d ? "–" + p.form.d : ""}</td><td class="num"><b>${fmt(100 * formPct(p.form), 1)}%</b></td><td class="num">${fmt(p.form.oppRank, 1)}</td><td class="num">${fmt(p.formRating, 1)}</td><td>${formDots(p.form.last10)}</td><td class="num">${fmt(p.avg12m, 1)}</td><td class="num">${cg}</td><td class="num">${fmt(100 * (c.w + c.d / 2) / cg, 1)}%</td><td class="num">${hw}–${hl}</td><td class="num">${fmt(100 * (hw + hd / 2) / (hw + hl + hd), 1)}%</td></tr>`;
+      return `<tr><td><a href="https://scrabble.stats.org.pl/zindex.php?p=${p.id}" target="_blank" rel="noopener">${esc(p.name)}</a></td><td class="num"><b>${fmt(p.strength)}</b></td><td class="num">${fmt(p.rank)} <span class="muted">(${p.rankPlace}.)</span></td><td class="num">${fmt(p.rank12m)}</td><td class="num"><b>${rec(p.form)}</b></td><td class="num"><b>${fmt(100 * formPct(p.form), 1)}%</b></td><td class="num">${fmt(p.form.oppRank, 1)}</td><td class="num">${fmt(p.formRating, 1)}</td><td>${formDots(p.form.last10)}</td><td class="num">${fmt(p.avg12m, 1)}</td><td class="num">${cg}</td><td class="num">${fmt(100 * (c.w + c.d / 2) / cg, 1)}%</td><td class="num">${hw}–${hl}</td><td class="num">${fmt(100 * (hw + hd / 2) / (hw + hl + hd), 1)}%</td></tr>`;
     }).join("");
-    $("#playersTbl").innerHTML = `<thead><tr><th>Gracz</th><th class="num">Siła</th><th class="num">Ranking PFS</th><th class="num">Rank. 12 mies.</th><th class="num">Vs 140+ W–P</th><th class="num">% vs 140+</th><th class="num">Śr. rank rywali</th><th class="num">Ranking formy</th><th>Ostatnie 10</th><th class="num">Śr. małe 12 mies.</th><th class="num">Gry (kariera)</th><th class="num">% wygr. (kariera)</th><th class="num">Vs finaliści</th><th class="num">% vs finaliści</th></tr></thead><tbody>${rows}</tbody>`;
+    $("#playersTbl").innerHTML = `<thead><tr><th>Gracz</th><th class="num">Siła</th><th class="num">Ranking PFS</th><th class="num">Rank. 12 mies.</th><th class="num">Vs 140+ W–P–R</th><th class="num">% vs 140+</th><th class="num">Śr. rank rywali</th><th class="num">Ranking formy</th><th>Ostatnie 10</th><th class="num">Śr. małe 12 mies.</th><th class="num">Gry (kariera)</th><th class="num">% wygr. (kariera)</th><th class="num">Vs finaliści</th><th class="num">% vs finaliści</th></tr></thead><tbody>${rows}</tbody>`;
   }
 
   function renderFaq() {
