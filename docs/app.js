@@ -225,7 +225,7 @@
     $("#standings").innerHTML = `<thead><tr><th>#</th><th>Gracz</th><th class="num">M</th><th class="num">Pkt</th><th class="num">Małe</th><th class="num">+/−</th><th>Forma</th><th class="num">Tytuł</th><th class="num">Kurs</th><th class="num">Podium</th></tr></thead><tbody>${rows}</tbody>`;
     $("#standings").querySelectorAll("tbody tr").forEach(tr => bindTip(tr, () => {
       const i = +tr.dataset.i, sm = SIM.find(s => s.i === i), p = P[i];
-      return `<div class="t">${esc(p.name)}</div>${tRow("Ranking PFS", fmt(p.rank) + ` (${p.rankPlace}.)`)}${tRow("Forma vs 140+ W–P–R", `${rec(p.form)} (${pct(formPct(p.form), 0)})`)}${tRow("Siła w modelu", fmt(p.strength))}${finished() ? "" : tRow("Szansa na tytuł", pct(sm.title)) + tRow("Szansa na podium", pct(sm.podium)) + tRow("Średnie miejsce (sym.)", fmt(sm.avgPlace, 1))}`;
+            return `<div class="t">${esc(p.name)}</div>${tRow("Ranking PFS", fmt(p.rank) + ` (${p.rankPlace}.)`)}${tRow("Forma 140+", `${p.form.w}W-${p.form.l}L-${p.form.d}D`)}${tRow("Siła w modelu", fmt(p.strength))}${finished() ? "" : tRow("Szansa na tytuł", pct(sm.title)) + tRow("Szansa na podium", pct(sm.podium)) + tRow("Średnie miejsce (sym.)", fmt(sm.avgPlace, 1))}`;
     }));
   }
 
