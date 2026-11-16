@@ -441,3 +441,11 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
 .typy-tbl thead th.sim-col { background: #b9780a; color: #fff; }
 .typy-tbl td.small { white-space: normal; line-height: 1.25; font-size: 12px; }
 .typy-tbl th, .typy-tbl td { padding-left: 6px; padding-right: 6px; }
+/* typer: węższa lewa kolumna, nicki w dwóch linijkach */
+.grid-typer { grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); }
+.typer-row { grid-template-columns: 30px minmax(0, 1fr) 92px 54px auto 62px; gap: 8px; font-size: 14px; }
+.typer-row .tname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tfc { font-size: 12px; }
+.typy-tbl td.nick { white-space: normal; overflow-wrap: anywhere; max-width: 110px; line-height: 1.2; }
+.typy-tbl { width: 100%; }
+.typy-tbl td.nick { overflow-wrap: break-word; word-break: normal; max-width: 130px; }
