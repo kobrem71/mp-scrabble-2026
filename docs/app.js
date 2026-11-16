@@ -238,7 +238,7 @@
     }).join("");
     $("#formChart").querySelectorAll(".form-row").forEach(r => bindTip(r, () => {
       const p = P[+r.dataset.i], f = p.form;
-      return `<div class="t">${esc(p.name)}</div>${tRow("Okres", `${f.months} mies. (od ${f.cutoff})`)}${tRow("Bilans (W–P–R)", rec(f))}${tRow("% wygranych", pct(formPct(f)))}${tRow("Śr. ranking rywali", fmt(f.oppRank))}${tRow("Śr. małe / rywala", `${fmt(f.avg, 1)} / ${fmt(f.oppAvg, 1)}`)}${tRow("Ranking formy", fmt(p.formRatingRaw, 1))}${tRow("Ranking formy (po ściągnięciu)", fmt(p.formRating, 1))}${tRow("Ostatnie 10", f.last10)}`;
+      return `<div class="t">${esc(p.name)}</div>${tRow("Okres", `${f.months} mies. (od ${f.cutoff})`)}${f.elim ? tRow("w tym eliminacje MP", `${f.elim} partii`) : ""}${tRow("Bilans (W–P–R)", rec(f))}${tRow("% wygranych", pct(formPct(f)))}${tRow("Śr. ranking rywali", fmt(f.oppRank))}${tRow("Śr. małe / rywala", `${fmt(f.avg, 1)} / ${fmt(f.oppAvg, 1)}`)}${tRow("Ranking formy", fmt(p.formRatingRaw, 1))}${tRow("Ranking formy (po ściągnięciu)", fmt(p.formRating, 1))}${tRow("Ostatnie 10", f.last10)}`;
     }));
   }
 
@@ -336,7 +336,7 @@
       const i = +td.dataset.i, j = +td.dataset.j;
       bindTip(td, () => {
         const x = H[i][j];
-        return `<div class="t">${esc(P[i].name)} vs ${esc(P[j].name)}</div>${tRow("Bilans", h2hStr(i, j))}${x ? tRow("% wygranych", pct((x.w + x.d / 2) / (x.w + x.d + x.l))) + tRow("Śr. małe pkt", `${fmt(x.avg, 1)} : ${fmt(x.oppAvg, 1)}`) + tRow("Suma różnic", (x.diff > 0 ? "+" : "") + x.diff) + tRow("Passa", x.streak) : ""}${tRow("Szansa w finale", pct(prob(i, j)))}${tRow("Kurs", fmtOdds(odds(prob(i, j), M.marginMatch)))}`;
+        return `<div class="t">${esc(P[i].name)} vs ${esc(P[j].name)}</div>${tRow("Bilans", h2hStr(i, j))}${H[i][j] && H[i][j].elim ? tRow("w tym eliminacje MP", H[i][j].elim.map(g => g.join(":")).join(", ")) : ""}${x ? tRow("% wygranych", pct((x.w + x.d / 2) / (x.w + x.d + x.l))) + tRow("Śr. małe pkt", `${fmt(x.avg, 1)} : ${fmt(x.oppAvg, 1)}`) + tRow("Suma różnic", (x.diff > 0 ? "+" : "") + x.diff) + tRow("Passa", x.streak) : ""}${tRow("Szansa w finale", pct(prob(i, j)))}${tRow("Kurs", fmtOdds(odds(prob(i, j), M.marginMatch)))}`;
       });
       td.addEventListener("click", () => { selPair = [i, j]; renderMatrix(); renderPair(); });
     });
@@ -359,6 +359,7 @@
       <div class="pair-head"><div><div class="big">${x ? x.w : 0}</div><div class="small">${esc(a.name)}</div></div><div class="muted">H2H</div><div class="r"><div class="big">${x ? x.l : 0}</div><div class="small">${esc(b.name)}</div></div></div>
       <div class="split"><span class="a" style="width:${pi * 100}%"></span><span class="b" style="width:${(1 - pi) * 100}%"></span></div>
       <div class="kv">
+        ${x && x.elim ? line(x.elim.map(g => `<b>${g[0]}</b>`).join(", "), "eliminacje MP 2026", x.elim.map(g => `<b>${g[1]}</b>`).join(", ")) : ""}
         ${line(pct(pi), "szansa w finale", pct(1 - pi))}
         ${line("<b>" + fmtOdds(odds(pi, M.marginMatch)) + "</b>", "kurs", "<b>" + fmtOdds(odds(1 - pi, M.marginMatch)) + "</b>")}
         ${line(pct(prior(i, j)), "szansa z samego rankingu", pct(1 - prior(i, j)))}
@@ -617,7 +618,7 @@
     const ex = [IDX["Dominik Urbacki"], IDX["Joanna Juszczak"]];
     const nGames = H.flat().filter(Boolean).reduce((t, x) => t + x.w + x.d + x.l, 0) / 2;
     const qa = [
-      ["Skąd pochodzą dane?", `Rankingi, bilanse head-to-head i statystyki graczy pochodzą z serwisu <a href="${DATA.source}" target="_blank" rel="noopener">scrabble.stats.org.pl</a> (turnieje rankingowe PFS), stan na ${DATA.updated}. Bilans H2H to wszystkie partie turniejowe rozegrane przez daną parę.`],
+      ["Skąd pochodzą dane?", `Rankingi, bilanse head-to-head i statystyki graczy pochodzą z serwisu <a href="${DATA.source}" target="_blank" rel="noopener">scrabble.stats.org.pl</a> (turnieje rankingowe PFS), stan na ${DATA.updated}. Dodatkowo doliczamy partie z <a href="${DATA.elimSource}" target="_blank" rel="noopener">eliminacji XXXIII MP</a> (15 rund), których serwis statystyk jeszcze nie zawiera – zarówno do bilansów między finalistami, jak i do formy. Górka, Urbacki i Ulatowski nie grali w eliminacjach. Bilans H2H to wszystkie partie turniejowe rozegrane przez daną parę.`],
       ["Jak wygląda faza finałowa?", `16 graczy gra każdy z każdym po razie – 15 rund, po 8 partii w rundzie. O kolejności decydują duże punkty (wygrana = 1, remis = ½), a przy równej liczbie – różnica małych punktów.`],
       ["Czy rozstawienia są oficjalne?", `Nie. Do czasu publikacji oficjalnego terminarza pary w rundach są wygenerowane tablicami Bergera według rankingu PFS. Po ogłoszeniu oficjalnych par zostaną podmienione.`],
       ["Jak liczona jest szansa na wygraną w pojedynku?", `Najpierw siła gracza: średnia z trzech liczb – aktualnego rankingu PFS, rankingu z ostatnich 12 miesięcy i rankingu formy (patrz niżej). Różnica sił zamieniana jest na prawdopodobieństwo wzorem <code>p₀ = 1 / (1 + e^(−k·ΔS))</code>, gdzie <code>k = ${fmt(M.k, 4)}</code> dopasowano do ${nGames} historycznych partii rozegranych między finalistami. Różnica 10 punktów rankingu to ok. ${pct(1 / (1 + Math.exp(-M.k * 10)))} dla wyżej notowanego.`],

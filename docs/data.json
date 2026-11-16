@@ -9,7 +9,7 @@
    "rankPlace": 16,
    "rank12m": 172.31,
    "rank12mPlace": 14,
-   "strength": 175.47,
+   "strength": 176.4,
    "games": 1975,
    "games12m": 188,
    "wins12m": 127,
@@ -24,19 +24,20 @@
     "oppAvg": 366.6
    },
    "form": {
-    "n": 130,
-    "w": 76,
-    "d": 0,
-    "l": 54,
-    "oppRank": 161.95,
-    "avg": 410.7,
-    "oppAvg": 386.9,
-    "last10": "LWWLLWLLWW",
+    "n": 145,
+    "w": 88,
+    "d": 1,
+    "l": 56,
+    "oppRank": 162.05,
+    "avg": 414.7,
+    "oppAvg": 385.3,
+    "last10": "WWWWWWWWLW",
+    "elim": 15,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 178.13,
-   "formRating": 177.79
+   "formRatingRaw": 181.46,
+   "formRating": 180.57
   },
   {
    "name": "Bartosz Morawski",
@@ -45,7 +46,7 @@
    "rankPlace": 11,
    "rank12m": 178.83,
    "rank12mPlace": 5,
-   "strength": 182.96,
+   "strength": 183.03,
    "games": 2514,
    "games12m": 153,
    "wins12m": 108,
@@ -60,19 +61,20 @@
     "oppAvg": 371.2
    },
    "form": {
-    "n": 96,
-    "w": 63,
+    "n": 110,
+    "w": 74,
     "d": 0,
-    "l": 33,
-    "oppRank": 163.13,
-    "avg": 429.3,
-    "oppAvg": 381.7,
-    "last10": "LWWWWWWLLL",
+    "l": 36,
+    "oppRank": 162.38,
+    "avg": 436.2,
+    "oppAvg": 382.9,
+    "last10": "LWLWWWWWWW",
+    "elim": 14,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 193.54,
-   "formRating": 190.27
+   "formRatingRaw": 193.37,
+   "formRating": 190.46
   },
   {
    "name": "Marcin Rogala",
@@ -81,7 +83,7 @@
    "rankPlace": 36,
    "rank12m": 162.52,
    "rank12mPlace": 45,
-   "strength": 166.56,
+   "strength": 167.28,
    "games": 1363,
    "games12m": 130,
    "wins12m": 78,
@@ -96,19 +98,20 @@
     "oppAvg": 376.6
    },
    "form": {
-    "n": 67,
-    "w": 37,
+    "n": 81,
+    "w": 47,
     "d": 1,
-    "l": 29,
-    "oppRank": 160.45,
-    "avg": 419.3,
-    "oppAvg": 389.3,
-    "last10": "WWWWLLLWLL",
+    "l": 33,
+    "oppRank": 159.42,
+    "avg": 425.8,
+    "oppAvg": 388.2,
+    "last10": "LLWWWWWWWL",
+    "elim": 14,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 171.65,
-   "formRating": 170.2
+   "formRatingRaw": 174.36,
+   "formRating": 172.36
   },
   {
    "name": "Łukasz Bobowski",
@@ -117,7 +120,7 @@
    "rankPlace": 22,
    "rank12m": 167.35,
    "rank12mPlace": 29,
-   "strength": 174.29,
+   "strength": 174.49,
    "games": 2469,
    "games12m": 165,
    "wins12m": 111,
@@ -132,19 +135,20 @@
     "oppAvg": 366.3
    },
    "form": {
-    "n": 90,
-    "w": 57,
+    "n": 105,
+    "w": 68,
     "d": 2,
-    "l": 31,
-    "oppRank": 158.7,
-    "avg": 408.5,
-    "oppAvg": 368.0,
-    "last10": "WLWWLLWWWW",
+    "l": 35,
+    "oppRank": 158.96,
+    "avg": 412.4,
+    "oppAvg": 371.9,
+    "last10": "WWLWWWWLWL",
+    "elim": 15,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 186.63,
-   "formRating": 183.08
+   "formRatingRaw": 186.92,
+   "formRating": 183.7
   },
   {
    "name": "Joanna Juszczak",
@@ -153,7 +157,7 @@
    "rankPlace": 117,
    "rank12m": 149.6,
    "rank12mPlace": 101,
-   "strength": 144.75,
+   "strength": 148.78,
    "games": 2035,
    "games12m": 30,
    "wins12m": 16,
@@ -168,19 +172,20 @@
     "oppAvg": 365.8
    },
    "form": {
-    "n": 19,
-    "w": 5,
+    "n": 31,
+    "w": 13,
     "d": 0,
-    "l": 14,
-    "oppRank": 166.27,
-    "avg": 365.7,
-    "oppAvg": 406.3,
-    "last10": "WLWLLLLLLL",
+    "l": 18,
+    "oppRank": 165.3,
+    "avg": 387.1,
+    "oppAvg": 394.7,
+    "last10": "LLWWWWWWLW",
+    "elim": 12,
     "months": 30,
     "cutoff": "16-05-2024"
    },
-   "formRatingRaw": 122.22,
-   "formRating": 137.49
+   "formRatingRaw": 151.91,
+   "formRating": 149.58
   },
   {
    "name": "Dawid Adamczyk",
@@ -189,7 +194,7 @@
    "rankPlace": 47,
    "rank12m": 165.67,
    "rank12mPlace": 36,
-   "strength": 168.51,
+   "strength": 169.41,
    "games": 1112,
    "games12m": 27,
    "wins12m": 17,
@@ -204,19 +209,20 @@
     "oppAvg": 370.4
    },
    "form": {
-    "n": 57,
-    "w": 36,
+    "n": 71,
+    "w": 46,
     "d": 0,
-    "l": 21,
-    "oppRank": 158.37,
-    "avg": 412.6,
-    "oppAvg": 386.9,
-    "last10": "WWLWWWWWWL",
+    "l": 25,
+    "oppRank": 159.87,
+    "avg": 412.7,
+    "oppAvg": 386.7,
+    "last10": "WLWWWLLLWW",
+    "elim": 14,
     "months": 30,
     "cutoff": "16-05-2024"
    },
-   "formRatingRaw": 183.36,
-   "formRating": 176.48
+   "formRatingRaw": 185.84,
+   "formRating": 179.17
   },
   {
    "name": "Artur Irzyk",
@@ -225,7 +231,7 @@
    "rankPlace": 56,
    "rank12m": 159.48,
    "rank12mPlace": 56,
-   "strength": 160.31,
+   "strength": 161.38,
    "games": 1733,
    "games12m": 134,
    "wins12m": 80,
@@ -240,19 +246,20 @@
     "oppAvg": 370.4
    },
    "form": {
-    "n": 70,
-    "w": 35,
+    "n": 81,
+    "w": 43,
     "d": 0,
-    "l": 35,
-    "oppRank": 160.51,
-    "avg": 392.9,
-    "oppAvg": 389.1,
-    "last10": "WWLWWLLLWL",
+    "l": 38,
+    "oppRank": 159.65,
+    "avg": 396.4,
+    "oppAvg": 383.3,
+    "last10": "WWLWLWWWWW",
+    "elim": 11,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 160.51,
-   "formRating": 160.61
+   "formRatingRaw": 164.94,
+   "formRating": 163.83
   },
   {
    "name": "Karolina Urbańska",
@@ -261,7 +268,7 @@
    "rankPlace": 98,
    "rank12m": 147.31,
    "rank12mPlace": 111,
-   "strength": 147.44,
+   "strength": 149.48,
    "games": 987,
    "games12m": 136,
    "wins12m": 69,
@@ -276,19 +283,20 @@
     "oppAvg": 379.1
    },
    "form": {
-    "n": 91,
-    "w": 37,
+    "n": 104,
+    "w": 46,
     "d": 1,
-    "l": 53,
-    "oppRank": 158.33,
-    "avg": 380.3,
-    "oppAvg": 398.6,
-    "last10": "WLLWWLLWLL",
+    "l": 57,
+    "oppRank": 158.92,
+    "avg": 382.1,
+    "oppAvg": 397.5,
+    "last10": "WLWWWLWLWW",
+    "elim": 13,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 141.62,
-   "formRating": 143.96
+   "formRatingRaw": 149.78,
+   "formRating": 150.07
   },
   {
    "name": "Jakub Szymczak",
@@ -297,7 +305,7 @@
    "rankPlace": 12,
    "rank12m": 172.13,
    "rank12mPlace": 16,
-   "strength": 177.51,
+   "strength": 176.9,
    "games": 1860,
    "games12m": 272,
    "wins12m": 177,
@@ -312,19 +320,20 @@
     "oppAvg": 368.8
    },
    "form": {
-    "n": 184,
-    "w": 111,
+    "n": 194,
+    "w": 117,
     "d": 0,
-    "l": 73,
-    "oppRank": 162.47,
-    "avg": 418.6,
-    "oppAvg": 391.7,
-    "last10": "LWWWWWLLWW",
+    "l": 77,
+    "oppRank": 162.11,
+    "avg": 418.3,
+    "oppAvg": 391.4,
+    "last10": "WLLWWWWWLL",
+    "elim": 10,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 182.39,
-   "formRating": 181.85
+   "formRatingRaw": 180.27,
+   "formRating": 180.04
   },
   {
    "name": "Wojciech Zemło",
@@ -333,7 +342,7 @@
    "rankPlace": 30,
    "rank12m": 166.28,
    "rank12mPlace": 34,
-   "strength": 170.32,
+   "strength": 170.21,
    "games": 2010,
    "games12m": 136,
    "wins12m": 84,
@@ -348,19 +357,20 @@
     "oppAvg": 367.1
    },
    "form": {
-    "n": 105,
-    "w": 60,
+    "n": 119,
+    "w": 69,
     "d": 1,
-    "l": 44,
-    "oppRank": 162.03,
-    "avg": 405.5,
-    "oppAvg": 387.1,
-    "last10": "WWLWWWLWWW",
+    "l": 49,
+    "oppRank": 161.28,
+    "avg": 407.8,
+    "oppAvg": 386.2,
+    "last10": "WWLLWLLWWW",
+    "elim": 14,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 176.52,
-   "formRating": 175.0
+   "formRatingRaw": 175.91,
+   "formRating": 174.66
   },
   {
    "name": "Mariusz Skrobosz",
@@ -369,7 +379,7 @@
    "rankPlace": 5,
    "rank12m": 179.24,
    "rank12mPlace": 4,
-   "strength": 186.17,
+   "strength": 185.07,
    "games": 5742,
    "games12m": 221,
    "wins12m": 151,
@@ -384,19 +394,20 @@
     "oppAvg": 363.2
    },
    "form": {
-    "n": 163,
-    "w": 109,
+    "n": 176,
+    "w": 117,
     "d": 0,
-    "l": 54,
-    "oppRank": 163.02,
-    "avg": 419.3,
-    "oppAvg": 382.6,
-    "last10": "WWWWWLLLWW",
+    "l": 59,
+    "oppRank": 162.67,
+    "avg": 419.9,
+    "oppAvg": 381.7,
+    "last10": "WWLLWLWWWW",
+    "elim": 13,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 196.34,
-   "formRating": 194.54
+   "formRatingRaw": 192.33,
+   "formRating": 191.23
   },
   {
    "name": "Przemysław Herdzina",
@@ -405,7 +416,7 @@
    "rankPlace": 15,
    "rank12m": 168.22,
    "rank12mPlace": 28,
-   "strength": 173.55,
+   "strength": 173.12,
    "games": 1838,
    "games12m": 248,
    "wins12m": 160,
@@ -420,19 +431,20 @@
     "oppAvg": 367.1
    },
    "form": {
-    "n": 156,
-    "w": 92,
+    "n": 169,
+    "w": 100,
     "d": 1,
-    "l": 63,
-    "oppRank": 157.86,
-    "avg": 406.9,
+    "l": 68,
+    "oppRank": 157.59,
+    "avg": 407.0,
     "oppAvg": 379.1,
-    "last10": "LWDWWWWWWW",
+    "last10": "LWWWLLWWLW",
+    "elim": 13,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 175.71,
-   "formRating": 175.85
+   "formRatingRaw": 174.2,
+   "formRating": 174.56
   },
   {
    "name": "Sławomir Piotrowski",
@@ -441,7 +453,7 @@
    "rankPlace": 83,
    "rank12m": 159.64,
    "rank12mPlace": 55,
-   "strength": 155.05,
+   "strength": 155.55,
    "games": 1712,
    "games12m": 89,
    "wins12m": 53,
@@ -456,19 +468,20 @@
     "oppAvg": 364.5
    },
    "form": {
-    "n": 125,
-    "w": 57,
+    "n": 136,
+    "w": 63,
     "d": 0,
-    "l": 68,
-    "oppRank": 158.15,
-    "avg": 378.9,
-    "oppAvg": 382.5,
-    "last10": "LWLLLWLWWL",
+    "l": 73,
+    "oppRank": 158.11,
+    "avg": 380.6,
+    "oppAvg": 382.8,
+    "last10": "LLWWWLWLWW",
+    "elim": 11,
     "months": 30,
     "cutoff": "16-05-2024"
    },
-   "formRatingRaw": 149.8,
-   "formRating": 150.76
+   "formRatingRaw": 151.74,
+   "formRating": 152.28
   },
   {
    "name": "Kamil Górka",
@@ -477,7 +490,7 @@
    "rankPlace": 2,
    "rank12m": 182.82,
    "rank12mPlace": 3,
-   "strength": 193.69,
+   "strength": 192.44,
    "games": 4772,
    "games12m": 186,
    "wins12m": 140,
@@ -500,11 +513,12 @@
     "avg": 438.4,
     "oppAvg": 377.8,
     "last10": "LWWWLLLWWW",
+    "elim": 0,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 213.68,
-   "formRating": 209.38
+   "formRatingRaw": 209.16,
+   "formRating": 205.64
   },
   {
    "name": "Dominik Urbacki",
@@ -513,7 +527,7 @@
    "rankPlace": 1,
    "rank12m": 183.38,
    "rank12mPlace": 2,
-   "strength": 190.87,
+   "strength": 189.85,
    "games": 2535,
    "games12m": 317,
    "wins12m": 226,
@@ -536,11 +550,12 @@
     "avg": 438.2,
     "oppAvg": 378.0,
     "last10": "LWWWLLLWWW",
+    "elim": 0,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 200.68,
-   "formRating": 199.53
+   "formRatingRaw": 197.26,
+   "formRating": 196.46
   },
   {
    "name": "Dariusz Ulatowski",
@@ -549,7 +564,7 @@
    "rankPlace": 4,
    "rank12m": 184.12,
    "rank12mPlace": 1,
-   "strength": 192.78,
+   "strength": 191.65,
    "games": 1150,
    "games12m": 203,
    "wins12m": 150,
@@ -572,11 +587,12 @@
     "avg": 428.8,
     "oppAvg": 385.4,
     "last10": "WWLWWWWLWW",
+    "elim": 0,
     "months": 12,
     "cutoff": "16-11-2025"
    },
-   "formRatingRaw": 212.38,
-   "formRating": 207.77
+   "formRatingRaw": 208.25,
+   "formRating": 204.38
   }
  ],
  "h2h": [
@@ -585,29 +601,47 @@
    {
     "w": 10,
     "d": 0,
-    "l": 7,
-    "diff": 376,
-    "streak": "-1",
-    "avg": 411.8,
-    "oppAvg": 389.7
+    "l": 8,
+    "diff": 180,
+    "streak": "-2",
+    "avg": 408.4,
+    "oppAvg": 398.4,
+    "elim": [
+     [
+      350,
+      546
+     ]
+    ]
    },
    {
-    "w": 8,
+    "w": 9,
     "d": 0,
     "l": 3,
-    "diff": 297,
-    "streak": "+1",
-    "avg": 410.0,
-    "oppAvg": 383.0
+    "diff": 539,
+    "streak": "+2",
+    "avg": 425.4,
+    "oppAvg": 380.5,
+    "elim": [
+     [
+      595,
+      353
+     ]
+    ]
    },
    {
-    "w": 6,
+    "w": 7,
     "d": 0,
     "l": 9,
-    "diff": -703,
-    "streak": "+1",
-    "avg": 356.3,
-    "oppAvg": 403.2
+    "diff": -550,
+    "streak": "+2",
+    "avg": 365.3,
+    "oppAvg": 399.8,
+    "elim": [
+     [
+      501,
+      348
+     ]
+    ]
    },
    {
     "w": 6,
@@ -619,13 +653,19 @@
     "oppAvg": 357.2
    },
    {
-    "w": 5,
+    "w": 6,
     "d": 0,
     "l": 4,
-    "diff": 143,
-    "streak": "+2",
-    "avg": 394.2,
-    "oppAvg": 378.3
+    "diff": 222,
+    "streak": "+3",
+    "avg": 398.2,
+    "oppAvg": 376.0,
+    "elim": [
+     [
+      434,
+      355
+     ]
+    ]
    },
    {
     "w": 4,
@@ -720,13 +760,19 @@
   ],
   [
    {
-    "w": 7,
+    "w": 8,
     "d": 0,
     "l": 10,
-    "diff": -376,
-    "streak": "+1",
-    "avg": 389.7,
-    "oppAvg": 411.8
+    "diff": -180,
+    "streak": "+2",
+    "avg": 398.4,
+    "oppAvg": 408.4,
+    "elim": [
+     [
+      546,
+      350
+     ]
+    ]
    },
    null,
    {
@@ -739,31 +785,49 @@
     "oppAvg": 377.5
    },
    {
-    "w": 21,
+    "w": 22,
     "d": 0,
     "l": 15,
-    "diff": 264,
-    "streak": "+1",
-    "avg": 404.3,
-    "oppAvg": 397.0
-   },
-   {
-    "w": 5,
-    "d": 0,
-    "l": 4,
-    "diff": 425,
-    "streak": "-1",
-    "avg": 420.9,
-    "oppAvg": 373.7
+    "diff": 273,
+    "streak": "+2",
+    "avg": 405.4,
+    "oppAvg": 398.1,
+    "elim": [
+     [
+      446,
+      437
+     ]
+    ]
    },
    {
     "w": 6,
     "d": 0,
-    "l": 9,
-    "diff": -550,
-    "streak": "-2",
-    "avg": 387.9,
-    "oppAvg": 424.5
+    "l": 4,
+    "diff": 503,
+    "streak": "+1",
+    "avg": 433.5,
+    "oppAvg": 383.2,
+    "elim": [
+     [
+      547,
+      469
+     ]
+    ]
+   },
+   {
+    "w": 6,
+    "d": 0,
+    "l": 10,
+    "diff": -602,
+    "streak": "-3",
+    "avg": 390.3,
+    "oppAvg": 427.9,
+    "elim": [
+     [
+      427,
+      479
+     ]
+    ]
    },
    {
     "w": 7,
@@ -774,7 +838,21 @@
     "avg": 417.8,
     "oppAvg": 389.3
    },
-   null,
+   {
+    "w": 1,
+    "d": 0,
+    "l": 0,
+    "diff": 203,
+    "streak": "+1",
+    "avg": 571.0,
+    "oppAvg": 368.0,
+    "elim": [
+     [
+      571,
+      368
+     ]
+    ]
+   },
    {
     "w": 9,
     "d": 0,
@@ -852,11 +930,17 @@
    {
     "w": 3,
     "d": 0,
-    "l": 8,
-    "diff": -297,
-    "streak": "-1",
-    "avg": 383.0,
-    "oppAvg": 410.0
+    "l": 9,
+    "diff": -539,
+    "streak": "-2",
+    "avg": 380.5,
+    "oppAvg": 425.4,
+    "elim": [
+     [
+      353,
+      595
+     ]
+    ]
    },
    {
     "w": 1,
@@ -878,22 +962,34 @@
     "oppAvg": 433.8
    },
    {
-    "w": 2,
-    "d": 0,
-    "l": 1,
-    "diff": 162,
-    "streak": "+1",
-    "avg": 383.3,
-    "oppAvg": 329.3
-   },
-   {
     "w": 3,
     "d": 0,
+    "l": 1,
+    "diff": 214,
+    "streak": "+2",
+    "avg": 406.7,
+    "oppAvg": 353.2,
+    "elim": [
+     [
+      477,
+      425
+     ]
+    ]
+   },
+   {
+    "w": 4,
+    "d": 0,
     "l": 0,
-    "diff": 182,
-    "streak": "+3",
-    "avg": 413.0,
-    "oppAvg": 352.3
+    "diff": 238,
+    "streak": "+4",
+    "avg": 417.2,
+    "oppAvg": 357.7,
+    "elim": [
+     [
+      430,
+      374
+     ]
+    ]
    },
    {
     "w": 0,
@@ -990,20 +1086,32 @@
    {
     "w": 9,
     "d": 0,
-    "l": 6,
-    "diff": 703,
-    "streak": "-1",
-    "avg": 403.2,
-    "oppAvg": 356.3
+    "l": 7,
+    "diff": 550,
+    "streak": "-2",
+    "avg": 399.8,
+    "oppAvg": 365.3,
+    "elim": [
+     [
+      348,
+      501
+     ]
+    ]
    },
    {
     "w": 15,
     "d": 0,
-    "l": 21,
-    "diff": -264,
-    "streak": "-1",
-    "avg": 397.0,
-    "oppAvg": 404.3
+    "l": 22,
+    "diff": -273,
+    "streak": "-2",
+    "avg": 398.1,
+    "oppAvg": 405.4,
+    "elim": [
+     [
+      437,
+      446
+     ]
+    ]
    },
    {
     "w": 2,
@@ -1025,13 +1133,19 @@
     "oppAvg": 299.5
    },
    {
-    "w": 7,
+    "w": 8,
     "d": 0,
     "l": 5,
-    "diff": 118,
-    "streak": "+4",
-    "avg": 389.2,
-    "oppAvg": 379.3
+    "diff": 234,
+    "streak": "+5",
+    "avg": 397.0,
+    "oppAvg": 379.0,
+    "elim": [
+     [
+      491,
+      375
+     ]
+    ]
    },
    {
     "w": 14,
@@ -1043,13 +1157,19 @@
     "oppAvg": 395.6
    },
    {
-    "w": 5,
+    "w": 6,
     "d": 0,
     "l": 0,
-    "diff": 442,
-    "streak": "+5",
-    "avg": 431.4,
-    "oppAvg": 343.0
+    "diff": 638,
+    "streak": "+6",
+    "avg": 438.2,
+    "oppAvg": 331.8,
+    "elim": [
+     [
+      472,
+      276
+     ]
+    ]
    },
    {
     "w": 5,
@@ -1137,20 +1257,32 @@
    {
     "w": 4,
     "d": 0,
-    "l": 5,
-    "diff": -425,
-    "streak": "+1",
-    "avg": 373.7,
-    "oppAvg": 420.9
+    "l": 6,
+    "diff": -503,
+    "streak": "-1",
+    "avg": 383.2,
+    "oppAvg": 433.5,
+    "elim": [
+     [
+      469,
+      547
+     ]
+    ]
    },
    {
     "w": 1,
     "d": 0,
-    "l": 2,
-    "diff": -162,
-    "streak": "-1",
-    "avg": 329.3,
-    "oppAvg": 383.3
+    "l": 3,
+    "diff": -214,
+    "streak": "-2",
+    "avg": 353.2,
+    "oppAvg": 406.7,
+    "elim": [
+     [
+      425,
+      477
+     ]
+    ]
    },
    {
     "w": 0,
@@ -1171,7 +1303,21 @@
     "avg": 361.6,
     "oppAvg": 368.8
    },
-   null,
+   {
+    "w": 1,
+    "d": 0,
+    "l": 0,
+    "diff": 32,
+    "streak": "+1",
+    "avg": 421.0,
+    "oppAvg": 389.0,
+    "elim": [
+     [
+      421,
+      389
+     ]
+    ]
+   },
    {
     "w": 1,
     "d": 0,
@@ -1218,13 +1364,19 @@
     "oppAvg": 417.4
    },
    {
-    "w": 2,
+    "w": 3,
     "d": 0,
     "l": 2,
-    "diff": -48,
-    "streak": "-1",
-    "avg": 361.3,
-    "oppAvg": 373.3
+    "diff": -16,
+    "streak": "+1",
+    "avg": 366.2,
+    "oppAvg": 369.4,
+    "elim": [
+     [
+      386,
+      354
+     ]
+    ]
    },
    {
     "w": 3,
@@ -1258,38 +1410,62 @@
    {
     "w": 4,
     "d": 0,
-    "l": 5,
-    "diff": -143,
-    "streak": "-2",
-    "avg": 378.3,
-    "oppAvg": 394.2
+    "l": 6,
+    "diff": -222,
+    "streak": "-3",
+    "avg": 376.0,
+    "oppAvg": 398.2,
+    "elim": [
+     [
+      355,
+      434
+     ]
+    ]
    },
    {
-    "w": 9,
+    "w": 10,
     "d": 0,
     "l": 6,
-    "diff": 550,
-    "streak": "+2",
-    "avg": 424.5,
-    "oppAvg": 387.9
+    "diff": 602,
+    "streak": "+3",
+    "avg": 427.9,
+    "oppAvg": 390.3,
+    "elim": [
+     [
+      479,
+      427
+     ]
+    ]
    },
    {
     "w": 0,
     "d": 0,
-    "l": 3,
-    "diff": -182,
-    "streak": "-3",
-    "avg": 352.3,
-    "oppAvg": 413.0
+    "l": 4,
+    "diff": -238,
+    "streak": "-4",
+    "avg": 357.7,
+    "oppAvg": 417.2,
+    "elim": [
+     [
+      374,
+      430
+     ]
+    ]
    },
    {
     "w": 5,
     "d": 0,
-    "l": 7,
-    "diff": -118,
-    "streak": "-4",
-    "avg": 379.3,
-    "oppAvg": 389.2
+    "l": 8,
+    "diff": -234,
+    "streak": "-5",
+    "avg": 379.0,
+    "oppAvg": 397.0,
+    "elim": [
+     [
+      375,
+      491
+     ]
+    ]
    },
    {
     "w": 4,
@@ -1347,13 +1523,19 @@
     "oppAvg": 387.2
    },
    {
-    "w": 2,
+    "w": 3,
     "d": 0,
     "l": 1,
-    "diff": 24,
-    "streak": "-1",
-    "avg": 418.0,
-    "oppAvg": 410.0
+    "diff": 41,
+    "streak": "+1",
+    "avg": 412.5,
+    "oppAvg": 402.2,
+    "elim": [
+     [
+      396,
+      379
+     ]
+    ]
    },
    {
     "w": 4,
@@ -1429,7 +1611,21 @@
     "avg": 395.6,
     "oppAvg": 394.1
    },
-   null,
+   {
+    "w": 0,
+    "d": 0,
+    "l": 1,
+    "diff": -32,
+    "streak": "-1",
+    "avg": 389.0,
+    "oppAvg": 421.0,
+    "elim": [
+     [
+      389,
+      421
+     ]
+    ]
+   },
    {
     "w": 4,
     "d": 0,
@@ -1532,7 +1728,21 @@
     "avg": 366.2,
     "oppAvg": 428.0
    },
-   null,
+   {
+    "w": 0,
+    "d": 0,
+    "l": 1,
+    "diff": -203,
+    "streak": "-1",
+    "avg": 368.0,
+    "oppAvg": 571.0,
+    "elim": [
+     [
+      368,
+      571
+     ]
+    ]
+   },
    {
     "w": 2,
     "d": 0,
@@ -1545,11 +1755,17 @@
    {
     "w": 0,
     "d": 0,
-    "l": 5,
-    "diff": -442,
-    "streak": "-5",
-    "avg": 343.0,
-    "oppAvg": 431.4
+    "l": 6,
+    "diff": -638,
+    "streak": "-6",
+    "avg": 331.8,
+    "oppAvg": 438.2,
+    "elim": [
+     [
+      276,
+      472
+     ]
+    ]
    },
    {
     "w": 0,
@@ -1580,13 +1796,19 @@
    },
    null,
    {
-    "w": 3,
+    "w": 4,
     "d": 0,
     "l": 3,
-    "diff": -23,
-    "streak": "-2",
-    "avg": 374.3,
-    "oppAvg": 378.2
+    "diff": -22,
+    "streak": "+1",
+    "avg": 368.7,
+    "oppAvg": 371.9,
+    "elim": [
+     [
+      335,
+      334
+     ]
+    ]
    },
    {
     "w": 0,
@@ -1616,13 +1838,19 @@
     "oppAvg": 474.0
    },
    {
-    "w": 2,
+    "w": 3,
     "d": 0,
     "l": 1,
-    "diff": 62,
-    "streak": "-1",
-    "avg": 388.0,
-    "oppAvg": 367.3
+    "diff": 78,
+    "streak": "+1",
+    "avg": 390.5,
+    "oppAvg": 371.0,
+    "elim": [
+     [
+      398,
+      382
+     ]
+    ]
    },
    {
     "w": 3,
@@ -1719,11 +1947,17 @@
    {
     "w": 3,
     "d": 0,
-    "l": 3,
-    "diff": 23,
-    "streak": "+2",
-    "avg": 378.2,
-    "oppAvg": 374.3
+    "l": 4,
+    "diff": 22,
+    "streak": "-1",
+    "avg": 371.9,
+    "oppAvg": 368.7,
+    "elim": [
+     [
+      334,
+      335
+     ]
+    ]
    },
    null,
    {
@@ -2115,11 +2349,17 @@
    {
     "w": 1,
     "d": 0,
-    "l": 2,
-    "diff": -24,
-    "streak": "+1",
-    "avg": 410.0,
-    "oppAvg": 418.0
+    "l": 3,
+    "diff": -41,
+    "streak": "-1",
+    "avg": 402.2,
+    "oppAvg": 412.5,
+    "elim": [
+     [
+      379,
+      396
+     ]
+    ]
    },
    {
     "w": 8,
@@ -2244,11 +2484,17 @@
    {
     "w": 2,
     "d": 0,
-    "l": 2,
-    "diff": 48,
-    "streak": "+1",
-    "avg": 373.3,
-    "oppAvg": 361.3
+    "l": 3,
+    "diff": 16,
+    "streak": "-1",
+    "avg": 369.4,
+    "oppAvg": 366.2,
+    "elim": [
+     [
+      354,
+      386
+     ]
+    ]
    },
    {
     "w": 3,
@@ -2271,11 +2517,17 @@
    {
     "w": 1,
     "d": 0,
-    "l": 2,
-    "diff": -62,
-    "streak": "+1",
-    "avg": 367.3,
-    "oppAvg": 388.0
+    "l": 3,
+    "diff": -78,
+    "streak": "-1",
+    "avg": 371.0,
+    "oppAvg": 390.5,
+    "elim": [
+     [
+      382,
+      398
+     ]
+    ]
    },
    {
     "w": 2,
@@ -2741,6 +2993,7 @@
    null
   ]
  ],
+ "elimSource": "https://www.pfs.org.pl/turniej.php?id=1399",
  "form": {
   "cutoff": "16-11-2025",
   "minRank": 140,
@@ -2749,7 +3002,7 @@
   "extCutoff": "16-05-2024"
  },
  "model": {
-  "k": 0.0208,
+  "k": 0.0228,
   "prior": 20,
   "spreadSd": 100,
   "marginMatch": 0.06,
