@@ -29,11 +29,14 @@ podmień pola `a`/`b` w odpowiednich rundach.
 
 ## Model kursów
 
-1. Siła = średnia rankingu PFS aktualnego i z ostatnich 12 miesięcy.
+1. Siła = średnia z: rankingu PFS aktualnego, rankingu z ostatnich 12 miesięcy oraz rankingu formy
+   (ranking osiągnięty w ostatnich 12 mies. w partiach z rywalami z rankingiem ≥ 140,
+   ściągnięty do aktualnego rankingu wagą 30 gier).
 2. `p0 = 1 / (1 + exp(-k·ΔS))`, `k` dopasowane (MLE) do 1703 historycznych partii między finalistami.
 3. Korekta H2H: `p = (W + R/2 + 20·p0) / (gry + 20)`.
 4. Kurs = `1 / (p · (1 + marża))`; marża 6% na mecze, 15% na tytuł/podium.
 5. Tytuł: 20 000 symulacji pozostałych meczów; remisy w tabeli rozstrzyga różnica małych punktów.
+6. Przycisk „Symuluj turniej” losuje dokładne wyniki (małe punkty) wszystkich nierozegranych partii.
 
 Parametry (`k`, waga prioru, marże) są w `data.json → model`.
 
