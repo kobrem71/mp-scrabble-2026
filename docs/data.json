@@ -9,7 +9,7 @@
    "rankPlace": 16,
    "rank12m": 172.31,
    "rank12mPlace": 14,
-   "strength": 174.31,
+   "strength": 175.37,
    "games": 1975,
    "games12m": 188,
    "wins12m": 127,
@@ -22,7 +22,19 @@
     "l": 705,
     "avg": 400.8,
     "oppAvg": 366.6
-   }
+   },
+   "form": {
+    "n": 130,
+    "w": 76,
+    "d": 0,
+    "l": 54,
+    "oppRank": 161.95,
+    "avg": 410.7,
+    "oppAvg": 386.9,
+    "last10": "LWWLLWLLWW"
+   },
+   "formRatingRaw": 177.75,
+   "formRating": 177.48
   },
   {
    "name": "Bartosz Morawski",
@@ -31,7 +43,7 @@
    "rankPlace": 11,
    "rank12m": 178.83,
    "rank12mPlace": 5,
-   "strength": 179.31,
+   "strength": 182.78,
    "games": 2514,
    "games12m": 153,
    "wins12m": 108,
@@ -44,7 +56,19 @@
     "l": 772,
     "avg": 417.7,
     "oppAvg": 371.2
-   }
+   },
+   "form": {
+    "n": 96,
+    "w": 63,
+    "d": 0,
+    "l": 33,
+    "oppRank": 163.13,
+    "avg": 429.3,
+    "oppAvg": 381.7,
+    "last10": "LWWWWWWLLL"
+   },
+   "formRatingRaw": 192.83,
+   "formRating": 189.72
   },
   {
    "name": "Marcin Rogala",
@@ -53,7 +77,7 @@
    "rankPlace": 36,
    "rank12m": 162.52,
    "rank12mPlace": 45,
-   "strength": 164.74,
+   "strength": 166.49,
    "games": 1363,
    "games12m": 130,
    "wins12m": 78,
@@ -66,7 +90,19 @@
     "l": 575,
     "avg": 401.3,
     "oppAvg": 376.6
-   }
+   },
+   "form": {
+    "n": 67,
+    "w": 37,
+    "d": 1,
+    "l": 29,
+    "oppRank": 160.45,
+    "avg": 419.3,
+    "oppAvg": 389.3,
+    "last10": "WWWWLLLWLL"
+   },
+   "formRatingRaw": 171.39,
+   "formRating": 170.01
   },
   {
    "name": "Łukasz Bobowski",
@@ -75,7 +111,7 @@
    "rankPlace": 22,
    "rank12m": 167.35,
    "rank12mPlace": 29,
-   "strength": 169.89,
+   "strength": 174.12,
    "games": 2469,
    "games12m": 165,
    "wins12m": 111,
@@ -88,7 +124,19 @@
     "l": 909,
     "avg": 397.5,
     "oppAvg": 366.3
-   }
+   },
+   "form": {
+    "n": 90,
+    "w": 57,
+    "d": 2,
+    "l": 31,
+    "oppRank": 158.7,
+    "avg": 408.5,
+    "oppAvg": 368.0,
+    "last10": "WLWWLLWWWW"
+   },
+   "formRatingRaw": 185.98,
+   "formRating": 182.59
   },
   {
    "name": "Joanna Juszczak",
@@ -97,7 +145,7 @@
    "rankPlace": 117,
    "rank12m": 149.6,
    "rank12mPlace": 101,
-   "strength": 148.38,
+   "strength": 146.25,
    "games": 2035,
    "games12m": 30,
    "wins12m": 16,
@@ -110,7 +158,19 @@
     "l": 920,
     "avg": 375.9,
     "oppAvg": 365.8
-   }
+   },
+   "form": {
+    "n": 14,
+    "w": 4,
+    "d": 0,
+    "l": 10,
+    "oppRank": 167.87,
+    "avg": 379.6,
+    "oppAvg": 405.1,
+    "last10": "WLWLLLLLLL"
+   },
+   "formRatingRaw": 130.85,
+   "formRating": 141.98
   },
   {
    "name": "Dawid Adamczyk",
@@ -119,7 +179,7 @@
    "rankPlace": 47,
    "rank12m": 165.67,
    "rank12mPlace": 36,
-   "strength": 164.53,
+   "strength": 168.55,
    "games": 1112,
    "games12m": 27,
    "wins12m": 17,
@@ -132,7 +192,19 @@
     "l": 377,
     "avg": 410.3,
     "oppAvg": 370.4
-   }
+   },
+   "form": {
+    "n": 10,
+    "w": 8,
+    "d": 0,
+    "l": 2,
+    "oppRank": 164.65,
+    "avg": 446.2,
+    "oppAvg": 403.0,
+    "last10": "WWLWWWWWWL"
+   },
+   "formRatingRaw": 216.23,
+   "formRating": 176.6
   },
   {
    "name": "Artur Irzyk",
@@ -141,7 +213,7 @@
    "rankPlace": 56,
    "rank12m": 159.48,
    "rank12mPlace": 56,
-   "strength": 160.16,
+   "strength": 160.31,
    "games": 1733,
    "games12m": 134,
    "wins12m": 80,
@@ -154,7 +226,19 @@
     "l": 691,
     "avg": 395.3,
     "oppAvg": 370.4
-   }
+   },
+   "form": {
+    "n": 70,
+    "w": 35,
+    "d": 0,
+    "l": 35,
+    "oppRank": 160.51,
+    "avg": 392.9,
+    "oppAvg": 389.1,
+    "last10": "WWLWWLLLWL"
+   },
+   "formRatingRaw": 160.51,
+   "formRating": 160.61
   },
   {
    "name": "Karolina Urbańska",
@@ -163,7 +247,7 @@
    "rankPlace": 98,
    "rank12m": 147.31,
    "rank12mPlace": 111,
-   "strength": 149.19,
+   "strength": 147.54,
    "games": 987,
    "games12m": 136,
    "wins12m": 69,
@@ -176,7 +260,19 @@
     "l": 515,
     "avg": 372.2,
     "oppAvg": 379.1
-   }
+   },
+   "form": {
+    "n": 91,
+    "w": 37,
+    "d": 1,
+    "l": 53,
+    "oppRank": 158.33,
+    "avg": 380.3,
+    "oppAvg": 398.6,
+    "last10": "WLLWWLLWLL"
+   },
+   "formRatingRaw": 142.01,
+   "formRating": 144.26
   },
   {
    "name": "Jakub Szymczak",
@@ -185,7 +281,7 @@
    "rankPlace": 12,
    "rank12m": 172.13,
    "rank12mPlace": 16,
-   "strength": 175.33,
+   "strength": 177.37,
    "games": 1860,
    "games12m": 272,
    "wins12m": 177,
@@ -198,7 +294,19 @@
     "l": 706,
     "avg": 399.8,
     "oppAvg": 368.8
-   }
+   },
+   "form": {
+    "n": 184,
+    "w": 111,
+    "d": 0,
+    "l": 73,
+    "oppRank": 162.47,
+    "avg": 418.6,
+    "oppAvg": 391.7,
+    "last10": "LWWWWWLLWW"
+   },
+   "formRatingRaw": 181.93,
+   "formRating": 181.45
   },
   {
    "name": "Wojciech Zemło",
@@ -207,7 +315,7 @@
    "rankPlace": 30,
    "rank12m": 166.28,
    "rank12mPlace": 34,
-   "strength": 167.98,
+   "strength": 170.23,
    "games": 2010,
    "games12m": 136,
    "wins12m": 84,
@@ -220,7 +328,19 @@
     "l": 771,
     "avg": 392.3,
     "oppAvg": 367.1
-   }
+   },
+   "form": {
+    "n": 105,
+    "w": 60,
+    "d": 1,
+    "l": 44,
+    "oppRank": 162.03,
+    "avg": 405.5,
+    "oppAvg": 387.1,
+    "last10": "WWLWWWLWWW"
+   },
+   "formRatingRaw": 176.18,
+   "formRating": 174.73
   },
   {
    "name": "Mariusz Skrobosz",
@@ -229,7 +349,7 @@
    "rankPlace": 5,
    "rank12m": 179.24,
    "rank12mPlace": 4,
-   "strength": 181.99,
+   "strength": 185.95,
    "games": 5742,
    "games12m": 221,
    "wins12m": 151,
@@ -242,7 +362,19 @@
     "l": 1840,
     "avg": 408.3,
     "oppAvg": 363.2
-   }
+   },
+   "form": {
+    "n": 163,
+    "w": 109,
+    "d": 0,
+    "l": 54,
+    "oppRank": 163.02,
+    "avg": 419.3,
+    "oppAvg": 382.6,
+    "last10": "WWWWWLLLWW"
+   },
+   "formRatingRaw": 195.56,
+   "formRating": 193.88
   },
   {
    "name": "Przemysław Herdzina",
@@ -251,7 +383,7 @@
    "rankPlace": 15,
    "rank12m": 168.22,
    "rank12mPlace": 28,
-   "strength": 172.4,
+   "strength": 173.43,
    "games": 1838,
    "games12m": 248,
    "wins12m": 160,
@@ -264,7 +396,19 @@
     "l": 683,
     "avg": 397.5,
     "oppAvg": 367.1
-   }
+   },
+   "form": {
+    "n": 156,
+    "w": 92,
+    "d": 1,
+    "l": 63,
+    "oppRank": 157.86,
+    "avg": 406.9,
+    "oppAvg": 379.1,
+    "last10": "LWDWWWWWWW"
+   },
+   "formRatingRaw": 175.29,
+   "formRating": 175.5
   },
   {
    "name": "Sławomir Piotrowski",
@@ -273,7 +417,7 @@
    "rankPlace": 83,
    "rank12m": 159.64,
    "rank12mPlace": 55,
-   "strength": 157.19,
+   "strength": 156.93,
    "games": 1712,
    "games12m": 89,
    "wins12m": 53,
@@ -286,7 +430,19 @@
     "l": 766,
     "avg": 380.2,
     "oppAvg": 364.5
-   }
+   },
+   "form": {
+    "n": 43,
+    "w": 21,
+    "d": 0,
+    "l": 22,
+    "oppRank": 159.65,
+    "avg": 381.6,
+    "oppAvg": 375.7,
+    "last10": "LWLLLWLWWL"
+   },
+   "formRatingRaw": 157.56,
+   "formRating": 156.4
   },
   {
    "name": "Kamil Górka",
@@ -295,7 +451,7 @@
    "rankPlace": 2,
    "rank12m": 182.82,
    "rank12mPlace": 3,
-   "strength": 185.84,
+   "strength": 193.36,
    "games": 4772,
    "games12m": 186,
    "wins12m": 140,
@@ -308,7 +464,19 @@
     "l": 1558,
     "avg": 410.1,
     "oppAvg": 366.4
-   }
+   },
+   "form": {
+    "n": 143,
+    "w": 107,
+    "d": 0,
+    "l": 36,
+    "oppRank": 162.18,
+    "avg": 438.4,
+    "oppAvg": 377.8,
+    "last10": "LWWWLLLWWW"
+   },
+   "formRatingRaw": 212.47,
+   "formRating": 208.38
   },
   {
    "name": "Dominik Urbacki",
@@ -317,7 +485,7 @@
    "rankPlace": 1,
    "rank12m": 183.38,
    "rank12mPlace": 2,
-   "strength": 186.54,
+   "strength": 190.6,
    "games": 2535,
    "games12m": 317,
    "wins12m": 226,
@@ -330,7 +498,19 @@
     "l": 750,
     "avg": 428.3,
     "oppAvg": 373
-   }
+   },
+   "form": {
+    "n": 255,
+    "w": 177,
+    "d": 0,
+    "l": 78,
+    "oppRank": 161.63,
+    "avg": 438.2,
+    "oppAvg": 378.0,
+    "last10": "LWWWLLLWWW"
+   },
+   "formRatingRaw": 199.77,
+   "formRating": 198.71
   },
   {
    "name": "Dariusz Ulatowski",
@@ -339,7 +519,7 @@
    "rankPlace": 4,
    "rank12m": 184.12,
    "rank12mPlace": 1,
-   "strength": 185.28,
+   "strength": 192.48,
    "games": 1150,
    "games12m": 203,
    "wins12m": 150,
@@ -352,7 +532,19 @@
     "l": 430,
     "avg": 407.8,
     "oppAvg": 374.7
-   }
+   },
+   "form": {
+    "n": 139,
+    "w": 101,
+    "d": 1,
+    "l": 37,
+    "oppRank": 165.3,
+    "avg": 428.8,
+    "oppAvg": 385.4,
+    "last10": "WWLWWWWLWW"
+   },
+   "formRatingRaw": 211.27,
+   "formRating": 206.87
   }
  ],
  "h2h": [
@@ -2517,8 +2709,13 @@
    null
   ]
  ],
+ "form": {
+  "cutoff": "16-11-2025",
+  "minRank": 140,
+  "prior": 30
+ },
  "model": {
-  "k": 0.0254,
+  "k": 0.0213,
   "prior": 20,
   "spreadSd": 100,
   "marginMatch": 0.06,

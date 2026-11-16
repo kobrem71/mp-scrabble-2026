@@ -81,6 +81,10 @@
         if (x > y) { A.w++; B.l++; A.form.push("w"); B.form.push("l"); }
         else if (x < y) { B.w++; A.l++; A.form.push("l"); B.form.push("w"); }
         else { A.d++; B.d++; A.form.push("d"); B.form.push("d"); }
+      } else if (Array.isArray(whatIf[m.key])) {
+        const [x, y] = whatIf[m.key];
+        A.played++; B.played++; A.pf += x; A.pa += y; B.pf += y; B.pa += x;
+        if (x > y) { A.w++; B.l++; A.form.push("hw"); B.form.push("hl"); } else { B.w++; A.l++; A.form.push("hl"); B.form.push("hw"); }
       } else if (whatIf[m.key]) {
         const winA = whatIf[m.key] === "a";
         A.played++; B.played++;
@@ -101,6 +105,10 @@
       if (m.score) {
         const [x, y] = m.score;
         base[m.a] += x > y ? 1 : x === y ? .5 : 0; base[m.b] += y > x ? 1 : x === y ? .5 : 0;
+        baseSpread[m.a] += x - y; baseSpread[m.b] += y - x;
+      } else if (Array.isArray(whatIf[m.key])) {
+        const [x, y] = whatIf[m.key];
+        base[x > y ? m.a : m.b] += 1;
         baseSpread[m.a] += x - y; baseSpread[m.b] += y - x;
       } else if (whatIf[m.key]) {
         const w = whatIf[m.key] === "a" ? m.a : m.b, l = w === m.a ? m.b : m.a;
@@ -126,6 +134,27 @@
     }
     return P.map((p, i) => ({ i, title: title[i] / SIMS, podium: podium[i] / SIMS, avgPlace: place[i] / SIMS }));
   }
+
+  // ---------- symulacja całego turnieju (dokładne wyniki) ----------
+  function gaussRand() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function simScore(a, b) {
+    const p = Math.min(Math.max(prob(a, b), 1e-4), 1 - 1e-4);
+    const d = M.spreadSd * invNorm(p) + M.spreadSd * gaussRand();           // różnica małych
+    const fa = P[a].form, fb = P[b].form;
+    const total = (fa.avg + fa.oppAvg + fb.avg + fb.oppAvg) / 2 + 55 * gaussRand(); // suma małych w partii
+    let x = Math.round((total + d) / 2), y = Math.round((total - d) / 2);
+    x = Math.max(x, 120); y = Math.max(y, 120);
+    if (x === y) { if (d >= 0) x++; else y++; }
+    return [x, y];
+  }
+  function simulateTournament() {
+    for (const m of matches) if (!m.score) whatIf[m.key] = simScore(m.a, m.b);
+    safeSet("mp2026-whatif", JSON.stringify(whatIf));
+    renderAll();
+  }
+  function clearSim() { whatIf = {}; safeSet("mp2026-whatif", "{}"); renderAll(); }
+  document.querySelectorAll(".sim-btn").forEach(b => b.addEventListener("click", simulateTournament));
+  document.querySelectorAll(".clear-btn").forEach(b => b.addEventListener("click", clearSim));
 
   // ---------- tooltip ----------
   const tip = $("#tooltip");
@@ -157,42 +186,45 @@
   let SIM = null;
   function renderAll() {
     SIM = simulate();
-    renderKpis(); renderStandings(); renderTitle(); renderMatches(); renderMatrix(); renderPair(); renderPlayers(); renderFaq();
+    renderStandings(); renderTitle(); renderForm(); renderMatches(); renderMatrix(); renderPair(); renderPlayers(); renderFaq();
   }
 
-  function renderKpis() {
-    const played = matches.filter(m => m.score).length;
-    const sims = Object.keys(whatIf).length;
-    const st = standings();
-    const fav = [...SIM].sort((a, b) => b.title - a.title)[0];
-    const roundsDone = RES.rounds.filter(r => r.matches.every(m => m.score)).length;
-    const leader = st[0];
-    $("#kpis").innerHTML = [
-      ["Rozegrane mecze", `${played} / ${matches.length}`, `ukończone rundy: ${roundsDone} / ${RES.rounds.length}` + (sims ? ` · symulowane: ${sims}` : "")],
-      ["Lider", played || sims ? esc(short(P[leader.i].name)) : "—", played || sims ? `${fmt(leader.pts, 1)} pkt · różnica ${leader.spread > 0 ? "+" : ""}${leader.spread}` : "turniej jeszcze się nie zaczął"],
-      ["Faworyt do tytułu", esc(short(P[fav.i].name)), `szansa ${pct(fav.title)} · kurs ${fmtOdds(odds(fav.title, M.marginOutright))}`],
-      ["Najwyższy ranking PFS", esc(short(P.reduce((a, b) => a.rank > b.rank ? a : b).name)), fmt(Math.max(...P.map(p => p.rank)), 2)],
-    ].map(([l, v, s]) => `<div class="kpi"><div class="label">${l}</div><div class="value">${v}</div><div class="sub">${s}</div></div>`).join("");
-  }
+  const formDots = str => [...str].map(c => c === "W" ? '<span class="form-dot w" title="wygrana"></span>' : c === "L" ? '<span class="form-dot l" title="porażka"></span>' : '<span class="form-dot d" title="remis"></span>').join("");
+  const formPct = f => (f.w + f.d / 2) / f.n;
 
   function renderStandings() {
     const st = standings();
     const simBy = Object.fromEntries(SIM.map(s => [s.i, s]));
     $("#tiebreakNote").textContent = "Kolejność: duże punkty → różnica małych punktów";
+    const nSim = matches.filter(m => !m.score && whatIf[m.key]).length, nReal = matches.filter(m => m.score).length;
+    $("#simState").innerHTML = nSim ? `<b>Symulacja:</b> ${nSim} partii symulowanych, ${nReal} rozegranych` + (nSim + nReal === matches.length ? " – tabela pokazuje wynik końcowy symulowanego turnieju" : "") : `${nReal} z ${matches.length} partii rozegranych`;
     const rows = st.map((s, k) => {
       const p = P[s.i], sm = simBy[s.i];
       const form = s.form.slice(-5).map(f => f === "w" ? '<span class="form-dot w" title="wygrana"></span>' : f === "l" ? '<span class="form-dot l" title="porażka"></span>' : f === "hw" ? '<span class="form-dot w h" title="wygrana (symulacja)"></span>' : f === "hl" ? '<span class="form-dot l h" title="porażka (symulacja)"></span>' : '<span class="form-dot" title="remis" style="background:var(--text-muted)"></span>').join("");
-      return `<tr data-i="${s.i}"><td class="pos">${k + 1}</td><td>${esc(p.name)}</td><td class="num">${s.played}</td><td class="num"><b>${fmt(s.pts, 1).replace(",0", "")}</b></td><td class="num">${s.pf || "–"}</td><td class="num">${s.spread > 0 ? "+" : ""}${s.spread}</td><td>${form}</td><td class="num">${pct(sm.title)}</td><td class="num">${fmtOdds(odds(sm.title, M.marginOutright))}</td><td class="num">${pct(sm.podium, 0)}</td></tr>`;
+      return `<tr data-i="${s.i}"><td class="pos">${k + 1}</td><td class="pname-cell">${esc(p.name)}</td><td class="num">${s.played}</td><td class="num"><b>${fmt(s.pts, 1).replace(",0", "")}</b></td><td class="num">${s.pf || "–"}</td><td class="num">${s.spread > 0 ? "+" : ""}${s.spread}</td><td>${form}</td><td class="num"><b>${pct(sm.title)}</b></td><td class="num"><b class="odds-ink">${fmtOdds(odds(sm.title, M.marginOutright))}</b></td><td class="num">${pct(sm.podium, 0)}</td></tr>`;
     }).join("");
     $("#standings").innerHTML = `<thead><tr><th>#</th><th>Gracz</th><th class="num">M</th><th class="num">Pkt</th><th class="num">Małe</th><th class="num">+/−</th><th>Forma</th><th class="num">Tytuł</th><th class="num">Kurs</th><th class="num">Podium</th></tr></thead><tbody>${rows}</tbody>`;
     $("#standings").querySelectorAll("tbody tr").forEach(tr => bindTip(tr, () => {
       const i = +tr.dataset.i, sm = SIM.find(s => s.i === i), p = P[i];
-      return `<div class="t">${esc(p.name)}</div>${tRow("Ranking PFS", fmt(p.rank) + ` (${p.rankPlace}.)`)}${tRow("Szansa na tytuł", pct(sm.title))}${tRow("Szansa na podium", pct(sm.podium))}${tRow("Średnie miejsce (sym.)", fmt(sm.avgPlace, 1))}`;
+      return `<div class="t">${esc(p.name)}</div>${tRow("Ranking PFS", fmt(p.rank) + ` (${p.rankPlace}.)`)}${tRow("Forma vs 140+ (12 mies.)", `${p.form.w}–${p.form.l} (${pct(formPct(p.form), 0)})`)}${tRow("Siła w modelu", fmt(p.strength))}${tRow("Szansa na tytuł", pct(sm.title))}${tRow("Szansa na podium", pct(sm.podium))}${tRow("Średnie miejsce (sym.)", fmt(sm.avgPlace, 1))}`;
+    }));
+  }
+
+  function renderForm() {
+    const ord = [...P.keys()].sort((a, b) => formPct(P[b].form) - formPct(P[a].form));
+    $("#formNote").textContent = `partie od ${DATA.form.cutoff}, rywale z rankingiem ≥ ${DATA.form.minRank}`;
+    $("#formChart").innerHTML = ord.map(i => {
+      const f = P[i].form, v = formPct(f);
+      return `<div class="form-row" data-i="${i}"><span class="name">${esc(P[i].name)}</span><span class="rec"><b>${f.w}–${f.l}</b>${f.d ? `<span class="muted">–${f.d}</span>` : ""}</span><div class="bar-track"><div class="bar-fill" style="width:${v * 100}%"></div></div><span class="val"><b>${pct(v, 1)}</b></span><span class="dots">${formDots(f.last10)}</span></div>`;
+    }).join("");
+    $("#formChart").querySelectorAll(".form-row").forEach(r => bindTip(r, () => {
+      const p = P[+r.dataset.i], f = p.form;
+      return `<div class="t">${esc(p.name)}</div>${tRow("Bilans (W–P–R)", `${f.w}–${f.l}–${f.d}`)}${tRow("% wygranych", pct(formPct(f)))}${tRow("Śr. ranking rywali", fmt(f.oppRank))}${tRow("Śr. małe / rywala", `${fmt(f.avg, 1)} / ${fmt(f.oppAvg, 1)}`)}${tRow("Ranking formy", fmt(p.formRatingRaw, 1))}${tRow("Ranking formy (po ściągnięciu)", fmt(p.formRating, 1))}${tRow("Ostatnie 10", f.last10)}`;
     }));
   }
 
   function renderTitle() {
-    const s = [...SIM].sort((a, b) => b.title - a.title);
+    const s = [...SIM].sort((a, b) => b.title - a.title || a.avgPlace - b.avgPlace);
     const max = Math.max(...s.map(x => x.title), 0.0001);
     $("#simNote").textContent = `symulacja Monte Carlo, ${SIMS.toLocaleString("pl-PL")} przebiegów`;
     $("#titleChart").innerHTML = s.map(x => `<div class="bar-row" data-i="${x.i}"><span class="name">${esc(P[x.i].name)}</span><div class="bar-track"><div class="bar-fill" style="width:${(x.title / max) * 100}%"></div></div><span class="val"><b>${pct(x.title)}</b> · ${fmtOdds(odds(x.title, M.marginOutright))}</span></div>`).join("");
@@ -210,7 +242,6 @@
   playerFilter.innerHTML += [...P].sort((a, b) => a.name.split(" ").pop().localeCompare(b.name.split(" ").pop(), "pl")).map(p => `<option value="${IDX[p.name]}">${esc(p.name)}</option>`).join("");
   roundSel.addEventListener("change", renderMatches);
   playerFilter.addEventListener("change", renderMatches);
-  $("#clearWhatIf").addEventListener("click", () => { whatIf = {}; safeSet("mp2026-whatif", "{}"); renderAll(); });
 
   function h2hStr(i, j) { const x = H[i][j]; return x ? `${x.w}–${x.l}${x.d ? ` (${x.d} rem.)` : ""}` : "brak gier"; }
 
@@ -235,12 +266,15 @@
   function matchCard(m) {
     const pa = prob(m.a, m.b), pb = 1 - pa;
     const played = !!m.score, sim = whatIf[m.key];
+    const simSc = !played && Array.isArray(sim) ? sim : null;
+    const sc = played ? m.score : simSc;
     const side = (i, p, s, sideKey) => {
-      const win = played ? (sideKey === "a" ? m.score[0] > m.score[1] : m.score[1] > m.score[0]) : sim === sideKey;
-      const right = played ? `<span class="score">${m.score[sideKey === "a" ? 0 : 1]}</span>` : `<span class="odds">${fmtOdds(odds(p, M.marginMatch))}</span>`;
-      return `<div class="side"><button class="pname ${win ? "win" : ""} ${!played && sim === sideKey ? "sim" : ""}" data-key="${m.key}" data-side="${sideKey}" ${played ? "disabled" : ""} title="${played ? "" : "Kliknij, by zasymulować wygraną"}">${esc(P[i].name)}</button><span class="pct">${pct(p, 0)}</span>${right}</div>`;
+      const k = sideKey === "a" ? 0 : 1;
+      const win = sc ? sc[k] > sc[1 - k] : sim === sideKey;
+      const right = sc ? `<span class="score${simSc ? " simsc" : ""}">${sc[k]}</span><span class="odds small-odds">${played ? "" : fmtOdds(odds(p, M.marginMatch))}</span>` : `<span class="odds">${fmtOdds(odds(p, M.marginMatch))}</span>`;
+      return `<div class="side${sc ? " has-score" : ""}"><button class="pname ${win ? "win" : ""} ${!played && sim === sideKey ? "sim" : ""}" data-key="${m.key}" data-side="${sideKey}" ${played ? "disabled" : ""} title="${played ? "" : "Kliknij, by zasymulować wygraną"}">${esc(P[i].name)}</button><span class="pct">${pct(p, 0)}</span>${right}</div>`;
     };
-    return `<div class="match ${played ? "played" : ""}" data-key="${m.key}">${side(m.a, pa, 0, "a")}<div class="split"><span class="a" style="width:${pa * 100}%"></span><span class="b" style="width:${pb * 100}%"></span></div>${side(m.b, pb, 0, "b")}<div class="meta"><span>H2H: ${h2hStr(m.a, m.b)}</span><span>${played ? "rozegrany" : "kurs dziesiętny"}</span></div></div>`;
+    return `<div class="match ${played ? "played" : ""}${simSc ? " simulated" : ""}" data-key="${m.key}">${side(m.a, pa, 0, "a")}<div class="split"><span class="a" style="width:${pa * 100}%"></span><span class="b" style="width:${pb * 100}%"></span></div>${side(m.b, pb, 0, "b")}<div class="meta"><span>H2H: ${h2hStr(m.a, m.b)}</span><span>${played ? "rozegrany" : simSc ? "wynik symulowany" : "kurs dziesiętny"}</span></div></div>`;
   }
 
   // ---------- macierz ----------
@@ -306,21 +340,24 @@
         ${x ? line(x.streak, "passa", x.streak.startsWith("+") ? "−" + x.streak.slice(1) : x.streak.startsWith("-") ? "+" + x.streak.slice(1) : x.streak) : ""}
         ${x && x.d ? line(x.d, "remisy", x.d) : ""}
         ${line(fmt(a.rank), "ranking PFS", fmt(b.rank))}
-        ${line(pct(a.winPct12m / 100, 1), "% wygr. (12 mies.)", pct(b.winPct12m / 100, 1))}
+        ${line(`<b>${a.form.w}–${a.form.l}</b>`, "forma vs 140+ (12 mies.)", `<b>${b.form.w}–${b.form.l}</b>`)}
+        ${line(pct(formPct(a.form), 1), "% wygr. vs 140+", pct(formPct(b.form), 1))}
+        ${line(formDots(a.form.last10), "ostatnie 10 vs 140+", formDots(b.form.last10))}
+        ${line(fmt(a.strength), "siła w modelu", fmt(b.strength))}
         ${line(fmt(a.avg12m, 1), "śr. małe (12 mies.)", fmt(b.avg12m, 1))}
       </div>
-      <p class="muted small">${fm ? (fm.score ? `W finale: ${esc(short(P[fm.a].name))} ${fm.score[0]} : ${fm.score[1]} ${esc(short(P[fm.b].name))} (runda ${fm.round}).` : `Mecz w finale: runda ${fm.round}.`) : ""}</p>`;
+      <p class="hint">${fm ? (fm.score ? `W finale: ${esc(short(P[fm.a].name))} ${fm.score[0]} : ${fm.score[1]} ${esc(short(P[fm.b].name))} (runda ${fm.round}).` : `Mecz w finale: runda ${fm.round}.`) : ""}</p>`;
   }
 
   function renderPlayers() {
-    const ord = [...P.keys()].sort((a, b) => P[b].rank - P[a].rank);
+    const ord = [...P.keys()].sort((a, b) => P[b].strength - P[a].strength);
     const rows = ord.map(i => {
       const p = P[i], c = p.career, cg = c.w + c.d + c.l;
       let hw = 0, hl = 0, hd = 0;
       for (let j = 0; j < N; j++) if (H[i][j]) { hw += H[i][j].w; hl += H[i][j].l; hd += H[i][j].d; }
-      return `<tr><td><a href="https://scrabble.stats.org.pl/zindex.php?p=${p.id}" target="_blank" rel="noopener">${esc(p.name)}</a></td><td class="num">${fmt(p.rank)}</td><td class="num">${p.rankPlace}</td><td class="num">${fmt(p.rank12m)}</td><td class="num">${p.games12m}</td><td class="num">${fmt(p.winPct12m, 1)}%</td><td class="num">${fmt(p.avg12m, 1)}</td><td class="num">${fmt(p.oppAvg12m, 1)}</td><td class="num">${cg}</td><td class="num">${fmt(100 * (c.w + c.d / 2) / cg, 1)}%</td><td class="num">${hw}–${hl}</td><td class="num">${fmt(100 * (hw + hd / 2) / (hw + hl + hd), 1)}%</td></tr>`;
+      return `<tr><td><a href="https://scrabble.stats.org.pl/zindex.php?p=${p.id}" target="_blank" rel="noopener">${esc(p.name)}</a></td><td class="num"><b>${fmt(p.strength)}</b></td><td class="num">${fmt(p.rank)} <span class="muted">(${p.rankPlace}.)</span></td><td class="num">${fmt(p.rank12m)}</td><td class="num"><b>${p.form.w}–${p.form.l}</b>${p.form.d ? "–" + p.form.d : ""}</td><td class="num"><b>${fmt(100 * formPct(p.form), 1)}%</b></td><td class="num">${fmt(p.form.oppRank, 1)}</td><td class="num">${fmt(p.formRating, 1)}</td><td>${formDots(p.form.last10)}</td><td class="num">${fmt(p.avg12m, 1)}</td><td class="num">${cg}</td><td class="num">${fmt(100 * (c.w + c.d / 2) / cg, 1)}%</td><td class="num">${hw}–${hl}</td><td class="num">${fmt(100 * (hw + hd / 2) / (hw + hl + hd), 1)}%</td></tr>`;
     }).join("");
-    $("#playersTbl").innerHTML = `<thead><tr><th>Gracz</th><th class="num">Ranking</th><th class="num">Miejsce</th><th class="num">Rank. 12 mies.</th><th class="num">Gry 12 mies.</th><th class="num">% wygr. 12 mies.</th><th class="num">Śr. małe</th><th class="num">Śr. rywala</th><th class="num">Gry (kariera)</th><th class="num">% wygr. (kariera)</th><th class="num">Vs finaliści</th><th class="num">% vs finaliści</th></tr></thead><tbody>${rows}</tbody>`;
+    $("#playersTbl").innerHTML = `<thead><tr><th>Gracz</th><th class="num">Siła</th><th class="num">Ranking PFS</th><th class="num">Rank. 12 mies.</th><th class="num">Vs 140+ W–P</th><th class="num">% vs 140+</th><th class="num">Śr. rank rywali</th><th class="num">Ranking formy</th><th>Ostatnie 10</th><th class="num">Śr. małe 12 mies.</th><th class="num">Gry (kariera)</th><th class="num">% wygr. (kariera)</th><th class="num">Vs finaliści</th><th class="num">% vs finaliści</th></tr></thead><tbody>${rows}</tbody>`;
   }
 
   function renderFaq() {
@@ -330,11 +367,13 @@
       ["Skąd pochodzą dane?", `Rankingi, bilanse head-to-head i statystyki graczy pochodzą z serwisu <a href="${DATA.source}" target="_blank" rel="noopener">scrabble.stats.org.pl</a> (turnieje rankingowe PFS), stan na ${DATA.updated}. Bilans H2H to wszystkie partie turniejowe rozegrane przez daną parę.`],
       ["Jak wygląda faza finałowa?", `16 graczy gra każdy z każdym po razie – 15 rund, po 8 partii w rundzie. O kolejności decydują duże punkty (wygrana = 1, remis = ½), a przy równej liczbie – różnica małych punktów.`],
       ["Czy rozstawienia są oficjalne?", `Nie. Do czasu publikacji oficjalnego terminarza pary w rundach są wygenerowane tablicami Bergera według rankingu PFS. Po ogłoszeniu oficjalnych par zostaną podmienione.`],
-      ["Jak liczona jest szansa na wygraną w pojedynku?", `Najpierw siła gracza: średnia z aktualnego rankingu PFS i rankingu z ostatnich 12 miesięcy. Różnica sił zamieniana jest na prawdopodobieństwo wzorem <code>p₀ = 1 / (1 + e^(−k·ΔS))</code>, gdzie <code>k = ${fmt(M.k, 4)}</code> dopasowano do ${nGames} historycznych partii rozegranych między finalistami. Różnica 10 punktów rankingu to ok. ${pct(1 / (1 + Math.exp(-M.k * 10)))} dla wyżej notowanego.`],
+      ["Jak liczona jest szansa na wygraną w pojedynku?", `Najpierw siła gracza: średnia z trzech liczb – aktualnego rankingu PFS, rankingu z ostatnich 12 miesięcy i rankingu formy (patrz niżej). Różnica sił zamieniana jest na prawdopodobieństwo wzorem <code>p₀ = 1 / (1 + e^(−k·ΔS))</code>, gdzie <code>k = ${fmt(M.k, 4)}</code> dopasowano do ${nGames} historycznych partii rozegranych między finalistami. Różnica 10 punktów rankingu to ok. ${pct(1 / (1 + Math.exp(-M.k * 10)))} dla wyżej notowanego.`],
+      ["Jak liczona jest forma?", `Bierzemy wszystkie partie turniejowe z ostatnich 12 miesięcy (od ${DATA.form.cutoff}) rozegrane z rywalami, którzy mieli w chwili gry ranking co najmniej ${DATA.form.minRank} – słabsze partie mało mówią o grze na poziomie finału. Z bilansu i średniego rankingu rywali liczymy <b>ranking formy</b>: taki ranking, przy którym model przewidziałby dokładnie taki wynik. Przy małej liczbie partii ranking formy jest „ściągany” do aktualnego rankingu (waga ${DATA.form.prior} wirtualnych gier), żeby 10 udanych partii nie robiło z nikogo faworyta. Formę widać w zakładkach Tabela, Gracze i Head-to-head.`],
       ["Czy bilans head-to-head ma znaczenie?", `Tak. Wynik z rankingu jest korygowany bilansem bezpośrednim: <code>p = (wygrane + remisy/2 + ${M.prior}·p₀) / (gry H2H + ${M.prior})</code>. Im więcej partii para rozegrała, tym mocniej bilans przesuwa prognozę. Przykład: ${esc(P[ex[0]].name)} vs ${esc(P[ex[1]].name)} – z samego rankingu ${pct(prior(ex[0], ex[1]))}, po uwzględnieniu H2H ${pct(prob(ex[0], ex[1]))}.`],
       ["Jak powstają kursy?", `Kurs dziesiętny = <code>1 / (p · (1 + marża))</code>. Marża na pojedynki wynosi ${pct(M.marginMatch, 0)}, na tytuł i podium ${pct(M.marginOutright, 0)}. Najniższy kurs to 1,01. Kursy mają charakter wyłącznie rozrywkowy.`],
       ["Skąd szanse na tytuł?", `Z symulacji Monte Carlo: ${SIMS.toLocaleString("pl-PL")} razy rozgrywamy wszystkie nierozegrane mecze, losując różnicę małych punktów z rozkładu normalnego (odchylenie ${M.spreadSd} pkt) dopasowanego do szansy na wygraną. Liczymy, jak często każdy gracz kończy na 1. miejscu i na podium.`],
-      ["Co robi symulacja w zakładce Rozstawienia?", `Kliknięcie nazwiska w nierozegranym meczu przyjmuje, że ten gracz wygrał. Tabela, forma i szanse na tytuł przeliczają się od razu. Symulacja zapisuje się tylko w Twojej przeglądarce i nie wpływa na to, co widzą inni. Przycisk „Wyczyść symulację” przywraca stan rzeczywisty.`],
+      ["Jak działa przycisk „Symuluj turniej”?", `Losuje dokładny wynik każdej nierozegranej partii – z małymi punktami. Zwycięzca wynika z kursów (różnica małych punktów losowana z rozkładu normalnego dopasowanego do szansy na wygraną), a suma punktów w partii – ze średnich obu graczy z ostatnich 12 miesięcy. Każde kliknięcie daje inny przebieg turnieju; tabela pokazuje wtedy symulowaną klasyfikację końcową, a w Rozstawieniach widać wyniki wszystkich partii.`],
+      ["Co robi kliknięcie nazwiska w Rozstawieniach?", `Kliknięcie nazwiska w nierozegranym meczu przyjmuje, że ten gracz wygrał (bez dokładnego wyniku). Tabela, forma i szanse na tytuł przeliczają się od razu. Symulacja zapisuje się tylko w Twojej przeglądarce i nie wpływa na to, co widzą inni. Przycisk „Wyczyść symulację” przywraca stan rzeczywisty.`],
       ["Jak często aktualizowane są wyniki?", `Wyniki są wpisywane w trakcie turnieju; po każdej aktualizacji strona przelicza tabelę, kursy i szanse automatycznie. Odśwież stronę, aby zobaczyć najnowszy stan.`],
     ];
     $("#faq").innerHTML = qa.map(([q, a], k) => `<details${k < 2 ? " open" : ""}><summary>${q}</summary><p>${a}</p></details>`).join("");
