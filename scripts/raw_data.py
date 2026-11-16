@@ -80,3 +80,12 @@ FORM12 = {"Kacper Zegadło":"130|76|0|54|161.95|410.7|386.9|LWWLLWLLWW","Bartosz
 FORM_MIN_GAMES = 60
 FORM_EXT_CUTOFF = "16-05-2024"
 FORM30 = {"Joanna Juszczak":"19|5|0|14|166.27|365.7|406.3|WLWLLLLLLL","Dawid Adamczyk":"57|36|0|21|158.37|412.6|386.9|WWLWWWWWWL","Sławomir Piotrowski":"125|57|0|68|158.15|378.9|382.5|LWLLLWLWWL"}
+
+
+# Eliminacje XXXIII MP (pfs.org.pl/turniej.php?id=1399), 15 rund – jeszcze nieobecne w scrabble.stats.org.pl.
+# Górka, Urbacki i Ulatowski nie grali w eliminacjach.
+ELIM_SOURCE = "https://www.pfs.org.pl/turniej.php?id=1399"
+# partie między finalistami: [i, j, runda, małe i, małe j] (indeksy jak w PLAYERS)
+ELIM_H2H = [[1, 4, 1, 547, 469], [7, 12, 2, 398, 382], [4, 6, 3, 421, 389], [1, 5, 6, 427, 479], [5, 11, 10, 396, 379], [0, 5, 11, 434, 355], [3, 7, 11, 472, 276], [4, 12, 11, 386, 354], [3, 5, 12, 491, 375], [1, 7, 13, 571, 368], [0, 3, 13, 501, 348], [2, 5, 13, 430, 374], [0, 1, 14, 350, 546], [2, 4, 14, 477, 425], [1, 3, 15, 446, 437], [7, 8, 15, 335, 334], [0, 2, 15, 595, 353]]
+# partie z rywalami z rankingiem >= 140: gry_ogółem|gry_140+|W|R|P|suma rankingów rywali|małe|małe rywali|wyniki w kolejności rund
+ELIM_FORM = {"Kacper Zegadło":"15|15|12|1|2|2444.41|6736|5565|WWWDLWWWWWWWWLW","Bartosz Morawski":"15|14|11|0|3|2201.64|6771|5481|WWLWLWLWWWWWWW","Marcin Rogala":"15|14|10|0|4|2162.57|6393|5362|LWWWLLWWWWWWWL","Łukasz Bobowski":"15|15|11|0|4|2407.84|6539|5934|WWWLWWWLWWWWLWL","Joanna Juszczak":"15|12|8|0|4|1965.18|5053|4516|LWLLWWWWWWLW","Dawid Adamczyk":"15|14|10|0|4|2323.77|5780|5405|WWWWWLWWWLLLWW","Artur Irzyk":"15|11|8|0|3|1696.00|4608|3811|LWWLWLWWWWW","Karolina Urbańska":"15|13|9|0|4|2119.37|5130|5070|WWLWLWWWLWLWW","Jakub Szymczak":"15|10|6|0|4|1555.33|4134|3853|WLLWWWWWLL","Wojciech Zemło":"15|14|9|0|5|2179.01|5952|5311|WWWLWWLLWLLWWW","Mariusz Skrobosz":"15|13|8|0|5|2057.22|5554|4819|WLLWWLLWLWWWW","Przemysław Herdzina":"15|13|8|0|5|2006.59|5314|4936|LWWLWWWLLWWLW","Sławomir Piotrowski":"15|11|6|0|5|1733.98|4405|4255|LLLWWWLWLWW"}

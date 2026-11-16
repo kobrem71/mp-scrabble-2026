@@ -11,7 +11,7 @@ Model:
 """
 import json, math, os, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from raw_data import PLAYERS, SUMMARY, CAREER, H2H, STREAK, FORM12, FORM_CUTOFF, FORM_MIN_RANK, FORM30, FORM_MIN_GAMES, FORM_EXT_CUTOFF
+from raw_data import PLAYERS, SUMMARY, CAREER, H2H, STREAK, FORM12, FORM_CUTOFF, FORM_MIN_RANK, FORM30, FORM_MIN_GAMES, FORM_EXT_CUTOFF, ELIM_H2H, ELIM_FORM, ELIM_SOURCE
 
 M_PRIOR = 20
 FORM_PRIOR = 30   # ile „wirtualnych gier” na poziomie aktualnego rankingu dokładamy do formy
@@ -36,15 +36,34 @@ for name, pid in PLAYERS:
         "career": {"w": c[0], "d": c[1], "l": c[2], "avg": c[3], "oppAvg": c[4]},
     })
 
-for p in players:
-    raw = FORM12[p["name"]]
-    months, cutoff = 12, FORM_CUTOFF
-    if int(raw.split("|")[0]) < FORM_MIN_GAMES and p["name"] in FORM30:
-        raw, months, cutoff = FORM30[p["name"]], 30, FORM_EXT_CUTOFF
+def parse_form(raw):
     f = raw.split("|")
-    p["form"] = {"n": int(f[0]), "w": int(f[1]), "d": int(f[2]), "l": int(f[3]),
-                 "oppRank": float(f[4]), "avg": float(f[5]), "oppAvg": float(f[6]), "last10": f[7],
-                 "months": months, "cutoff": cutoff}
+    return {"n": int(f[0]), "w": int(f[1]), "d": int(f[2]), "l": int(f[3]),
+            "oppRank": float(f[4]), "avg": float(f[5]), "oppAvg": float(f[6]), "last10": f[7]}
+
+def add_elim(fm, name):
+    """Dolicza partie z eliminacji MP (rywale >= 140) – najnowsze, więc idą na koniec ostatnich 10."""
+    if name not in ELIM_FORM:
+        fm["elim"] = 0
+        return fm
+    e = ELIM_FORM[name].split("|")
+    en, ew, ed, el = int(e[1]), int(e[2]), int(e[3]), int(e[4])
+    ers, epf, epa, seq = float(e[5]), int(e[6]), int(e[7]), e[8]
+    n0, n1 = fm["n"], fm["n"] + en
+    fm["oppRank"] = round((fm["oppRank"] * n0 + ers) / n1, 2)
+    fm["avg"] = round((fm["avg"] * n0 + epf) / n1, 1)
+    fm["oppAvg"] = round((fm["oppAvg"] * n0 + epa) / n1, 1)
+    fm.update(n=n1, w=fm["w"] + ew, d=fm["d"] + ed, l=fm["l"] + el, last10=(fm["last10"] + seq)[-10:], elim=en)
+    return fm
+
+for p in players:
+    months, cutoff = 12, FORM_CUTOFF
+    fm = add_elim(parse_form(FORM12[p["name"]]), p["name"])
+    if fm["n"] < FORM_MIN_GAMES and p["name"] in FORM30:
+        months, cutoff = 30, FORM_EXT_CUTOFF
+        fm = add_elim(parse_form(FORM30[p["name"]]), p["name"])
+    fm.update(months=months, cutoff=cutoff)
+    p["form"] = fm
 
 def form_rating(p, k):
     """Ranking osiągnięty: F takie, że n·σ(k·(F − śr.rank rywali)) = wynik (+1 W i +1 P dla stabilności),
@@ -67,7 +86,40 @@ for i in range(n):
         h2h[i][j] = {"w": w, "d": d, "l": l, "diff": diff, "streak": streak,
                      "avg": float(avg), "oppAvg": float(oavg)}
 
-# kontrola symetrii
+# kontrola symetrii danych ze statystyk (przed dodaniem eliminacji)
+def check_sym():
+    for i in range(n):
+        for j in range(n):
+            a, b = h2h[i][j], h2h[j][i]
+            assert (a is None) == (b is None), (names[i], names[j])
+            if a:
+                assert (a["w"], a["d"], a["l"], a["diff"]) == (b["l"], b["d"], b["w"], -b["diff"]), (names[i], names[j])
+check_sym()
+
+# dolicz partie między finalistami z eliminacji MP (najnowsze – aktualizują passę)
+def add_game(i, j, x, y):
+    e = h2h[i][j]
+    if e is None:
+        e = h2h[i][j] = {"w": 0, "d": 0, "l": 0, "diff": 0, "streak": "0", "avg": 0.0, "oppAvg": 0.0}
+    g = e["w"] + e["d"] + e["l"]
+    e["avg"] = round((e["avg"] * g + x) / (g + 1), 1)
+    e["oppAvg"] = round((e["oppAvg"] * g + y) / (g + 1), 1)
+    e["diff"] += x - y
+    s = int(e["streak"])
+    if x > y:
+        e["w"] += 1; s = s + 1 if s > 0 else 1
+    elif x < y:
+        e["l"] += 1; s = s - 1 if s < 0 else -1
+    else:
+        e["d"] += 1; s = 0
+    e["streak"] = ("+" if s > 0 else "") + str(s)
+    e.setdefault("elim", []).append([x, y])
+
+for i, j, rnd, x, y in ELIM_H2H:
+    add_game(i, j, x, y)
+    add_game(j, i, y, x)
+
+# kontrola symetrii po dodaniu
 for i in range(n):
     for j in range(n):
         a, b = h2h[i][j], h2h[j][i]
@@ -107,6 +159,7 @@ data = {
     "source": "https://scrabble.stats.org.pl/",
     "players": players,
     "h2h": h2h,
+    "elimSource": ELIM_SOURCE,
     "form": {"cutoff": FORM_CUTOFF, "minRank": FORM_MIN_RANK, "prior": FORM_PRIOR,
              "minGames": FORM_MIN_GAMES, "extCutoff": FORM_EXT_CUTOFF},
     "model": {"k": best_k, "prior": M_PRIOR, "spreadSd": 100,
