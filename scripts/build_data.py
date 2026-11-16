@@ -11,7 +11,7 @@ Model:
 """
 import json, math, os, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from raw_data import PLAYERS, SUMMARY, CAREER, H2H, STREAK, FORM12, FORM_CUTOFF, FORM_MIN_RANK
+from raw_data import PLAYERS, SUMMARY, CAREER, H2H, STREAK, FORM12, FORM_CUTOFF, FORM_MIN_RANK, FORM30, FORM_MIN_GAMES, FORM_EXT_CUTOFF
 
 M_PRIOR = 20
 FORM_PRIOR = 30   # ile „wirtualnych gier” na poziomie aktualnego rankingu dokładamy do formy
@@ -37,9 +37,14 @@ for name, pid in PLAYERS:
     })
 
 for p in players:
-    f = FORM12[p["name"]].split("|")
+    raw = FORM12[p["name"]]
+    months, cutoff = 12, FORM_CUTOFF
+    if int(raw.split("|")[0]) < FORM_MIN_GAMES and p["name"] in FORM30:
+        raw, months, cutoff = FORM30[p["name"]], 30, FORM_EXT_CUTOFF
+    f = raw.split("|")
     p["form"] = {"n": int(f[0]), "w": int(f[1]), "d": int(f[2]), "l": int(f[3]),
-                 "oppRank": float(f[4]), "avg": float(f[5]), "oppAvg": float(f[6]), "last10": f[7]}
+                 "oppRank": float(f[4]), "avg": float(f[5]), "oppAvg": float(f[6]), "last10": f[7],
+                 "months": months, "cutoff": cutoff}
 
 def form_rating(p, k):
     """Ranking osiągnięty: F takie, że n·σ(k·(F − śr.rank rywali)) = wynik (+1 W i +1 P dla stabilności),
@@ -102,10 +107,16 @@ data = {
     "source": "https://scrabble.stats.org.pl/",
     "players": players,
     "h2h": h2h,
-    "form": {"cutoff": FORM_CUTOFF, "minRank": FORM_MIN_RANK, "prior": FORM_PRIOR},
+    "form": {"cutoff": FORM_CUTOFF, "minRank": FORM_MIN_RANK, "prior": FORM_PRIOR,
+             "minGames": FORM_MIN_GAMES, "extCutoff": FORM_EXT_CUTOFF},
     "model": {"k": best_k, "prior": M_PRIOR, "spreadSd": 100,
               "marginMatch": 0.06, "marginOutright": 0.15},
 }
+# zamrożona prognoza do Typera (bonusy liczone względem niej) – zachowaj z poprzedniego pliku
+if os.path.exists(OUT):
+    old = json.load(open(OUT, encoding="utf-8"))
+    if "typerForecast" in old:
+        data["typerForecast"] = old["typerForecast"]
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, "w", encoding="utf-8") as f:
     json.dump(data, f, ensure_ascii=False, indent=1)
