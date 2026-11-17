@@ -686,7 +686,7 @@
     `${b("Sławomir Piotrowski")} i ${b("Dariusz Ulatowski")} to jedyna para finalistów, która nigdy nie zagrała ze sobą w turnieju rankingowym.`,
     `${b("Mariusz Skrobosz")} rozegrał 5742 partie turniejowe – najwięcej z finalistów i ponad pięć razy więcej niż ${b("Dawid Adamczyk")} (1112).`,
     `${b("Dominik Urbacki")} ma najwyższą średnią małych punktów w karierze spośród finalistów: 428.3 na partię.`,
-    `${b("Dariusz Ulatowski")} ma najwyższy ranking z ostatnich 12 miesięcy (184.12), choć rozegrał dopiero 1150 partii.`,
+    `${b("Dariusz Ulatowski")} ma najwyższy ranking z ostatnich 12 miesięcy spośród finalistów (184.12) – wyższy niż lider listy rankingowej ${b("Dominik Urbacki")} (183.38).`,
     `${b("Kacper Zegadło")} wygrał 9 z 10 ostatnich partii z rywalami z rankingiem 140+.`,
     `${b("Bartosz Morawski")} wygrał 7 ostatnich partii z rywalami z rankingiem 140+.`,
     `${b("Kamil Górka")} ma najlepszy bilans z rywalami 140+ w ostatnich 12 miesiącach: 107–36 (74.8%).`,
