@@ -691,10 +691,10 @@
     `${b("Kamil Górka")} wygrał 6 ostatnich pojedynków z ${b("Dominikiem Urbackim")} i prowadzi w ich historii 29–21.`,
     `${b("Dariusz Ulatowski")} wygrał 5 ostatnich partii z ${b("Marcinem Rogalą")} (bilans 7–1).`,
     `${b("Dawid Adamczyk")} wygrał 5 ostatnich partii z ${b("Wojciechem Zemło")}.`,
-    `${b("Przemysław Herdzina")} zdobywa przeciw ${b("Marcinowi Rogali")} średnio 460.7 punktu – najwyższa średnia wśród par finalistów.`,
+    `${b("Przemysław Herdzina")} zdobywa przeciw ${b("Marcinowi Rogali")} średnio 460.7 punktu (w 3 partiach) – najwyższa średnia wśród par finalistów.`,
     `${b("Dominik Urbacki")} prowadzi z ${b("Marcinem Rogalą")} 14–5 i jest od niego lepszy o 1590 małych punktów.`,
     `${b("Wojciech Zemło")} wygrał z ${b("Jakubem Szymczakiem")} 18 z 24 partii.`,
-    `${b("Kamil Górka")} i ${b("Bartosz Morawski")} zagrali 67 razy – Górka prowadzi 38–28 przy 1 remisie.`,
+    `${b("Bartosz Morawski")} i ${b("Kamil Górka")} zagrali 67 razy – Morawski prowadzi 38–28 przy 1 remisie.`,
     `${b("Joanna Juszczak")} po eliminacjach podniosła bilans z rywalami 140+ z 5–14 do 13–18.`,
   ];
   // ciekawostki generowane automatycznie z macierzy H2H (serie i komplety zwycięstw)
