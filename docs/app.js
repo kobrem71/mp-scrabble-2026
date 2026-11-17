@@ -673,6 +673,11 @@
     `${b("Justynie")} zabrakło niewiele, ale przynajmniej zajmie się dziećmi w czasie finałów.`,
     `Prawdopodobnie żaden finalista nie ma urodzin w czasie finałów (ale tego nie sprawdzałem).`,
     `Gdyby sędzia turnieju dał każdemu uczestnikowi jednego ze swoich kotów, to i tak zostałoby mu jeszcze 12.`,
+    `Obrońcą tytułu jest dwukrotny zwycięzca tych rozgrywek ${b("Jakub Szymczak")}.`,
+    `Sześciu finalistów wygrało już MP: ${b("Skrobosz")} ×3, ${b("Morawski")} ×2, ${b("Szymczak")} ×2, ${b("Urbacki")} ×2, ${b("Górka")} ×2, ${b("Zegadło")} ×1.`,
+    // poniższe liczą szansę na bieżąco z kursów (tylko prawdziwe wyniki, bez symulacji użytkownika)
+    () => `Jeśli turniej wygra ${b("Juszczak")} lub ${b("Urbańska")}, to pierwszy raz w historii Mistrzem Polski zostanie kobieta. Szansa na to według kursów to ${pct(realTitle(["Joanna Juszczak", "Karolina Urbańska"]), 2)}.`,
+    () => `W finale zagra czterech Warszawiaków (${b("Skrobosz")}, ${b("Zegadło")}, ${b("Rogala")}, ${b("Juszczak")}) – szansa, że gracz z miasta stołecznego sięgnie po tytuł, to ${pct(realTitle(["Mariusz Skrobosz", "Kacper Zegadło", "Marcin Rogala", "Joanna Juszczak"]), 0)}.`,
     // z danych
     `${b("Mariusz Skrobosz")} i ${b("Kamil Górka")} zagrali ze sobą aż 113 razy – bilans 57–56 dla Skrobosza. Najczęstszy pojedynek wśród finalistów.`,
     `${b("Kamil Górka")} wygrał 10 ostatnich partii z ${b("Joanną Juszczak")} (bilans 18–3).`,
@@ -716,13 +721,20 @@
     }
     return out;
   }
+  // szanse na tytuł liczone tylko z prawdziwych wyników (bez symulacji użytkownika)
+  let REAL_SIM = null;
+  function realTitle(names) {
+    if (!REAL_SIM) { const keep = whatIf; whatIf = {}; REAL_SIM = simulate(); whatIf = keep; }
+    return names.reduce((t, n) => t + REAL_SIM[IDX[n]].title, 0);
+  }
   const FACTS = [...FACTS_FIXED, ...autoFacts()];
   let factOrder = [], factPos = 0, factTimer = null;
   function nextFact() {
     if (!factOrder.length || factPos >= factOrder.length) { factOrder = [...FACTS.keys()].sort(() => Math.random() - .5); factPos = 0; }
     const el = $("#factText"); if (!el) return;
     el.classList.remove("show"); void el.offsetWidth;
-    el.innerHTML = FACTS[factOrder[factPos++]];
+    const f = FACTS[factOrder[factPos++]];
+    el.innerHTML = typeof f === "function" ? f() : f;
     el.classList.add("show");
     clearInterval(factTimer); factTimer = setInterval(nextFact, 15000);
   }
