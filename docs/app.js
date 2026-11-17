@@ -671,6 +671,8 @@
     `Mistrzostw w tym roku nie wygra ${b("Dariusz Kosz")}.`,
     `Mistrzostw w tym roku nie wygra i nigdy wcześniej nie wygrał ${b("Kobrem")}.`,
     `${b("Justynie")} zabrakło niewiele, ale przynajmniej zajmie się dziećmi w czasie finałów.`,
+    `Prawdopodobnie żaden finalista nie ma urodzin w czasie finałów (ale tego nie sprawdzałem).`,
+    `Gdyby sędzia turnieju dał każdemu uczestnikowi jednego ze swoich kotów, to i tak zostałoby mu jeszcze 12.`,
     // z danych
     `${b("Mariusz Skrobosz")} i ${b("Kamil Górka")} zagrali ze sobą aż 113 razy – bilans 57–56 dla Skrobosza. Najczęstszy pojedynek wśród finalistów.`,
     `${b("Kamil Górka")} wygrał 10 ostatnich partii z ${b("Joanną Juszczak")} (bilans 18–3).`,
