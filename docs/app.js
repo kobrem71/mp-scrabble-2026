@@ -7,7 +7,7 @@
   const fmt = (x, d = 2) => Number(x).toFixed(d);
   const rec = f => `${f.w}–${f.l}–${f.d}`; // wygrane–porażki–remisy, zawsze z remisami
   // okrągłe zdjęcie gracza (duotone w kolorach strony)
-  const av = (i, cls = "") => `<img class="pav ${cls}" src="img/p${P[i].id}.jpg?v=1" alt="" width="28" height="28" loading="lazy" decoding="async">`;
+  const av = (i, cls = "") => `<img class="pav ${cls}" src="img/p${P[i].id}.jpg?v=2" alt="" width="28" height="28" loading="lazy" decoding="async">`;
   const short = n => { const [f, ...l] = n.split(" "); return f[0] + ". " + l.join(" "); };
 
   function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
