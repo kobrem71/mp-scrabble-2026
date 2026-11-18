@@ -28,7 +28,7 @@
 
   // ---------- dane ----------
   const bust = "?v=" + Date.now();
-  const [DATA, RES] = await Promise.all([
+  let [DATA, RES] = await Promise.all([
     fetch("data.json" + bust).then(r => r.json()),
     fetch("results.json" + bust).then(r => r.json()),
   ]);
@@ -39,10 +39,14 @@
   const H = DATA.h2h;
 
   const matches = [];
-  RES.rounds.forEach(r => r.matches.forEach((m, k) => matches.push({
-    round: r.round, key: r.round + ":" + k, a: IDX[m.a], b: IDX[m.b], score: m.score,
-  })));
-  matches.forEach(m => { if (m.a === undefined || m.b === undefined) console.error("Nieznany gracz w results.json", m); });
+  function loadMatches() {
+    matches.length = 0;
+    RES.rounds.forEach(r => r.matches.forEach((m, k) => matches.push({
+      round: r.round, key: r.round + ":" + k, a: IDX[m.a], b: IDX[m.b], score: m.score, tentative: !!r.tentative,
+    })));
+    matches.forEach(m => { if (m.a === undefined || m.b === undefined) console.error("Nieznany gracz w results.json", m); });
+  }
+  loadMatches();
 
   let whatIf = {};
   try { whatIf = JSON.parse(safeGet("mp2026-whatif") || "{}"); } catch (e) { }
@@ -279,7 +283,7 @@
     const list = matches.filter(m => (!r || m.round == r) && (pf === "" || m.a == pf || m.b == pf));
     const byRound = {};
     list.forEach(m => (byRound[m.round] = byRound[m.round] || []).push(m));
-    $("#matches").innerHTML = Object.entries(byRound).map(([rd, ms]) => `<div class="round"><h3 class="tiles tiles-sm" aria-label="Runda ${rd}">${tilesHTML("RUNDA " + rd)}</h3><div class="round-grid">${ms.map(matchCard).join("")}</div></div>`).join("") || `<p class="muted">Brak meczów.</p>`;
+    $("#matches").innerHTML = Object.entries(byRound).map(([rd, ms]) => `<div class="round"><h3 class="tiles tiles-sm" aria-label="Runda ${rd}">${tilesHTML("RUNDA " + rd)}</h3>${ms[0].tentative ? `<p class="tent">Pary szacunkowe – sędzia ustali je w trakcie turnieju (kursy i symulacja liczą się na pozostałych pojedynkach).</p>` : ""}<div class="round-grid">${ms.map(matchCard).join("")}</div></div>`).join("") || `<p class="muted">Brak meczów.</p>`;
     $("#matches").querySelectorAll("button.pname").forEach(b => b.addEventListener("click", () => {
       const key = b.dataset.key, side = b.dataset.side;
       if (whatIf[key] === side) delete whatIf[key]; else whatIf[key] = side;
@@ -623,14 +627,25 @@
       const order = t.order.map(n => IDX[n]).filter(i => i !== undefined);
       const ok = order.length === N;
       return { ...t, order, sc: anyPlayed && ok ? typerScore(order, fin).total : null, exp: ok ? typerScore(order, expOrder).total : null };
-    }).sort((a, b) => (anyPlayed ? (b.sc ?? 0) - (a.sc ?? 0) : 0) || (b.exp ?? 0) - (a.exp ?? 0) || a.nick.localeCompare(b.nick, "pl"));
+    });
+    // po zamknięciu typowania: dwóch „graczy AI” do porównania
+    if (typerLocked() && allTypy.length) {
+      const avgPos = P.map((p, i) => ({ i, s: 0, n: 0 }));
+      allTypy.forEach(t => t.order.forEach((n, k) => { const i = IDX[n]; if (i !== undefined) { avgPos[i].s += k + 1; avgPos[i].n++; } }));
+      const avgOrder = avgPos.sort((a, b) => a.s / (a.n || 1) - b.s / (b.n || 1) || forecastPlace[a.i] - forecastPlace[b.i]).map(x => x.i);
+      [["ai-avg", "🤖 Średnia typerów", avgOrder], ["ai-odds", "🤖 Według kursów", FORECAST.slice()]].forEach(([uid, nick, order]) =>
+        rows.push({ uid, nick, order, ai: true, sc: anyPlayed ? typerScore(order, fin).total : null, exp: typerScore(order, expOrder).total }));
+    }
+    rows.sort((a, b) => (anyPlayed ? (b.sc ?? 0) - (a.sc ?? 0) : 0) || (b.exp ?? 0) - (a.exp ?? 0) || a.nick.localeCompare(b.nick, "pl"));
+    const humans = rows.filter(r => !r.ai);
+    let place = 0;
     const scLabel = !anyPlayed ? "" : simOn ? (finished() ? "wg symulacji" : "wg symulacji (częściowej)") : finished() ? "wynik końcowy" : "wg obecnej tabeli";
-    $("#typyNote").textContent = `${rows.length} ${rows.length === 1 ? "typ" : rows.length > 1 && rows.length < 5 ? "typy" : "typów"}`;
+    $("#typyNote").textContent = `${humans.length} ${humans.length === 1 ? "typ" : humans.length > 1 && humans.length < 5 ? "typy" : "typów"}${rows.length > humans.length ? " + 2 AI" : ""}`;
     $("#typySimInfo").innerHTML = anyPlayed
       ? `Kolumna <b>${scLabel}</b> pokazuje punkty każdego typera przy ${simOn ? "Twojej aktualnej symulacji" : "obecnych wynikach"}. Kliknij „Symuluj cały turniej” jeszcze raz, by zobaczyć inny scenariusz.`
       : `Kliknij <b>🎲 Symuluj cały turniej</b>, a obok prognozy pojawią się punkty każdego typera w wylosowanym przebiegu turnieju.`;
     $("#typyList").innerHTML = rows.length ? `<table class="tbl typy-tbl"><thead><tr><th>#</th><th>Nick</th><th>Podium w typie</th><th class="num" title="Punkty, gdyby turniej skończył się w kolejności oczekiwanej przez model (średnie miejsce z symulacji Monte Carlo)">Prognoza</th>${anyPlayed ? `<th class="num sim-col" title="${scLabel}">${simOn ? "Symulacja" : finished() ? "Wynik" : "Teraz"}</th>` : ""}</tr></thead><tbody>${rows.map((r, k) => `
-      <tr class="typ-row${fbUser && r.uid === fbUser.uid ? " mine" : ""}" data-k="${k}"><td class="pos">${k + 1}</td><td class="nick"><b>${esc(r.nick)}</b></td><td class="small">${r.order.slice(0, 3).map(i => esc(short(P[i].name))).join(", ")}</td><td class="num">${r.exp == null ? "–" : r.exp.toFixed(1)}</td>${anyPlayed ? `<td class="num sim-col"><b>${r.sc == null ? "–" : r.sc.toFixed(1)}</b></td>` : ""}</tr>
+      <tr class="typ-row${fbUser && r.uid === fbUser.uid ? " mine" : ""}${r.ai ? " ai" : ""}" data-k="${k}" ${r.ai ? 'title="Typ porównawczy – nie bierze udziału w klasyfikacji"' : ""}><td class="pos">${r.ai ? "" : ++place}</td><td class="nick"><b>${esc(r.nick)}</b></td><td class="small">${r.order.slice(0, 3).map(i => esc(short(P[i].name))).join(", ")}</td><td class="num">${r.exp == null ? "–" : r.exp.toFixed(1)}</td>${anyPlayed ? `<td class="num sim-col"><b>${r.sc == null ? "–" : r.sc.toFixed(1)}</b></td>` : ""}</tr>
       <tr class="typ-detail" data-k="${k}" hidden><td></td><td colspan="${anyPlayed ? 4 : 3}"><ol class="typ-ol">${r.order.map(i => `<li>${esc(P[i].name)} <span class="muted">(prognoza ${forecastPlace[i]}.${anyPlayed ? `, teraz ${fin.indexOf(i) + 1}.` : ""})</span></li>`).join("")}</ol></td></tr>`).join("")}</tbody></table>` : `<p class="hint">Nikt jeszcze nie zapisał typu – bądź pierwszy!</p>`;
     $("#typyList").querySelectorAll(".typ-row").forEach(tr => tr.addEventListener("click", () => {
       const d = $(`#typyList .typ-detail[data-k="${tr.dataset.k}"]`); d.hidden = !d.hidden;
@@ -742,6 +757,22 @@
     clearInterval(factTimer); factTimer = setInterval(nextFact, 15000);
   }
   if ($("#factNext")) { $("#factNext").addEventListener("click", nextFact); nextFact(); }
+
+  // ---------- odświeżanie wyników na żywo (results.json aktualizuje automat z transmisji PFS) ----------
+  const pairSig = res => res.rounds.map(r => r.matches.map(m => m.a + "|" + m.b).join(",")).join(";");
+  async function refreshResults() {
+    if (document.hidden) return;
+    try {
+      const fresh = await fetch("results.json?v=" + Date.now(), { cache: "no-store" }).then(r => r.json());
+      if (JSON.stringify(fresh) === JSON.stringify(RES)) return;
+      if (pairSig(fresh) !== pairSig(RES)) { whatIf = {}; safeSet("mp2026-whatif", "{}"); }   // zmieniły się pary – symulacja nieaktualna
+      RES = fresh; loadMatches(); REAL_SIM = null; REAL_EXP = null;
+      renderAll();
+      const lu = $("#liveNote"); if (lu) lu.textContent = `Wyniki zaktualizowane ${new Date().toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" })}`;
+    } catch (e) { console.warn("Nie udało się odświeżyć wyników", e); }
+  }
+  setInterval(refreshResults, 120000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshResults(); });
 
   renderAll();
 })();

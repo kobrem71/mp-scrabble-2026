@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=31">
+<link rel="stylesheet" href="style.css?v=32">
 </head>
 <body>
 <div class="viz-root">
@@ -51,7 +51,7 @@
     <div class="grid-2">
       <div class="card">
         <div class="card-head"><h2>Tabela</h2><span class="note" id="tiebreakNote"></span></div>
-        <div class="sim-bar"><button class="btn next-btn" type="button">⏭ Symuluj następną rundę</button><button class="btn sim-btn" type="button">🎲 Symuluj cały turniej</button><button class="btn ghost clear-btn" type="button">Wyczyść symulację</button><span class="hint" id="simState"></span></div>
+        <div class="sim-bar"><button class="btn next-btn" type="button">⏭ Symuluj następną rundę</button><button class="btn sim-btn" type="button">🎲 Symuluj cały turniej</button><button class="btn ghost clear-btn" type="button">Wyczyść symulację</button><span class="hint" id="simState"></span><span class="hint live-note" id="liveNote"></span></div>
         <div class="card-body"><div class="table-scroll"><table id="standings" class="tbl"></table></div></div>
       </div>
       <div class="card">
@@ -181,7 +181,7 @@
 </footer>
 <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
 </div>
-<script src="app.js?v=32"></script>
+<script src="app.js?v=33"></script>
 <script src="bg.js?v=1" defer></script>
 </body>
 </html>
