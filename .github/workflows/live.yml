@@ -1,0 +1,55 @@
+name: Wyniki na żywo (PFS)
+
+# Finały MP 2026: sobota 21-11 od 11:00 do ~21:00, niedziela 22-11 do ~16:00 (czas polski = UTC+1).
+# GitHub uruchamia harmonogram z opóźnieniem do kilkunastu minut przy dużym ruchu.
+on:
+  schedule:
+    - cron: "*/10 10-20 21 11 *"   # sobota 11:00–21:50 czasu polskiego
+    - cron: "*/10 8-15 22 11 *"    # niedziela 9:00–16:50 czasu polskiego
+  workflow_dispatch:
+    inputs:
+      tour:
+        description: "ID turnieju w transmisji PFS"
+        default: "1400"
+      dry_run:
+        description: "Tylko sprawdź (bez zapisu)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: live-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Pobierz wyniki z transmisji PFS
+        env:
+          TOUR_ID: ${{ inputs.tour || '1400' }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            python scripts/live_update.py --dry-run
+          else
+            python scripts/live_update.py
+          fi
+      - name: Zapisz zmiany
+        if: ${{ inputs.dry_run != true }}
+        run: |
+          if git diff --quiet -- docs/results.json; then echo "Bez zmian"; exit 0; fi
+          git config user.name "mp-live-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/results.json
+          git commit -m "Wyniki na żywo $(TZ=Europe/Warsaw date '+%d-%m-%Y %H:%M')"
+          git push
+          # poproś GitHub Pages o przebudowanie strony (push z tokenu Actions może go nie wywołać)
+          curl -s -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pages/builds" || true
