@@ -6,6 +6,8 @@
   const pct = (p, d = 1) => (p * 100).toFixed(d) + "%";
   const fmt = (x, d = 2) => Number(x).toFixed(d);
   const rec = f => `${f.w}–${f.l}–${f.d}`; // wygrane–porażki–remisy, zawsze z remisami
+  // okrągłe zdjęcie gracza (duotone w kolorach strony)
+  const av = (i, cls = "") => `<img class="pav ${cls}" src="img/p${P[i].id}.jpg?v=1" alt="" width="28" height="28" loading="lazy" decoding="async">`;
   const short = n => { const [f, ...l] = n.split(" "); return f[0] + ". " + l.join(" "); };
 
   function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -220,7 +222,7 @@
       const p = P[s.i], sm = simBy[s.i];
       const tail = done ? `<td></td><td></td><td></td>` : `<td class="num"><b>${pct(sm.title)}</b></td><td class="num"><b class="odds-ink">${fmtOdds(odds(sm.title, M.marginOutright))}</b></td><td class="num">${pct(sm.podium, 0)}</td>`;
       const form = s.form.slice(-5).map(f => f === "w" ? '<span class="form-dot w" title="wygrana"></span>' : f === "l" ? '<span class="form-dot l" title="porażka"></span>' : f === "hw" ? '<span class="form-dot w h" title="wygrana (symulacja)"></span>' : f === "hl" ? '<span class="form-dot l h" title="porażka (symulacja)"></span>' : '<span class="form-dot" title="remis" style="background:var(--text-muted)"></span>').join("");
-      return `<tr data-i="${s.i}"><td class="pos">${k + 1}</td><td class="pname-cell">${esc(p.name)}</td><td class="num">${s.played}</td><td class="num"><b>${fmt(s.pts, 1).replace(/\.0$/, "")}</b></td><td class="num">${s.pf || "–"}</td><td class="num">${s.spread > 0 ? "+" : ""}${s.spread}</td><td>${form}</td>${tail}</tr>`;
+      return `<tr data-i="${s.i}"><td class="pos">${k + 1}</td><td class="pname-cell"><span class="pn">${av(s.i)}${esc(p.name)}</span></td><td class="num">${s.played}</td><td class="num"><b>${fmt(s.pts, 1).replace(/\.0$/, "")}</b></td><td class="num">${s.pf || "–"}</td><td class="num">${s.spread > 0 ? "+" : ""}${s.spread}</td><td>${form}</td>${tail}</tr>`;
     }).join("");
     $("#standings").innerHTML = `<thead><tr><th>#</th><th>Gracz</th><th class="num">M</th><th class="num">Pkt</th><th class="num">Małe</th><th class="num">+/−</th><th>Forma</th><th class="num">Tytuł</th><th class="num">Kurs</th><th class="num">Podium</th></tr></thead><tbody>${rows}</tbody>`;
     $("#standings").querySelectorAll("tbody tr").forEach(tr => bindTip(tr, () => {
@@ -234,7 +236,7 @@
     $("#formNote").textContent = `partie od ${DATA.form.cutoff}, rywale z rankingiem ≥ ${DATA.form.minRank} · * mniej niż ${DATA.form.minGames} partii – okno 30 mies. (od ${DATA.form.extCutoff})`;
     $("#formChart").innerHTML = ord.map(i => {
       const f = P[i].form, v = formPct(f);
-      return `<div class="form-row" data-i="${i}"><span class="name">${esc(P[i].name)}${f.months > 12 ? '<span class="ext" title="okno 30 miesięcy">*</span>' : ""}</span><span class="rec"><b>${rec(f)}</b></span><div class="bar-track"><div class="bar-fill" style="width:${v * 100}%"></div></div><span class="val"><b>${pct(v, 1)}</b></span><span class="dots">${formDots(f.last10)}</span></div>`;
+      return `<div class="form-row" data-i="${i}"><span class="name">${av(i, "sm")}${esc(P[i].name)}${f.months > 12 ? '<span class="ext" title="okno 30 miesięcy">*</span>' : ""}</span><span class="rec"><b>${rec(f)}</b></span><div class="bar-track"><div class="bar-fill" style="width:${v * 100}%"></div></div><span class="val"><b>${pct(v, 1)}</b></span><span class="dots">${formDots(f.last10)}</span></div>`;
     }).join("");
     $("#formChart").querySelectorAll(".form-row").forEach(r => bindTip(r, () => {
       const p = P[+r.dataset.i], f = p.form;
@@ -247,14 +249,14 @@
       const st = standings(), sim = matches.some(m => !m.score);
       $("#titleHead").textContent = sim ? "Wynik symulacji" : "Klasyfikacja końcowa";
       $("#simNote").textContent = sim ? "turniej rozegrany w symulacji" : "turniej zakończony";
-      $("#titleChart").innerHTML = st.slice(0, 3).map((x, k) => `<div class="podium-row"><span class="medal m${k + 1}">${k + 1}</span><span class="name">${esc(P[x.i].name)}</span><span class="val"><b>${fmt(x.pts, 1).replace(/\.0$/, "")} pkt</b> · ${x.spread > 0 ? "+" : ""}${x.spread}</span></div>`).join("") + `<p class="hint">Szanse i kursy na tytuł nie mają sensu po ostatniej rundzie – kliknij „Wyczyść symulację”, by wrócić do prognozy.</p>`;
+      $("#titleChart").innerHTML = st.slice(0, 3).map((x, k) => `<div class="podium-row"><span class="medal m${k + 1}">${k + 1}</span><span class="name">${av(x.i)}${esc(P[x.i].name)}</span><span class="val"><b>${fmt(x.pts, 1).replace(/\.0$/, "")} pkt</b> · ${x.spread > 0 ? "+" : ""}${x.spread}</span></div>`).join("") + `<p class="hint">Szanse i kursy na tytuł nie mają sensu po ostatniej rundzie – kliknij „Wyczyść symulację”, by wrócić do prognozy.</p>`;
       return;
     }
     $("#titleHead").textContent = "Szanse na tytuł";
     const s = [...SIM].sort((a, b) => b.title - a.title || a.avgPlace - b.avgPlace);
     const max = Math.max(...s.map(x => x.title), 0.0001);
     $("#simNote").textContent = `symulacja Monte Carlo, ${SIMS.toLocaleString("pl-PL")} przebiegów`;
-    $("#titleChart").innerHTML = s.map(x => `<div class="bar-row" data-i="${x.i}"><span class="name">${esc(P[x.i].name)}</span><div class="bar-track"><div class="bar-fill" style="width:${(x.title / max) * 100}%"></div></div><span class="val"><b>${pct(x.title)}</b> · ${fmtOdds(odds(x.title, M.marginOutright))}</span></div>`).join("");
+    $("#titleChart").innerHTML = s.map(x => `<div class="bar-row" data-i="${x.i}"><span class="name">${av(x.i, "sm")}${esc(P[x.i].name)}</span><div class="bar-track"><div class="bar-fill" style="width:${(x.title / max) * 100}%"></div></div><span class="val"><b>${pct(x.title)}</b> · ${fmtOdds(odds(x.title, M.marginOutright))}</span></div>`).join("");
     $("#titleChart").querySelectorAll(".bar-row").forEach(r => bindTip(r, () => {
       const x = SIM.find(s => s.i === +r.dataset.i);
       return `<div class="t">${esc(P[x.i].name)}</div>${tRow("Tytuł", pct(x.title, 2))}${tRow("Kurs na tytuł", fmtOdds(odds(x.title, M.marginOutright)))}${tRow("Podium", pct(x.podium))}${tRow("Kurs na podium", fmtOdds(odds(x.podium, M.marginOutright)))}${tRow("Średnie miejsce", fmt(x.avgPlace, 1))}`;
@@ -299,7 +301,7 @@
       const k = sideKey === "a" ? 0 : 1;
       const win = sc ? sc[k] > sc[1 - k] : sim === sideKey;
       const right = sc ? `<span class="score${simSc ? " simsc" : ""}">${sc[k]}</span><span class="odds small-odds">${played ? "" : fmtOdds(odds(p, M.marginMatch))}</span>` : `<span class="odds">${fmtOdds(odds(p, M.marginMatch))}</span>`;
-      return `<div class="side${sc ? " has-score" : ""}"><button class="pname ${win ? "win" : ""} ${!played && sim === sideKey ? "sim" : ""}" data-key="${m.key}" data-side="${sideKey}" ${played ? "disabled" : ""} title="${played ? "" : "Kliknij, by zasymulować wygraną"}">${esc(P[i].name)}</button><span class="pct">${pct(p, 0)}</span>${right}</div>`;
+      return `<div class="side${sc ? " has-score" : ""}"><button class="pname ${win ? "win" : ""} ${!played && sim === sideKey ? "sim" : ""}" data-key="${m.key}" data-side="${sideKey}" ${played ? "disabled" : ""} title="${played ? "" : "Kliknij, by zasymulować wygraną"}">${av(i)}<span class="pnt">${esc(P[i].name)}</span></button><span class="pct">${pct(p, 0)}</span>${right}</div>`;
     };
     return `<div class="match ${played ? "played" : ""}${simSc ? " simulated" : ""}" data-key="${m.key}">${side(m.a, pa, 0, "a")}<div class="split"><span class="a" style="width:${pa * 100}%"></span><span class="b" style="width:${pb * 100}%"></span></div>${side(m.b, pb, 0, "b")}<div class="meta"><span>H2H: ${h2hStr(m.a, m.b)}</span><span>${played ? "rozegrany" : simSc ? "wynik symulowany" : "kurs dziesiętny"}</span></div></div>`;
   }
@@ -320,8 +322,8 @@
 
   function renderMatrix() {
     const ord = matrixOrder();
-    const head = `<thead><tr><th></th>${ord.map(j => `<th title="${esc(P[j].name)}">${esc(short(P[j].name))}</th>`).join("")}</tr></thead>`;
-    const body = ord.map(i => `<tr><th>${esc(short(P[i].name))}</th>${ord.map(j => {
+    const head = `<thead><tr><th></th>${ord.map(j => `<th class="avh" data-p="${j}">${av(j)}</th>`).join("")}</tr></thead>`;
+    const body = ord.map(i => `<tr><th class="avh" data-p="${i}">${av(i)}</th>${ord.map(j => {
       if (i === j) return `<td class="self"></td>`;
       const x = H[i][j];
       const sel = (selPair[0] === i && selPair[1] === j) ? " sel" : "";
@@ -332,6 +334,7 @@
     $("#h2hMatrix").innerHTML = head + `<tbody>${body}</tbody>`;
     const l = divColor(0.15).bg, m = divColor(0.5).bg, r = divColor(0.85).bg;
     $("#h2hLegend").innerHTML = `<span>0%</span><span class="ramp" style="background:linear-gradient(90deg,${l},${m},${r})"></span><span>100%</span><span class="muted">· wzór = brak gier</span>`;
+    $("#h2hMatrix").querySelectorAll("th.avh").forEach(th => bindTip(th, () => { const p = P[+th.dataset.p]; return `<div class="t">${esc(p.name)}</div>${tRow("Ranking PFS", fmt(p.rank))}${tRow("Siła w modelu", fmt(p.strength))}`; }));
     $("#h2hMatrix").querySelectorAll("td[data-i]").forEach(td => {
       const i = +td.dataset.i, j = +td.dataset.j;
       bindTip(td, () => {
@@ -476,7 +479,7 @@
       const diff = f - t;
       return `<li class="typer-row${lock ? " locked" : ""}" draggable="${!lock}" data-k="${k}">
         <span class="tpos">${t}</span>
-        <span class="tname">${esc(P[i].name)}</span>
+        <span class="tname">${av(i, "sm")}${esc(P[i].name)}</span>
         <span class="tfc">prognoza: ${f}.</span>
         <span class="tmult ${mult > 1 ? "up" : ""}">${mult > 1 ? "×" + mult.toFixed(2) : "×1.00"}</span>
         ${sc ? `<span class="tpts">${r.a}. → <b>${r.pts.toFixed(1)}</b></span>` : ""}
@@ -601,7 +604,7 @@
     const tot = x => x.c[0] + x.c[1] + x.c[2];
     const rows = cnt.filter(x => tot(x) > 0).sort((a, b) => b.c[0] - a.c[0] || tot(b) - tot(a) || b.c[1] - a.c[1]);
     const max = Math.max(...rows.map(x => x.c[0]), 1);
-    el.innerHTML = `<table class="tbl fav-tbl"><thead><tr><th>Gracz</th><th>Na mistrza</th><th class="num">🥇 1.</th><th class="num">🥈 2.</th><th class="num">🥉 3.</th><th class="num">Na podium</th></tr></thead><tbody>${rows.map(x => `<tr><td class="pname-cell">${esc(P[x.i].name)}</td><td class="fav-bar"><div class="bar-track"><div class="bar-fill gold" style="width:${x.c[0] / max * 100}%"></div></div></td><td class="num"><b>${x.c[0]}</b> <span class="muted">(${pct(x.c[0] / n, 0)})</span></td><td class="num">${x.c[1]}</td><td class="num">${x.c[2]}</td><td class="num"><b>${tot(x)}</b> <span class="muted">(${pct(tot(x) / n, 0)})</span></td></tr>`).join("")}</tbody></table>`;
+    el.innerHTML = `<table class="tbl fav-tbl"><thead><tr><th>Gracz</th><th>Na mistrza</th><th class="num">🥇 1.</th><th class="num">🥈 2.</th><th class="num">🥉 3.</th><th class="num">Na podium</th></tr></thead><tbody>${rows.map(x => `<tr><td class="pname-cell"><span class="pn">${av(x.i)}${esc(P[x.i].name)}</span></td><td class="fav-bar"><div class="bar-track"><div class="bar-fill gold" style="width:${x.c[0] / max * 100}%"></div></div></td><td class="num"><b>${x.c[0]}</b> <span class="muted">(${pct(x.c[0] / n, 0)})</span></td><td class="num">${x.c[1]}</td><td class="num">${x.c[2]}</td><td class="num"><b>${tot(x)}</b> <span class="muted">(${pct(tot(x) / n, 0)})</span></td></tr>`).join("")}</tbody></table>`;
   }
   function bindGoTyper() { document.querySelectorAll(".go-typer").forEach(a => { if (a.dataset.bound) return; a.dataset.bound = 1; a.addEventListener("click", e => { e.preventDefault(); document.querySelector('.tabs button[data-tab="typer"]').click(); scrollTo(0, 0); }); }); }
 

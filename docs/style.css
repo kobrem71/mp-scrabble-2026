@@ -574,3 +574,21 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
 }
 @media (prefers-reduced-motion: reduce) { .fact-text { transition: none; } }
 .fact-text { display: block; min-height: 0; }
+
+
+/* --- Zdjęcia graczy (kółeczka w stylu zdjęcia autora) --- */
+.pav { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex: none; vertical-align: middle;
+  border: 2px solid var(--tile); box-shadow: 0 1px 3px rgba(0,0,0,.4); background: var(--bar-1); margin-right: 8px; }
+.pav.sm { width: 22px; height: 22px; border-width: 1.5px; margin-right: 6px; }
+.pn { display: inline-flex; align-items: center; }
+.bar-row .name, .form-row .name, .podium-row .name, .tname { display: flex; align-items: center; min-width: 0; }
+.side .pname { display: flex; align-items: center; min-width: 0; }
+.side .pname .pnt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* H2H: same kółeczka zamiast nazwisk */
+.matrix thead th.avh { writing-mode: horizontal-tb; transform: none; height: auto; text-align: center; vertical-align: bottom; padding: 2px 0 4px; }
+.matrix tbody th.avh { text-align: center; padding: 0 4px 0 0; }
+.matrix th.avh .pav { margin: 0; width: 30px; height: 30px; cursor: help; }
+.matrix th.avh:hover .pav { border-color: #ffd95a; }
+@media (max-width: 700px) { .pav { width: 24px; height: 24px; margin-right: 6px; } .matrix th.avh .pav { width: 24px; height: 24px; } }
+.matrix thead th { height: auto; }
+.tbl td { vertical-align: middle; }
