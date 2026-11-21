@@ -85,7 +85,10 @@
     {
      "a": "Sławomir Piotrowski",
      "b": "Dominik Urbacki",
-     "score": null
+     "score": [
+      384,
+      412
+     ]
     },
     {
      "a": "Wojciech Zemło",
@@ -95,7 +98,10 @@
     {
      "a": "Mariusz Skrobosz",
      "b": "Kacper Zegadło",
-     "score": null
+     "score": [
+      440,
+      374
+     ]
     },
     {
      "a": "Karolina Urbańska",
@@ -722,5 +728,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T11:52:07+00:00"
+ "updated": "2026-11-21T11:58:13+00:00"
 }
