@@ -231,7 +231,10 @@
     {
      "a": "Artur Irzyk",
      "b": "Dariusz Ulatowski",
-     "score": null
+     "score": [
+      469,
+      517
+     ]
     },
     {
      "a": "Kacper Zegadło",
@@ -260,7 +263,10 @@
     {
      "a": "Mariusz Skrobosz",
      "b": "Łukasz Bobowski",
-     "score": null
+     "score": [
+      434,
+      410
+     ]
     },
     {
      "a": "Joanna Juszczak",
@@ -780,5 +786,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T14:38:43+00:00"
+ "updated": "2026-11-21T14:47:52+00:00"
 }
