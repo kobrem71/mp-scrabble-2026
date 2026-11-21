@@ -215,7 +215,10 @@
     {
      "a": "Jakub Szymczak",
      "b": "Kamil Górka",
-     "score": null
+     "score": [
+      364,
+      369
+     ]
     },
     {
      "a": "Dominik Urbacki",
@@ -233,7 +236,10 @@
     {
      "a": "Kacper Zegadło",
      "b": "Dawid Adamczyk",
-     "score": null
+     "score": [
+      414,
+      325
+     ]
     },
     {
      "a": "Sławomir Piotrowski",
@@ -246,7 +252,10 @@
     {
      "a": "Marcin Rogala",
      "b": "Przemysław Herdzina",
-     "score": null
+     "score": [
+      444,
+      450
+     ]
     },
     {
      "a": "Mariusz Skrobosz",
@@ -771,5 +780,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T14:35:38+00:00"
+ "updated": "2026-11-21T14:38:43+00:00"
 }
