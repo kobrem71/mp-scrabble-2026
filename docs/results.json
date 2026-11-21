@@ -284,7 +284,10 @@
     {
      "a": "Kamil Górka",
      "b": "Karolina Urbańska",
-     "score": null
+     "score": [
+      425,
+      328
+     ]
     },
     {
      "a": "Dominik Urbacki",
@@ -302,7 +305,10 @@
     {
      "a": "Kacper Zegadło",
      "b": "Artur Irzyk",
-     "score": null
+     "score": [
+      384,
+      288
+     ]
     },
     {
      "a": "Bartosz Morawski",
@@ -788,5 +794,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T15:24:13+00:00"
+ "updated": "2026-11-21T15:33:19+00:00"
 }
