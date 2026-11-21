@@ -24,7 +24,10 @@
     {
      "a": "Dariusz Ulatowski",
      "b": "Mariusz Skrobosz",
-     "score": null
+     "score": [
+      433,
+      402
+     ]
     },
     {
      "a": "Kacper Zegadło",
@@ -37,12 +40,18 @@
     {
      "a": "Bartosz Morawski",
      "b": "Jakub Szymczak",
-     "score": null
+     "score": [
+      472,
+      355
+     ]
     },
     {
      "a": "Marcin Rogala",
      "b": "Karolina Urbańska",
-     "score": null
+     "score": [
+      324,
+      393
+     ]
     },
     {
      "a": "Łukasz Bobowski",
@@ -702,5 +711,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T11:00:27+00:00"
+ "updated": "2026-11-21T11:03:31+00:00"
 }
