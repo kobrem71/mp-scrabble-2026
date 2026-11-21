@@ -23,6 +23,7 @@ on:
 permissions:
   contents: write
   pages: write
+  actions: write
 
 concurrency:
   group: live-update
@@ -48,22 +49,37 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [ "$DRY" = "true" ]; then python scripts/live_update.py --dry-run; exit 0; fi
           start=$(date +%s); stop=$((start + MINUTES*60))
-          while :; do
-            now=$(date -u +%s)
-            # koniec okna: sobota 21:30, niedziela 17:00 czasu polskiego (ręczne uruchomienie poza oknem robi jeden przebieg)
+          in_window() {
             d=$(date -u +%d); h=$(date -u +%H%M)
-            git pull -q --rebase origin main || true
-            python scripts/live_update.py || echo "błąd pobierania – spróbuję za chwilę"
-            if ! git diff --quiet -- docs/results.json; then
-              git add docs/results.json
-              git commit -q -m "Wyniki na żywo $(TZ=Europe/Warsaw date '+%d-%m-%Y %H:%M')"
-              git push -q origin HEAD:main || { git pull -q --rebase origin main && git push -q origin HEAD:main; } || true
-              curl -s -o /dev/null -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
-                "https://api.github.com/repos/${{ github.repository }}/pages/builds" || true
+            # sobota 21-11 10:45–20:30 UTC (11:45–21:30 PL), niedziela 22-11 07:45–16:00 UTC (8:45–17:00 PL)
+            if [ "$d" = "21" ] && [ "$h" \> "0945" ] && [ "$h" \< "2030" ]; then return 0; fi
+            if [ "$d" = "22" ] && [ "$h" \> "0745" ] && [ "$h" \< "1600" ]; then return 0; fi
+            return 1
+          }
+          first=1
+          while :; do
+            if in_window || [ $first = 1 ]; then
+              first=0
+              git pull -q --rebase origin main || true
+              python scripts/live_update.py || echo "błąd pobierania – spróbuję za chwilę"
+              if ! git diff --quiet -- docs/results.json; then
+                git add docs/results.json
+                git commit -q -m "Wyniki na żywo $(TZ=Europe/Warsaw date '+%d-%m-%Y %H:%M')"
+                git push -q origin HEAD:main || { git pull -q --rebase origin main && git push -q origin HEAD:main; } || true
+                curl -s -o /dev/null -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+                  "https://api.github.com/repos/${{ github.repository }}/pages/builds" || true
+              fi
             fi
-            in_window=0
-            if [ "$d" = "21" ] && [ "$h" \> "0945" ] && [ "$h" \< "2030" ]; then in_window=1; fi
-            if [ "$d" = "22" ] && [ "$h" \> "0745" ] && [ "$h" \< "1600" ]; then in_window=1; fi
-            if [ $in_window = 0 ] || [ $((now + 200)) -gt $stop ]; then echo "Koniec pętli"; break; fi
+            [ $(( $(date +%s) + 200 )) -gt $stop ] && break
             sleep 180
           done
+          # sztafeta: przed końcem turnieju (niedziela 22-11 16:00 UTC) uruchom następny przebieg,
+          # bo harmonogram (cron) GitHuba bywa zawodny
+          if [ "$(date -u +%Y%m%d%H%M)" \< "202611221600" ]; then
+            echo "Uruchamiam następny przebieg"
+            curl -s -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/live.yml/dispatches" \
+              -d '{"ref":"main","inputs":{"tour":"'"$TOUR_ID"'","minutes":"340"}}'
+          else
+            echo "Koniec turnieju – nie uruchamiam kolejnego przebiegu"
+          fi
