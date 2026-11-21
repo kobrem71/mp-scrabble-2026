@@ -575,7 +575,10 @@
     {
      "a": "Sławomir Piotrowski",
      "b": "Kacper Zegadło",
-     "score": null
+     "score": [
+      327,
+      661
+     ]
     },
     {
      "a": "Dawid Adamczyk",
@@ -877,5 +880,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T18:16:11+00:00"
+ "updated": "2026-11-21T18:46:26+00:00"
 }
