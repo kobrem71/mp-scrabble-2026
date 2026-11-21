@@ -1,9 +1,9 @@
 rules_version = '2';
-// MP 2026 – Typer. Typy widzi każdy; zapisać/zmienić można tylko własny typ, do 21-11-2026 11:00 (Warszawa).
+// MP 2026 – Typer. Typy widzi każdy; zapisać/zmienić można tylko własny typ, do 21-11-2026 11:59 (Warszawa).
 service cloud.firestore {
   match /databases/{database}/documents {
     function beforeDeadline() {
-      return request.time < timestamp.value(1795255200000);
+      return request.time < timestamp.value(1795258740000);
     }
     function validTyp() {
       let d = request.resource.data;
