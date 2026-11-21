@@ -99,10 +99,13 @@
       }
     }
     s.forEach(x => { x.pts = x.w + x.d / 2; x.spread = x.pf - x.pa; });
-    return s.sort((x, y) => y.pts - x.pts || y.spread - x.spread || (SIM ? SIM[y.i].title - SIM[x.i].title || SIM[x.i].avgPlace - SIM[y.i].avgPlace : 0) || P[y.i].rank - P[x.i].rank);
+    return s.sort((x, y) => y.pts - x.pts || y.pf - x.pf || y.spread - x.spread || (SIM ? SIM[y.i].title - SIM[x.i].title || SIM[x.i].avgPlace - SIM[y.i].avgPlace : 0) || P[y.i].rank - P[x.i].rank);
   }
 
   // ---------- Monte Carlo ----------
+  // średnia suma małych punktów w partii (jak w simScore) – potrzebna, bo 2. kryterium to SUMA małych punktów
+  const TOTAL_SD = 55;
+  const meanTotal = (a, b) => (P[a].form.avg + P[a].form.oppAvg + P[b].form.avg + P[b].form.oppAvg) / 2;
   const SIMS = 20000;
   function simulate(pre = false) {
     seed = 20261116; // stałe ziarno: te same kursy przy każdym odświeżeniu
@@ -111,31 +114,31 @@
     for (const m of matches) {
       if (pre) {
         const p = prob(m.a, m.b);
-        open.push([m.a, m.b, M.spreadSd * invNorm(Math.min(Math.max(p, 1e-6), 1 - 1e-6))]);
+        open.push([m.a, m.b, M.spreadSd * invNorm(Math.min(Math.max(p, 1e-6), 1 - 1e-6)), meanTotal(m.a, m.b)]);
       } else if (m.score) {
         const [x, y] = m.score;
         base[m.a] += x > y ? 1 : x === y ? .5 : 0; base[m.b] += y > x ? 1 : x === y ? .5 : 0;
-        baseSpread[m.a] += x - y; baseSpread[m.b] += y - x;
+        baseSpread[m.a] += x; baseSpread[m.b] += y;
       } else if (Array.isArray(whatIf[m.key])) {
         const [x, y] = whatIf[m.key];
         base[x > y ? m.a : m.b] += 1;
-        baseSpread[m.a] += x - y; baseSpread[m.b] += y - x;
+        baseSpread[m.a] += x; baseSpread[m.b] += y;
       } else if (whatIf[m.key]) {
         const w = whatIf[m.key] === "a" ? m.a : m.b, l = w === m.a ? m.b : m.a;
-        base[w] += 1; baseSpread[w] += 60; baseSpread[l] -= 60;
+        base[w] += 1; const t0 = meanTotal(m.a, m.b); baseSpread[w] += t0 / 2 + 30; baseSpread[l] += t0 / 2 - 30;
       } else {
         const p = prob(m.a, m.b);
-        open.push([m.a, m.b, M.spreadSd * invNorm(Math.min(Math.max(p, 1e-6), 1 - 1e-6))]);
+        open.push([m.a, m.b, M.spreadSd * invNorm(Math.min(Math.max(p, 1e-6), 1 - 1e-6)), meanTotal(m.a, m.b)]);
       }
     }
     const title = new Float64Array(N), podium = new Float64Array(N), place = new Float64Array(N);
     const pts = new Float64Array(N), spr = new Float64Array(N), order = [...Array(N).keys()];
     for (let s = 0; s < SIMS; s++) {
       pts.set(base); spr.set(baseSpread);
-      for (const [a, b, mu] of open) {
-        const d = mu + M.spreadSd * randn();
+      for (const [a, b, mu, t0] of open) {
+        const d = mu + M.spreadSd * randn(), tot = t0 + TOTAL_SD * randn();
         if (d > 0) pts[a]++; else pts[b]++;
-        spr[a] += d; spr[b] -= d;
+        spr[a] += (tot + d) / 2; spr[b] += (tot - d) / 2;   // spr = suma małych punktów
       }
       order.sort((x, y) => pts[y] - pts[x] || spr[y] - spr[x]);
       title[order[0]]++;
@@ -215,7 +218,7 @@
   function renderStandings() {
     const st = standings();
     const simBy = Object.fromEntries(SIM.map(s => [s.i, s]));
-    $("#tiebreakNote").textContent = "Kolejność: duże punkty → różnica małych punktów";
+    $("#tiebreakNote").textContent = "Kolejność: duże punkty → suma małych punktów";
     const nSim = matches.filter(m => !m.score && whatIf[m.key]).length, nReal = matches.filter(m => m.score).length;
     $("#simState").innerHTML = nSim ? `<b>Symulacja:</b> ${nSim} partii symulowanych, ${nReal} rozegranych` + (nSim + nReal === matches.length ? " – tabela pokazuje wynik końcowy symulowanego turnieju" : "") : `${nReal} z ${matches.length} partii rozegranych`;
     const done = finished();
@@ -254,7 +257,7 @@
       const st = standings(), sim = matches.some(m => !m.score);
       $("#titleHead").textContent = sim ? "Wynik symulacji" : "Klasyfikacja końcowa";
       $("#simNote").textContent = sim ? "turniej rozegrany w symulacji" : "turniej zakończony";
-      $("#titleChart").innerHTML = st.slice(0, 3).map((x, k) => `<div class="podium-row"><span class="medal m${k + 1}">${k + 1}</span><span class="name">${av(x.i)}${esc(P[x.i].name)}</span><span class="val"><b>${fmt(x.pts, 1).replace(/\.0$/, "")} pkt</b> · ${x.spread > 0 ? "+" : ""}${x.spread}</span></div>`).join("") + `<p class="hint">Szanse i kursy na tytuł nie mają sensu po ostatniej rundzie – kliknij „Wyczyść symulację”, by wrócić do prognozy.</p>`;
+      $("#titleChart").innerHTML = st.slice(0, 3).map((x, k) => `<div class="podium-row"><span class="medal m${k + 1}">${k + 1}</span><span class="name">${av(x.i)}${esc(P[x.i].name)}</span><span class="val"><b>${fmt(x.pts, 1).replace(/\.0$/, "")} pkt</b> · ${x.pf} małych</span></div>`).join("") + `<p class="hint">Szanse i kursy na tytuł nie mają sensu po ostatniej rundzie – kliknij „Wyczyść symulację”, by wrócić do prognozy.</p>`;
       return;
     }
     $("#titleHead").textContent = "Szanse na tytuł";
@@ -634,16 +637,16 @@
       if (m.score) {
         const [x, y] = m.score;
         base[m.a] += x > y ? 1 : x === y ? .5 : 0; base[m.b] += y > x ? 1 : x === y ? .5 : 0;
-        baseSpread[m.a] += x - y; baseSpread[m.b] += y - x;
+        baseSpread[m.a] += x; baseSpread[m.b] += y;
       } else if (Array.isArray(whatIf[m.key])) {
         const [x, y] = whatIf[m.key];
-        base[x > y ? m.a : m.b] += 1; baseSpread[m.a] += x - y; baseSpread[m.b] += y - x;
+        base[x > y ? m.a : m.b] += 1; baseSpread[m.a] += x; baseSpread[m.b] += y;
       } else if (whatIf[m.key]) {
         const w = whatIf[m.key] === "a" ? m.a : m.b, l = w === m.a ? m.b : m.a;
-        base[w] += 1; baseSpread[w] += 60; baseSpread[l] -= 60;
+        base[w] += 1; const t0 = meanTotal(m.a, m.b); baseSpread[w] += t0 / 2 + 30; baseSpread[l] += t0 / 2 - 30;
       } else {
         const p = prob(m.a, m.b);
-        open.push([m.a, m.b, M.spreadSd * invNorm(Math.min(Math.max(p, 1e-6), 1 - 1e-6))]);
+        open.push([m.a, m.b, M.spreadSd * invNorm(Math.min(Math.max(p, 1e-6), 1 - 1e-6)), meanTotal(m.a, m.b)]);
       }
     }
     // tabela punktów: tbl[e][gracz*N + miejsce-1]
@@ -658,7 +661,7 @@
     const sims = open.length ? TYPER_SIMS : 1;
     for (let s = 0; s < sims; s++) {
       pts.set(base); spr.set(baseSpread);
-      for (const [a, b, mu] of open) { const d = mu + M.spreadSd * randn(); if (d > 0) pts[a]++; else pts[b]++; spr[a] += d; spr[b] -= d; }
+      for (const [a, b, mu, t0] of open) { const d = mu + M.spreadSd * randn(), tot = t0 + TOTAL_SD * randn(); if (d > 0) pts[a]++; else pts[b]++; spr[a] += (tot + d) / 2; spr[b] += (tot - d) / 2; }
       order.sort((x, y) => pts[y] - pts[x] || spr[y] - spr[x]);
       for (let e = 0; e < T; e++) { const t = tbl[e]; let v = 0; for (let pl = 0; pl < N; pl++) v += t[order[pl] * N + pl]; v = Math.round(v * 10) / 10; sc[e] = v; sum[e] += v; }
       let best = -1, nb = 0;
@@ -740,13 +743,13 @@
     const nGames = H.flat().filter(Boolean).reduce((t, x) => t + x.w + x.d + x.l, 0) / 2;
     const qa = [
       ["Skąd pochodzą dane?", `Rankingi, bilanse head-to-head i statystyki graczy pochodzą z serwisu <a href="${DATA.source}" target="_blank" rel="noopener">scrabble.stats.org.pl</a> (turnieje rankingowe PFS), stan na ${DATA.updated}. Dodatkowo doliczamy partie z <a href="${DATA.elimSource}" target="_blank" rel="noopener">eliminacji XXXIII MP</a> (15 rund), których serwis statystyk jeszcze nie zawiera – zarówno do bilansów między finalistami, jak i do formy. Górka, Urbacki i Ulatowski nie grali w eliminacjach. Bilans H2H to wszystkie partie turniejowe rozegrane przez daną parę.`],
-      ["Jak wygląda faza finałowa?", `16 graczy gra każdy z każdym po razie – 15 rund, po 8 partii w rundzie. O kolejności decydują duże punkty (wygrana = 1, remis = ½), a przy równej liczbie – różnica małych punktów.`],
+      ["Jak wygląda faza finałowa?", `16 graczy gra każdy z każdym po razie – 15 rund, po 8 partii w rundzie. O kolejności decydują duże punkty (wygrana = 1, remis = ½), a przy równej liczbie – suma małych punktów (potem różnica małych).`],
       ["Czy rozstawienia są oficjalne?", `Nie. Do czasu publikacji oficjalnego terminarza pary w rundach są wygenerowane tablicami Bergera według rankingu PFS. Po ogłoszeniu oficjalnych par zostaną podmienione.`],
       ["Jak liczona jest szansa na wygraną w pojedynku?", `Najpierw siła gracza: średnia z trzech liczb – aktualnego rankingu PFS, rankingu z ostatnich 12 miesięcy i rankingu formy (patrz niżej). Różnica sił zamieniana jest na prawdopodobieństwo wzorem <code>p₀ = 1 / (1 + e^(−k·ΔS))</code>, gdzie <code>k = ${fmt(M.k, 4)}</code> dopasowano do ${nGames} historycznych partii rozegranych między finalistami. Różnica 10 punktów rankingu to ok. ${pct(1 / (1 + Math.exp(-M.k * 10)))} dla wyżej notowanego.`],
       ["Jak liczona jest forma?", `Bierzemy wszystkie partie turniejowe z ostatnich 12 miesięcy (od ${DATA.form.cutoff}) rozegrane z rywalami, którzy mieli w chwili gry ranking co najmniej ${DATA.form.minRank} – słabsze partie mało mówią o grze na poziomie finału. Jeśli gracz ma takich partii mniej niż ${DATA.form.minGames}, okno wydłużamy do 30 miesięcy (od ${DATA.form.extCutoff}); takich graczy oznaczamy gwiazdką *. Z bilansu i średniego rankingu rywali liczymy <b>ranking formy</b>: taki ranking, przy którym model przewidziałby dokładnie taki wynik. Przy małej liczbie partii ranking formy jest „ściągany” do aktualnego rankingu (waga ${DATA.form.prior} wirtualnych gier), żeby 10 udanych partii nie robiło z nikogo faworyta. Formę widać w zakładkach Tabela, Gracze i H2H.`],
       ["Czy bilans head-to-head ma znaczenie?", `Tak. Wynik z rankingu jest korygowany bilansem bezpośrednim: <code>p = (wygrane + remisy/2 + ${M.prior}·p₀) / (gry H2H + ${M.prior})</code>. Im więcej partii para rozegrała, tym mocniej bilans przesuwa prognozę. Przykład: ${esc(P[ex[0]].name)} vs ${esc(P[ex[1]].name)} – z samego rankingu ${pct(prior(ex[0], ex[1]))}, po uwzględnieniu H2H ${pct(prob(ex[0], ex[1]))}.`],
       ["Jak powstają kursy?", `Kurs dziesiętny = <code>1 / (p · (1 + marża))</code>. Marża na pojedynki wynosi ${pct(M.marginMatch, 0)}, na tytuł i podium ${pct(M.marginOutright, 0)}. Najniższy kurs to 1.01; kursy podajemy zawsze z dwoma miejscami po kropce. Kursy mają charakter wyłącznie rozrywkowy.`],
-      ["Skąd szanse na tytuł?", `Z symulacji Monte Carlo: ${SIMS.toLocaleString("pl-PL")} razy rozgrywamy wszystkie nierozegrane mecze, losując różnicę małych punktów z rozkładu normalnego (odchylenie ${M.spreadSd} pkt) dopasowanego do szansy na wygraną. Liczymy, jak często każdy gracz kończy na 1. miejscu i na podium.`],
+      ["Skąd szanse na tytuł?", `Z symulacji Monte Carlo: ${SIMS.toLocaleString("pl-PL")} razy rozgrywamy wszystkie nierozegrane mecze, losując różnicę małych punktów z rozkładu normalnego (odchylenie ${M.spreadSd} pkt) dopasowanego do szansy na wygraną oraz sumę małych w partii (ze średnich obu graczy, odchylenie ${TOTAL_SD} pkt) – bo przy równych dużych punktach decyduje suma małych. Liczymy, jak często każdy gracz kończy na 1. miejscu i na podium.`],
       ["Jak działają przyciski symulacji?", `„Symuluj następną rundę” losuje dokładne wyniki (z małymi punktami) partii kolejnej nierozegranej rundy – można tak przejść turniej runda po rundzie i obserwować, jak zmieniają się kursy. „Symuluj cały turniej” losuje od nowa wszystkie nierozegrane partie. Zwycięzca wynika z kursów (różnica małych punktów losowana z rozkładu normalnego dopasowanego do szansy na wygraną), a suma punktów w partii – ze średnich obu graczy z ostatnich 12 miesięcy. Każde kliknięcie daje inny przebieg. Gdy wszystkie partie mają wynik, kolumny z szansami i kursami na tytuł są puste, a zamiast nich pokazujemy podium.`],
       ["Co robi kliknięcie nazwiska w zakładce Mecze?", `Kliknięcie nazwiska w nierozegranym meczu przyjmuje, że ten gracz wygrał (bez dokładnego wyniku). Tabela, forma i szanse na tytuł przeliczają się od razu. Symulacja zapisuje się tylko w Twojej przeglądarce i nie wpływa na to, co widzą inni. Przycisk „Wyczyść symulację” przywraca stan rzeczywisty.`],
       ["Jak działa Typer?", `W zakładce Typer ustawiasz kolejność końcową wszystkich 16 graczy (przeciągając lub strzałkami ▲▼). Za każdego gracza dostajesz punkty zależnie od tego, jak blisko jego faktycznego miejsca trafiłeś: dokładnie – ${BASE_PTS[0]} pkt, o 1 miejsce – ${BASE_PTS[1]}, o 2 – ${BASE_PTS[2]}, o 3 – ${BASE_PTS[3]}, dalej – 0. W liście „Typy uczestników” kolumna Prognoza pokazuje punkty przy kolejności oczekiwanej przez model, a po kliknięciu „Symuluj cały turniej” – punkty każdego typera w wylosowanym przebiegu.`],
