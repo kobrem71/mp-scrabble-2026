@@ -64,7 +64,10 @@
     {
      "a": "Joanna Juszczak",
      "b": "Dawid Adamczyk",
-     "score": null
+     "score": [
+      379,
+      380
+     ]
     }
    ]
   },
@@ -714,5 +717,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T11:06:35+00:00"
+ "updated": "2026-11-21T11:09:40+00:00"
 }
