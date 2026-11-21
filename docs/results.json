@@ -560,7 +560,10 @@
     {
      "a": "Wojciech Zemło",
      "b": "Kamil Górka",
-     "score": null
+     "score": [
+      423,
+      410
+     ]
     },
     {
      "a": "Mariusz Skrobosz",
@@ -880,5 +883,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T18:46:26+00:00"
+ "updated": "2026-11-21T18:49:31+00:00"
 }
