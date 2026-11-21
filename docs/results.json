@@ -220,7 +220,10 @@
     {
      "a": "Dominik Urbacki",
      "b": "Karolina Urbańska",
-     "score": null
+     "score": [
+      532,
+      295
+     ]
     },
     {
      "a": "Artur Irzyk",
@@ -762,5 +765,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T13:50:13+00:00"
+ "updated": "2026-11-21T14:32:32+00:00"
 }
