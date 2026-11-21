@@ -16,7 +16,10 @@
     {
      "a": "Dominik Urbacki",
      "b": "Przemysław Herdzina",
-     "score": null
+     "score": [
+      415,
+      386
+     ]
     },
     {
      "a": "Dariusz Ulatowski",
@@ -699,5 +702,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T10:51:20+00:00"
+ "updated": "2026-11-21T11:00:27+00:00"
 }
