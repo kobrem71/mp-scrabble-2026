@@ -77,7 +77,10 @@
     {
      "a": "Przemysław Herdzina",
      "b": "Kamil Górka",
-     "score": null
+     "score": [
+      416,
+      290
+     ]
     },
     {
      "a": "Sławomir Piotrowski",
@@ -716,5 +719,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T11:12:45+00:00"
+ "updated": "2026-11-21T11:46:02+00:00"
 }
