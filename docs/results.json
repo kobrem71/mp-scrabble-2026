@@ -294,7 +294,10 @@
     {
      "a": "Dariusz Ulatowski",
      "b": "Dawid Adamczyk",
-     "score": null
+     "score": [
+      270,
+      615
+     ]
     },
     {
      "a": "Kacper Zegadło",
@@ -785,5 +788,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T14:53:58+00:00"
+ "updated": "2026-11-21T15:24:13+00:00"
 }
