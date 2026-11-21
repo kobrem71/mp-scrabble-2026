@@ -499,7 +499,10 @@
     {
      "a": "Dominik Urbacki",
      "b": "Dawid Adamczyk",
-     "score": null
+     "score": [
+      411,
+      426
+     ]
     },
     {
      "a": "Dariusz Ulatowski",
@@ -527,7 +530,10 @@
     {
      "a": "Łukasz Bobowski",
      "b": "Sławomir Piotrowski",
-     "score": null
+     "score": [
+      401,
+      346
+     ]
     },
     {
      "a": "Joanna Juszczak",
@@ -863,5 +869,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T18:03:46+00:00"
+ "updated": "2026-11-21T18:06:50+00:00"
 }
