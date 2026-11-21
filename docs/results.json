@@ -8,7 +8,10 @@
     {
      "a": "Kamil Górka",
      "b": "Sławomir Piotrowski",
-     "score": null
+     "score": [
+      511,
+      462
+     ]
     },
     {
      "a": "Dominik Urbacki",
@@ -23,7 +26,10 @@
     {
      "a": "Kacper Zegadło",
      "b": "Wojciech Zemło",
-     "score": null
+     "score": [
+      389,
+      525
+     ]
     },
     {
      "a": "Bartosz Morawski",
@@ -693,5 +699,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T10:19:25+00:00"
+ "updated": "2026-11-21T10:51:20+00:00"
 }
