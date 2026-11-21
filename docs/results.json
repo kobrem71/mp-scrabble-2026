@@ -170,7 +170,10 @@
     {
      "a": "Kacper Zegadło",
      "b": "Przemysław Herdzina",
-     "score": null
+     "score": [
+      515,
+      284
+     ]
     },
     {
      "a": "Bartosz Morawski",
@@ -183,7 +186,10 @@
     {
      "a": "Marcin Rogala",
      "b": "Dawid Adamczyk",
-     "score": null
+     "score": [
+      432,
+      329
+     ]
     },
     {
      "a": "Łukasz Bobowski",
@@ -757,5 +763,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T12:52:44+00:00"
+ "updated": "2026-11-21T12:58:50+00:00"
 }
