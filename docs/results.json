@@ -56,7 +56,10 @@
     {
      "a": "Łukasz Bobowski",
      "b": "Artur Irzyk",
-     "score": null
+     "score": [
+      425,
+      404
+     ]
     },
     {
      "a": "Joanna Juszczak",
@@ -711,5 +714,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T11:03:31+00:00"
+ "updated": "2026-11-21T11:06:35+00:00"
 }
