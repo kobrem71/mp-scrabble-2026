@@ -491,7 +491,10 @@
     {
      "a": "Kamil Górka",
      "b": "Artur Irzyk",
-     "score": null
+     "score": [
+      391,
+      346
+     ]
     },
     {
      "a": "Dominik Urbacki",
@@ -506,7 +509,10 @@
     {
      "a": "Kacper Zegadło",
      "b": "Karolina Urbańska",
-     "score": null
+     "score": [
+      590,
+      246
+     ]
     },
     {
      "a": "Bartosz Morawski",
@@ -526,7 +532,10 @@
     {
      "a": "Joanna Juszczak",
      "b": "Przemysław Herdzina",
-     "score": null
+     "score": [
+      429,
+      324
+     ]
     }
    ]
   },
@@ -854,5 +863,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T17:21:26+00:00"
+ "updated": "2026-11-21T18:03:46+00:00"
 }
