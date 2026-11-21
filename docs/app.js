@@ -473,7 +473,7 @@
     const st = standings(), anyPlayed = matches.some(isDone), done = finished();
     const sc = anyPlayed ? typerScore(typer.order, st.map(x => x.i)) : null;
     const lock = typerLocked();
-    $("#typerDeadline").innerHTML = lock ? `<b>Typowanie zamknięte</b> (21 listopada 2026, 11:00).` : `Typy można zapisywać i zmieniać do <b>soboty 21 listopada 2026, 11:00</b>. Typy wszystkich uczestników są jawne.`;
+    $("#typerDeadline").innerHTML = lock ? `<b>Typowanie zamknięte</b> (21 listopada 2026, 11:59).` : `Typy można zapisywać i zmieniać do <b>soboty 21 listopada 2026, 11:59</b>. Typy wszystkich uczestników są jawne.`;
     $("#typerReset").disabled = lock;
     if (typeof renderTypy === "function") renderTypy();
     const byI = sc ? Object.fromEntries(sc.rows.map(r => [r.i, r])) : {};
@@ -512,7 +512,7 @@
   $("#typerReset").addEventListener("click", () => { if (typerLocked()) return; typer.order = FORECAST.slice(); saveTyperLocal(); renderTyper(); });
 
   // ---------- Firebase: logowanie Google + wspólna baza typów ----------
-  const DEADLINE = Date.UTC(2026, 10, 21, 10, 0); // 21-11-2026 11:00 czasu polskiego (musi zgadzać się z regułami Firestore)
+  const DEADLINE = Date.UTC(2026, 10, 21, 10, 59); // 21-11-2026 11:59 czasu polskiego (musi zgadzać się z regułami Firestore)
   const typerLocked = () => Date.now() >= DEADLINE;
   const FB_CONFIG = {
     apiKey: "AIzaSyD0T8vRrOGx7LiS-J-0lHmmCR4rl92-rjM",
@@ -601,7 +601,7 @@
     const el = $("#favList"); if (!el) return;
     if (!allTypy) { el.innerHTML = `<p class="hint">Wczytuję typy…</p>`; return; }
     const n = allTypy.length;
-    $("#favNote").textContent = `${n} ${n === 1 ? "typ" : n > 1 && n < 5 ? "typy" : "typów"} · typowanie do 21-11-2026 11:00`;
+    $("#favNote").textContent = `${n} ${n === 1 ? "typ" : n > 1 && n < 5 ? "typy" : "typów"} · typowanie do 21-11-2026 11:59`;
     if (!n) { el.innerHTML = `<p class="hint">Nikt jeszcze nie typował – <a href="#typer" class="go-typer">bądź pierwszy w zakładce Typer</a>.</p>`; bindGoTyper(); return; }
     const cnt = P.map((p, i) => ({ i, c: [0, 0, 0] }));
     allTypy.forEach(t => t.order.slice(0, 3).forEach((name, k) => { const i = IDX[name]; if (i !== undefined) cnt[i].c[k]++; }));
@@ -672,7 +672,7 @@
       ["Jak działają przyciski symulacji?", `„Symuluj następną rundę” losuje dokładne wyniki (z małymi punktami) partii kolejnej nierozegranej rundy – można tak przejść turniej runda po rundzie i obserwować, jak zmieniają się kursy. „Symuluj cały turniej” losuje od nowa wszystkie nierozegrane partie. Zwycięzca wynika z kursów (różnica małych punktów losowana z rozkładu normalnego dopasowanego do szansy na wygraną), a suma punktów w partii – ze średnich obu graczy z ostatnich 12 miesięcy. Każde kliknięcie daje inny przebieg. Gdy wszystkie partie mają wynik, kolumny z szansami i kursami na tytuł są puste, a zamiast nich pokazujemy podium.`],
       ["Co robi kliknięcie nazwiska w zakładce Mecze?", `Kliknięcie nazwiska w nierozegranym meczu przyjmuje, że ten gracz wygrał (bez dokładnego wyniku). Tabela, forma i szanse na tytuł przeliczają się od razu. Symulacja zapisuje się tylko w Twojej przeglądarce i nie wpływa na to, co widzą inni. Przycisk „Wyczyść symulację” przywraca stan rzeczywisty.`],
       ["Jak działa Typer?", `W zakładce Typer ustawiasz kolejność końcową wszystkich 16 graczy (przeciągając lub strzałkami ▲▼). Za każdego gracza dostajesz punkty zależnie od tego, jak blisko jego faktycznego miejsca trafiłeś: dokładnie – ${BASE_PTS[0]} pkt, o 1 miejsce – ${BASE_PTS[1]}, o 2 – ${BASE_PTS[2]}, o 3 – ${BASE_PTS[3]}, dalej – 0. W liście „Typy uczestników” kolumna Prognoza pokazuje punkty przy kolejności oczekiwanej przez model, a po kliknięciu „Symuluj cały turniej” – punkty każdego typera w wylosowanym przebiegu.`],
-      ["Jak zapisać typ i do kiedy?", `W zakładce Typer zaloguj się kontem Google, wpisz nick, ustaw kolejność i kliknij „Zapisz typ”. Każde konto ma jeden typ, który możesz zmieniać do soboty 21 listopada 2026, 11:00 – potem zapis blokuje serwer. Typy wszystkich uczestników są jawne (lista w zakładce Typer), ale nikt nie może zmienić cudzego typu. Zapisujemy tylko nick i kolejność – bez adresu e-mail.`],
+      ["Jak zapisać typ i do kiedy?", `W zakładce Typer zaloguj się kontem Google, wpisz nick, ustaw kolejność i kliknij „Zapisz typ”. Każde konto ma jeden typ, który możesz zmieniać do soboty 21 listopada 2026, 11:59 – potem zapis blokuje serwer. Typy wszystkich uczestników są jawne (lista w zakładce Typer), ale nikt nie może zmienić cudzego typu. Zapisujemy tylko nick i kolejność – bez adresu e-mail.`],
       ["Co daje typowanie wbrew kursom?", `Każde miejsce, o które ustawisz gracza wyżej niż przedturniejowa prognoza (kolejność wg kursu na tytuł), zwiększa punkty za niego o ${Math.round(BONUS_STEP * 100)}% – maksymalnie ×${BONUS_MAX.toFixed(2)}. Mnożnik działa tylko wtedy, gdy za gracza zdobywasz punkty, więc odważny typ opłaca się tylko, jeśli jest trafiony. Ustawienie gracza niżej niż prognoza nie ma mnożnika.`],
       ["Jak często aktualizowane są wyniki?", `Wyniki są wpisywane w trakcie turnieju; po każdej aktualizacji strona przelicza tabelę, kursy i szanse automatycznie. Odśwież stronę, aby zobaczyć najnowszy stan.`],
     ];
