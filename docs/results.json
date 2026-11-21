@@ -133,21 +133,69 @@
     {
      "a": "Artur Irzyk",
      "b": "Joanna Juszczak",
-     "score": null
+     "score": [
+      346,
+      291
+     ]
     }
    ]
   },
   {
    "round": 3,
-   "tentative": true,
    "matches": [
     {
-     "a": "Artur Irzyk",
-     "b": "Bartosz Morawski",
+     "a": "Kamil Górka",
+     "b": "Mariusz Skrobosz",
+     "score": null
+    },
+    {
+     "a": "Dominik Urbacki",
+     "b": "Wojciech Zemło",
      "score": null
     },
     {
      "a": "Dariusz Ulatowski",
+     "b": "Sławomir Piotrowski",
+     "score": null
+    },
+    {
+     "a": "Kacper Zegadło",
+     "b": "Przemysław Herdzina",
+     "score": null
+    },
+    {
+     "a": "Bartosz Morawski",
+     "b": "Artur Irzyk",
+     "score": null
+    },
+    {
+     "a": "Marcin Rogala",
+     "b": "Dawid Adamczyk",
+     "score": null
+    },
+    {
+     "a": "Łukasz Bobowski",
+     "b": "Jakub Szymczak",
+     "score": null
+    },
+    {
+     "a": "Joanna Juszczak",
+     "b": "Karolina Urbańska",
+     "score": null
+    }
+   ]
+  },
+  {
+   "round": 4,
+   "tentative": true,
+   "matches": [
+    {
+     "a": "Artur Irzyk",
+     "b": "Dariusz Ulatowski",
+     "score": null
+    },
+    {
+     "a": "Bartosz Morawski",
      "b": "Dawid Adamczyk",
      "score": null
     },
@@ -184,17 +232,17 @@
    ]
   },
   {
-   "round": 4,
+   "round": 5,
    "tentative": true,
    "matches": [
     {
      "a": "Artur Irzyk",
-     "b": "Dariusz Ulatowski",
+     "b": "Dawid Adamczyk",
      "score": null
     },
     {
      "a": "Bartosz Morawski",
-     "b": "Dawid Adamczyk",
+     "b": "Dariusz Ulatowski",
      "score": null
     },
     {
@@ -230,52 +278,6 @@
    ]
   },
   {
-   "round": 5,
-   "tentative": true,
-   "matches": [
-    {
-     "a": "Artur Irzyk",
-     "b": "Dawid Adamczyk",
-     "score": null
-    },
-    {
-     "a": "Bartosz Morawski",
-     "b": "Dariusz Ulatowski",
-     "score": null
-    },
-    {
-     "a": "Dominik Urbacki",
-     "b": "Kacper Zegadło",
-     "score": null
-    },
-    {
-     "a": "Jakub Szymczak",
-     "b": "Joanna Juszczak",
-     "score": null
-    },
-    {
-     "a": "Kamil Górka",
-     "b": "Mariusz Skrobosz",
-     "score": null
-    },
-    {
-     "a": "Karolina Urbańska",
-     "b": "Przemysław Herdzina",
-     "score": null
-    },
-    {
-     "a": "Marcin Rogala",
-     "b": "Łukasz Bobowski",
-     "score": null
-    },
-    {
-     "a": "Sławomir Piotrowski",
-     "b": "Wojciech Zemło",
-     "score": null
-    }
-   ]
-  },
-  {
    "round": 6,
    "tentative": true,
    "matches": [
@@ -291,22 +293,17 @@
     },
     {
      "a": "Dariusz Ulatowski",
-     "b": "Jakub Szymczak",
+     "b": "Dawid Adamczyk",
      "score": null
     },
     {
-     "a": "Dawid Adamczyk",
-     "b": "Kacper Zegadło",
+     "a": "Jakub Szymczak",
+     "b": "Kamil Górka",
      "score": null
     },
     {
-     "a": "Kamil Górka",
-     "b": "Wojciech Zemło",
-     "score": null
-    },
-    {
-     "a": "Karolina Urbańska",
-     "b": "Sławomir Piotrowski",
+     "a": "Kacper Zegadło",
+     "b": "Karolina Urbańska",
      "score": null
     },
     {
@@ -317,6 +314,11 @@
     {
      "a": "Mariusz Skrobosz",
      "b": "Łukasz Bobowski",
+     "score": null
+    },
+    {
+     "a": "Sławomir Piotrowski",
+     "b": "Wojciech Zemło",
      "score": null
     }
    ]
@@ -342,27 +344,27 @@
     },
     {
      "a": "Dawid Adamczyk",
-     "b": "Kamil Górka",
+     "b": "Kacper Zegadło",
      "score": null
     },
     {
-     "a": "Kacper Zegadło",
-     "b": "Karolina Urbańska",
-     "score": null
-    },
-    {
-     "a": "Marcin Rogala",
-     "b": "Sławomir Piotrowski",
-     "score": null
-    },
-    {
-     "a": "Mariusz Skrobosz",
+     "a": "Kamil Górka",
      "b": "Wojciech Zemło",
      "score": null
     },
     {
-     "a": "Przemysław Herdzina",
+     "a": "Karolina Urbańska",
+     "b": "Przemysław Herdzina",
+     "score": null
+    },
+    {
+     "a": "Marcin Rogala",
      "b": "Łukasz Bobowski",
+     "score": null
+    },
+    {
+     "a": "Mariusz Skrobosz",
+     "b": "Sławomir Piotrowski",
      "score": null
     }
    ]
@@ -393,22 +395,22 @@
     },
     {
      "a": "Joanna Juszczak",
-     "b": "Przemysław Herdzina",
+     "b": "Marcin Rogala",
      "score": null
     },
     {
      "a": "Karolina Urbańska",
-     "b": "Łukasz Bobowski",
-     "score": null
-    },
-    {
-     "a": "Marcin Rogala",
-     "b": "Wojciech Zemło",
+     "b": "Sławomir Piotrowski",
      "score": null
     },
     {
      "a": "Mariusz Skrobosz",
-     "b": "Sławomir Piotrowski",
+     "b": "Wojciech Zemło",
+     "score": null
+    },
+    {
+     "a": "Przemysław Herdzina",
+     "b": "Łukasz Bobowski",
      "score": null
     }
    ]
@@ -429,27 +431,27 @@
     },
     {
      "a": "Dariusz Ulatowski",
-     "b": "Karolina Urbańska",
+     "b": "Jakub Szymczak",
      "score": null
     },
     {
      "a": "Dawid Adamczyk",
-     "b": "Marcin Rogala",
-     "score": null
-    },
-    {
-     "a": "Dominik Urbacki",
-     "b": "Wojciech Zemło",
-     "score": null
-    },
-    {
-     "a": "Jakub Szymczak",
-     "b": "Sławomir Piotrowski",
+     "b": "Dominik Urbacki",
      "score": null
     },
     {
      "a": "Joanna Juszczak",
+     "b": "Sławomir Piotrowski",
+     "score": null
+    },
+    {
+     "a": "Karolina Urbańska",
      "b": "Łukasz Bobowski",
+     "score": null
+    },
+    {
+     "a": "Marcin Rogala",
+     "b": "Wojciech Zemło",
      "score": null
     },
     {
@@ -490,12 +492,12 @@
     },
     {
      "a": "Jakub Szymczak",
-     "b": "Wojciech Zemło",
+     "b": "Sławomir Piotrowski",
      "score": null
     },
     {
      "a": "Joanna Juszczak",
-     "b": "Sławomir Piotrowski",
+     "b": "Wojciech Zemło",
      "score": null
     },
     {
@@ -536,12 +538,12 @@
     },
     {
      "a": "Jakub Szymczak",
-     "b": "Przemysław Herdzina",
+     "b": "Wojciech Zemło",
      "score": null
     },
     {
      "a": "Joanna Juszczak",
-     "b": "Wojciech Zemło",
+     "b": "Przemysław Herdzina",
      "score": null
     },
     {
@@ -567,22 +569,22 @@
     },
     {
      "a": "Dariusz Ulatowski",
-     "b": "Sławomir Piotrowski",
+     "b": "Karolina Urbańska",
      "score": null
     },
     {
      "a": "Dawid Adamczyk",
-     "b": "Dominik Urbacki",
+     "b": "Wojciech Zemło",
      "score": null
     },
     {
-     "a": "Jakub Szymczak",
+     "a": "Dominik Urbacki",
      "b": "Kamil Górka",
      "score": null
     },
     {
-     "a": "Joanna Juszczak",
-     "b": "Marcin Rogala",
+     "a": "Jakub Szymczak",
+     "b": "Joanna Juszczak",
      "score": null
     },
     {
@@ -591,8 +593,8 @@
      "score": null
     },
     {
-     "a": "Karolina Urbańska",
-     "b": "Wojciech Zemło",
+     "a": "Marcin Rogala",
+     "b": "Sławomir Piotrowski",
      "score": null
     }
    ]
@@ -618,27 +620,27 @@
     },
     {
      "a": "Dawid Adamczyk",
-     "b": "Wojciech Zemło",
+     "b": "Kamil Górka",
      "score": null
     },
     {
      "a": "Dominik Urbacki",
-     "b": "Karolina Urbańska",
+     "b": "Kacper Zegadło",
      "score": null
     },
     {
      "a": "Jakub Szymczak",
-     "b": "Łukasz Bobowski",
-     "score": null
-    },
-    {
-     "a": "Joanna Juszczak",
      "b": "Mariusz Skrobosz",
      "score": null
     },
     {
-     "a": "Kacper Zegadło",
-     "b": "Kamil Górka",
+     "a": "Joanna Juszczak",
+     "b": "Łukasz Bobowski",
+     "score": null
+    },
+    {
+     "a": "Karolina Urbańska",
+     "b": "Wojciech Zemło",
      "score": null
     }
    ]
@@ -669,12 +671,12 @@
     },
     {
      "a": "Dominik Urbacki",
-     "b": "Marcin Rogala",
+     "b": "Karolina Urbańska",
      "score": null
     },
     {
      "a": "Jakub Szymczak",
-     "b": "Karolina Urbańska",
+     "b": "Przemysław Herdzina",
      "score": null
     },
     {
@@ -684,7 +686,7 @@
     },
     {
      "a": "Kacper Zegadło",
-     "b": "Przemysław Herdzina",
+     "b": "Marcin Rogala",
      "score": null
     }
    ]
@@ -715,27 +717,27 @@
     },
     {
      "a": "Dominik Urbacki",
-     "b": "Kamil Górka",
+     "b": "Marcin Rogala",
      "score": null
     },
     {
      "a": "Jakub Szymczak",
-     "b": "Mariusz Skrobosz",
-     "score": null
-    },
-    {
-     "a": "Joanna Juszczak",
      "b": "Karolina Urbańska",
      "score": null
     },
     {
+     "a": "Joanna Juszczak",
+     "b": "Mariusz Skrobosz",
+     "score": null
+    },
+    {
      "a": "Kacper Zegadło",
-     "b": "Marcin Rogala",
+     "b": "Kamil Górka",
      "score": null
     }
    ]
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T12:01:17+00:00"
+ "updated": "2026-11-21T12:07:22+00:00"
 }
