@@ -105,7 +105,10 @@
     {
      "a": "Jakub Szymczak",
      "b": "Marcin Rogala",
-     "score": null
+     "score": [
+      349,
+      557
+     ]
     },
     {
      "a": "Dawid Adamczyk",
@@ -719,5 +722,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T11:46:02+00:00"
+ "updated": "2026-11-21T11:52:07+00:00"
 }
