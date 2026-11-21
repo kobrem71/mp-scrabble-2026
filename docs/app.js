@@ -249,6 +249,7 @@
   }
 
   function renderTitle() {
+    if (liveTyperMode()) return; // kartę wypełnia renderTypy() → renderLiveTypers()
     if (finished()) {
       const st = standings(), sim = matches.some(m => !m.score);
       $("#titleHead").textContent = sim ? "Wynik symulacji" : "Klasyfikacja końcowa";
@@ -612,10 +613,87 @@
   }
   function bindGoTyper() { document.querySelectorAll(".go-typer").forEach(a => { if (a.dataset.bound) return; a.dataset.bound = 1; a.addEventListener("click", e => { e.preventDefault(); document.querySelector('.tabs button[data-tab="typer"]').click(); scrollTo(0, 0); }); }); }
 
+
+  // ---------- typerzy na żywo (po zamknięciu typowania – prawa karta na stronie głównej) ----------
+  const liveTyperMode = () => typerLocked() && Array.isArray(allTypy) && allTypy.length > 0;
+  function typerEntries() {
+    const out = allTypy.map(t => ({ uid: t.uid, nick: t.nick, order: t.order.map(n => IDX[n]).filter(i => i !== undefined) })).filter(t => t.order.length === N);
+    const avgPos = P.map((p, i) => ({ i, s: 0, n: 0 }));
+    allTypy.forEach(t => t.order.forEach((n, k) => { const i = IDX[n]; if (i !== undefined) { avgPos[i].s += k + 1; avgPos[i].n++; } }));
+    const avgOrder = avgPos.sort((a, b) => a.s / (a.n || 1) - b.s / (b.n || 1) || forecastPlace[a.i] - forecastPlace[b.i]).map(x => x.i);
+    out.push({ uid: "ai-avg", nick: "🤖 Średnia typerów", order: avgOrder, ai: true });
+    out.push({ uid: "ai-odds", nick: "🤖 Według kursów", order: FORECAST.slice(), ai: true });
+    return out;
+  }
+  const TYPER_SIMS = 5000;
+  function typerMC(entries) {
+    // te same założenia co Monte Carlo tytułu: rozegrane (i symulowane przez użytkownika) partie zostają, reszta losowana
+    seed = 20261121;
+    const base = new Float64Array(N), baseSpread = new Float64Array(N), open = [];
+    for (const m of matches) {
+      if (m.score) {
+        const [x, y] = m.score;
+        base[m.a] += x > y ? 1 : x === y ? .5 : 0; base[m.b] += y > x ? 1 : x === y ? .5 : 0;
+        baseSpread[m.a] += x - y; baseSpread[m.b] += y - x;
+      } else if (Array.isArray(whatIf[m.key])) {
+        const [x, y] = whatIf[m.key];
+        base[x > y ? m.a : m.b] += 1; baseSpread[m.a] += x - y; baseSpread[m.b] += y - x;
+      } else if (whatIf[m.key]) {
+        const w = whatIf[m.key] === "a" ? m.a : m.b, l = w === m.a ? m.b : m.a;
+        base[w] += 1; baseSpread[w] += 60; baseSpread[l] -= 60;
+      } else {
+        const p = prob(m.a, m.b);
+        open.push([m.a, m.b, M.spreadSd * invNorm(Math.min(Math.max(p, 1e-6), 1 - 1e-6))]);
+      }
+    }
+    // tabela punktów: tbl[e][gracz*N + miejsce-1]
+    const T = entries.length, tbl = entries.map(e => {
+      const a = new Float64Array(N * N);
+      e.order.forEach((i, k) => { for (let pl = 0; pl < N; pl++) a[i * N + pl] = Math.round((BASE_PTS[Math.abs(k - pl)] || 0) * typerMult(i, k + 1) * 10) / 10; });
+      return a;
+    });
+    const humans = entries.map((e, k) => e.ai ? -1 : k).filter(k => k >= 0);
+    const win = new Float64Array(T), sum = new Float64Array(T), sc = new Float64Array(T);
+    const pts = new Float64Array(N), spr = new Float64Array(N), order = [...Array(N).keys()];
+    const sims = open.length ? TYPER_SIMS : 1;
+    for (let s = 0; s < sims; s++) {
+      pts.set(base); spr.set(baseSpread);
+      for (const [a, b, mu] of open) { const d = mu + M.spreadSd * randn(); if (d > 0) pts[a]++; else pts[b]++; spr[a] += d; spr[b] -= d; }
+      order.sort((x, y) => pts[y] - pts[x] || spr[y] - spr[x]);
+      for (let e = 0; e < T; e++) { const t = tbl[e]; let v = 0; for (let pl = 0; pl < N; pl++) v += t[order[pl] * N + pl]; v = Math.round(v * 10) / 10; sc[e] = v; sum[e] += v; }
+      let best = -1, nb = 0;
+      for (const e of humans) { if (sc[e] > best + 1e-9) { best = sc[e]; nb = 1; } else if (Math.abs(sc[e] - best) < 1e-9) nb++; }
+      for (const e of humans) if (Math.abs(sc[e] - best) < 1e-9) win[e] += 1 / nb;
+    }
+    return entries.map((e, k) => ({ ...e, win: e.ai ? null : win[k] / sims, exp: sum[k] / sims }));
+  }
+  function renderLiveTypers() {
+    const st = standings(), anyPlayed = matches.some(isDone), fin = st.map(x => x.i), done = finished();
+    const simOn = matches.some(m => !m.score && whatIf[m.key]);
+    const res = typerMC(typerEntries()).map(r => ({ ...r, now: anyPlayed ? typerScore(r.order, fin).total : null }));
+    res.sort((a, b) => done ? b.now - a.now : (b.win ?? -1) - (a.win ?? -1) || (b.now ?? 0) - (a.now ?? 0) || b.exp - a.exp);
+    const nReal = matches.filter(m => m.score).length;
+    $("#titleHead").textContent = done ? (simOn ? "Typerzy – wynik symulacji" : "Typerzy – klasyfikacja końcowa") : "Typerzy na żywo";
+    $("#simNote").textContent = done ? "" : `${nReal} z ${matches.length} partii rozegranych${simOn ? " + Twoja symulacja" : ""} · szanse z ${TYPER_SIMS.toLocaleString("pl-PL")} symulacji reszty turnieju`;
+    const maxW = Math.max(...res.map(r => r.win || 0), 0.0001);
+    let place = 0;
+    const rows = res.map(r => {
+      const mine = fbUser && r.uid === fbUser.uid;
+      const nowTd = `<td class="num"><b>${r.now == null ? "–" : r.now.toFixed(1)}</b></td>`;
+      if (done) return `<tr class="${r.ai ? "ai" : ""}${mine ? " mine" : ""}"><td class="pos">${r.ai ? "" : ++place}</td><td class="nick"><span>${esc(r.nick)}</span></td>${nowTd}</tr>`;
+      return `<tr class="${r.ai ? "ai" : ""}${mine ? " mine" : ""}" ${r.ai ? 'title="Typ porównawczy – nie bierze udziału w klasyfikacji"' : ""}><td class="pos">${r.ai ? "" : ++place}</td><td class="nick"><span>${esc(r.nick)}</span></td>${nowTd}<td class="num">${r.exp.toFixed(1)}</td><td class="lt-bar">${r.ai ? "" : `<div class="bar-track"><div class="bar-fill gold" style="width:${r.win / maxW * 100}%"></div></div>`}</td><td class="num"><b>${r.ai ? "–" : pct(r.win)}</b></td></tr>`;
+    }).join("");
+    const head = done ? `<th>#</th><th>Typer</th><th class="num">Pkt</th>` :
+      `<th>#</th><th>Typer</th><th class="num" title="Punkty, gdyby turniej skończył się w obecnej kolejności tabeli">Teraz</th><th class="num" title="Średnia liczba punktów na koniec turnieju w symulacjach">Oczek.</th><th colspan="2" class="num" title="Szansa na wygranie typera">Szansa</th>`;
+    $("#titleChart").innerHTML = `<div class="live-typ-wrap"><table class="tbl live-typ">${`<thead><tr>${head}</tr></thead>`}<tbody>${rows}</tbody></table></div>` +
+      (done ? "" : `<p class="hint">Kolejność wg szansy na wygranie typera. <b>Teraz</b> – punkty, gdyby turniej skończył się w obecnej kolejności tabeli; <b>Oczek.</b> – średnia punktów na koniec. Rozegrane partie zostają, losowane są tylko pozostałe. Szanse na tytuł mistrza są nadal w kolumnie „Tytuł” w tabeli.</p>`);
+  }
+
   let REAL_EXP = null;
   function renderTypy() {
     renderFavs();
     if (!allTypy) return;
+    if (liveTyperMode()) renderLiveTypers();
     const st = standings(), anyPlayed = matches.some(isDone);
     const simOn = matches.some(m => !m.score && whatIf[m.key]);
     const fin = st.map(x => x.i);

@@ -596,3 +596,18 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
 .typy-tbl tr.ai td { background: #eef3f5 !important; font-style: italic; color: var(--text-secondary); }
 .typy-tbl tr.ai td.nick b { color: var(--bar-2); }
 .live-note { color: var(--good); font-weight: bold; }
+
+/* typerzy na żywo – prawa karta strony głównej po zamknięciu typowania */
+.live-typ-wrap { max-height: 620px; overflow: auto; }
+.live-typ { width: 100%; font-size: .92em; }
+.live-typ th, .live-typ td { padding-left: 5px; padding-right: 5px; }
+.live-typ td.nick { font-weight: 700; overflow-wrap: anywhere; max-width: 120px; }
+.live-typ td.lt-bar { width: 22%; min-width: 34px; padding-right: 3px; }
+.live-typ td.lt-bar + td { padding-left: 3px; white-space: nowrap; }
+@media (max-width: 520px) { .live-typ td.lt-bar { display: none; } }
+.live-typ tr.mine td { background: #e6f2e9 !important; }
+.live-typ tr.ai td { background: #eef3f5 !important; font-style: italic; color: var(--text-secondary); }
+.live-typ thead th { position: sticky; top: 0; z-index: 1; }
+.live-typ td.nick, .live-typ td.nick span { white-space: normal; }
+.live-typ td.nick span { display: block; max-width: 120px; overflow-wrap: anywhere; word-break: break-word; }
+@media (max-width: 520px) { .live-typ td.nick span { max-width: 100px; } }
