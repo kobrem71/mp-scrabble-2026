@@ -292,7 +292,10 @@
     {
      "a": "Dominik Urbacki",
      "b": "Jakub Szymczak",
-     "score": null
+     "score": [
+      483,
+      344
+     ]
     },
     {
      "a": "Dariusz Ulatowski",
@@ -328,7 +331,10 @@
     {
      "a": "Joanna Juszczak",
      "b": "Mariusz Skrobosz",
-     "score": null
+     "score": [
+      376,
+      358
+     ]
     }
    ]
   },
@@ -794,5 +800,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T15:33:19+00:00"
+ "updated": "2026-11-21T15:36:24+00:00"
 }
