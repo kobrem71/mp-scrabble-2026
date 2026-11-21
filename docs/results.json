@@ -238,7 +238,10 @@
     {
      "a": "Sławomir Piotrowski",
      "b": "Bartosz Morawski",
-     "score": null
+     "score": [
+      281,
+      484
+     ]
     },
     {
      "a": "Marcin Rogala",
@@ -253,7 +256,10 @@
     {
      "a": "Joanna Juszczak",
      "b": "Wojciech Zemło",
-     "score": null
+     "score": [
+      271,
+      554
+     ]
     }
    ]
   },
@@ -765,5 +771,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-21T14:32:32+00:00"
+ "updated": "2026-11-21T14:35:38+00:00"
 }
