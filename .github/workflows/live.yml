@@ -1,11 +1,12 @@
 name: Wyniki na żywo (PFS)
 
 # Finały MP 2026: sobota 21-11 od 11:00 do ~21:00, niedziela 22-11 do ~16:00 (czas polski = UTC+1).
-# GitHub uruchamia harmonogram z opóźnieniem do kilkunastu minut przy dużym ruchu.
+# Harmonogram GitHuba bywa opóźniony o kilkadziesiąt minut, dlatego jedno uruchomienie pracuje w pętli
+# (sprawdza transmisję co ~3 min) przez kilka godzin, a cron służy tylko do ponownego startu.
 on:
   schedule:
-    - cron: "*/10 10-20 21 11 *"   # sobota 11:00–21:50 czasu polskiego
-    - cron: "*/10 8-15 22 11 *"    # niedziela 9:00–16:50 czasu polskiego
+    - cron: "*/30 10-19 21 11 *"   # sobota 11:00–20:30 czasu polskiego
+    - cron: "*/30 8-14 22 11 *"    # niedziela 9:00–15:30 czasu polskiego
   workflow_dispatch:
     inputs:
       tour:
@@ -15,6 +16,9 @@ on:
         description: "Tylko sprawdź (bez zapisu)"
         type: boolean
         default: false
+      minutes:
+        description: "Jak długo pracować w pętli (min, maks. ~340)"
+        default: "340"
 
 permissions:
   contents: write
@@ -27,29 +31,39 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 355
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Pobierz wyniki z transmisji PFS
+      - name: Wyniki z transmisji PFS (pętla)
         env:
           TOUR_ID: ${{ inputs.tour || '1400' }}
+          DRY: ${{ inputs.dry_run }}
+          MINUTES: ${{ inputs.minutes || '340' }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
-            python scripts/live_update.py --dry-run
-          else
-            python scripts/live_update.py
-          fi
-      - name: Zapisz zmiany
-        if: ${{ inputs.dry_run != true }}
-        run: |
-          if git diff --quiet -- docs/results.json; then echo "Bez zmian"; exit 0; fi
           git config user.name "mp-live-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/results.json
-          git commit -m "Wyniki na żywo $(TZ=Europe/Warsaw date '+%d-%m-%Y %H:%M')"
-          git push
-          # poproś GitHub Pages o przebudowanie strony (push z tokenu Actions może go nie wywołać)
-          curl -s -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/pages/builds" || true
+          if [ "$DRY" = "true" ]; then python scripts/live_update.py --dry-run; exit 0; fi
+          start=$(date +%s); stop=$((start + MINUTES*60))
+          while :; do
+            now=$(date -u +%s)
+            # koniec okna: sobota 21:30, niedziela 17:00 czasu polskiego (ręczne uruchomienie poza oknem robi jeden przebieg)
+            d=$(date -u +%d); h=$(date -u +%H%M)
+            git pull -q --rebase origin main || true
+            python scripts/live_update.py || echo "błąd pobierania – spróbuję za chwilę"
+            if ! git diff --quiet -- docs/results.json; then
+              git add docs/results.json
+              git commit -q -m "Wyniki na żywo $(TZ=Europe/Warsaw date '+%d-%m-%Y %H:%M')"
+              git push -q origin HEAD:main || { git pull -q --rebase origin main && git push -q origin HEAD:main; } || true
+              curl -s -o /dev/null -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/${{ github.repository }}/pages/builds" || true
+            fi
+            in_window=0
+            if [ "$d" = "21" ] && [ "$h" \> "0945" ] && [ "$h" \< "2030" ]; then in_window=1; fi
+            if [ "$d" = "22" ] && [ "$h" \> "0745" ] && [ "$h" \< "1600" ]; then in_window=1; fi
+            if [ $in_window = 0 ] || [ $((now + 200)) -gt $stop ]; then echo "Koniec pętli"; break; fi
+            sleep 180
+          done
