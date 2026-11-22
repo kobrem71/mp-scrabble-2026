@@ -910,7 +910,10 @@
     {
      "a": "Kacper Zegadło",
      "b": "Dominik Urbacki",
-     "score": null
+     "score": [
+      351,
+      390
+     ]
     },
     {
      "a": "Łukasz Bobowski",
@@ -992,5 +995,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T11:34:49+00:00"
+ "updated": "2026-11-22T12:11:06+00:00"
 }
