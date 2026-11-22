@@ -905,7 +905,10 @@
     {
      "a": "Dariusz Ulatowski",
      "b": "Kamil Górka",
-     "score": null
+     "score": [
+      442,
+      337
+     ]
     },
     {
      "a": "Kacper Zegadło",
@@ -943,7 +946,10 @@
     {
      "a": "Sławomir Piotrowski",
      "b": "Mariusz Skrobosz",
-     "score": null
+     "score": [
+      407,
+      433
+     ]
     }
    ]
   },
@@ -995,5 +1001,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T12:11:06+00:00"
+ "updated": "2026-11-22T12:14:11+00:00"
 }
