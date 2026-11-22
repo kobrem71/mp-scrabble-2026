@@ -970,16 +970,10 @@
   },
   {
    "round": 15,
-   "tentative": true,
    "matches": [
     {
-     "a": "Artur Irzyk",
-     "b": "Dawid Adamczyk",
-     "score": null
-    },
-    {
-     "a": "Bartosz Morawski",
-     "b": "Marcin Rogala",
+     "a": "Kamil Górka",
+     "b": "Dominik Urbacki",
      "score": null
     },
     {
@@ -988,23 +982,28 @@
      "score": null
     },
     {
-     "a": "Dominik Urbacki",
-     "b": "Kamil Górka",
+     "a": "Bartosz Morawski",
+     "b": "Marcin Rogala",
      "score": null
     },
     {
-     "a": "Jakub Szymczak",
-     "b": "Karolina Urbańska",
+     "a": "Łukasz Bobowski",
+     "b": "Joanna Juszczak",
      "score": null
     },
     {
-     "a": "Joanna Juszczak",
-     "b": "Łukasz Bobowski",
+     "a": "Dawid Adamczyk",
+     "b": "Artur Irzyk",
      "score": null
     },
     {
-     "a": "Mariusz Skrobosz",
-     "b": "Wojciech Zemło",
+     "a": "Karolina Urbańska",
+     "b": "Jakub Szymczak",
+     "score": null
+    },
+    {
+     "a": "Wojciech Zemło",
+     "b": "Mariusz Skrobosz",
      "score": null
     },
     {
@@ -1016,5 +1015,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T12:26:26+00:00"
+ "updated": "2026-11-22T12:29:30+00:00"
 }
