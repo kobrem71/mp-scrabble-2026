@@ -873,7 +873,10 @@
     {
      "a": "Artur Irzyk",
      "b": "Wojciech Zemło",
-     "score": null
+     "score": [
+      430,
+      461
+     ]
     },
     {
      "a": "Karolina Urbańska",
@@ -987,5 +990,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T11:22:39+00:00"
+ "updated": "2026-11-22T11:25:43+00:00"
 }
