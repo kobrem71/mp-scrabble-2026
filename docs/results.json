@@ -990,7 +990,10 @@
     {
      "a": "Bartosz Morawski",
      "b": "Marcin Rogala",
-     "score": null
+     "score": [
+      427,
+      449
+     ]
     },
     {
      "a": "Łukasz Bobowski",
@@ -1027,5 +1030,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T13:11:50+00:00"
+ "updated": "2026-11-22T13:14:54+00:00"
 }
