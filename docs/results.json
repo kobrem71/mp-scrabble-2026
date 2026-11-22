@@ -931,17 +931,26 @@
     {
      "a": "Karolina Urbańska",
      "b": "Dawid Adamczyk",
-     "score": null
+     "score": [
+      385,
+      402
+     ]
     },
     {
      "a": "Jakub Szymczak",
      "b": "Artur Irzyk",
-     "score": null
+     "score": [
+      482,
+      360
+     ]
     },
     {
      "a": "Przemysław Herdzina",
      "b": "Wojciech Zemło",
-     "score": null
+     "score": [
+      269,
+      483
+     ]
     },
     {
      "a": "Sławomir Piotrowski",
@@ -1001,5 +1010,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T12:14:11+00:00"
+ "updated": "2026-11-22T12:17:16+00:00"
 }
