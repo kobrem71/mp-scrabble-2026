@@ -637,7 +637,10 @@
     {
      "a": "Artur Irzyk",
      "b": "Dominik Urbacki",
-     "score": null
+     "score": [
+      423,
+      431
+     ]
     },
     {
      "a": "Karolina Urbańska",
@@ -658,12 +661,18 @@
     {
      "a": "Wojciech Zemło",
      "b": "Bartosz Morawski",
-     "score": null
+     "score": [
+      466,
+      398
+     ]
     },
     {
      "a": "Mariusz Skrobosz",
      "b": "Marcin Rogala",
-     "score": null
+     "score": [
+      451,
+      354
+     ]
     },
     {
      "a": "Przemysław Herdzina",
@@ -915,5 +924,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T08:45:13+00:00"
+ "updated": "2026-11-22T08:48:17+00:00"
 }
