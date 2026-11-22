@@ -1022,7 +1022,10 @@
     {
      "a": "Wojciech Zemło",
      "b": "Mariusz Skrobosz",
-     "score": null
+     "score": [
+      421,
+      421
+     ]
     },
     {
      "a": "Przemysław Herdzina",
@@ -1036,5 +1039,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T13:21:00+00:00"
+ "updated": "2026-11-22T13:24:04+00:00"
 }
