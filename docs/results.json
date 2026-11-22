@@ -974,12 +974,18 @@
     {
      "a": "Kamil Górka",
      "b": "Dominik Urbacki",
-     "score": null
+     "score": [
+      375,
+      400
+     ]
     },
     {
      "a": "Dariusz Ulatowski",
      "b": "Kacper Zegadło",
-     "score": null
+     "score": [
+      497,
+      365
+     ]
     },
     {
      "a": "Bartosz Morawski",
@@ -989,7 +995,10 @@
     {
      "a": "Łukasz Bobowski",
      "b": "Joanna Juszczak",
-     "score": null
+     "score": [
+      385,
+      346
+     ]
     },
     {
      "a": "Dawid Adamczyk",
@@ -1009,11 +1018,14 @@
     {
      "a": "Przemysław Herdzina",
      "b": "Sławomir Piotrowski",
-     "score": null
+     "score": [
+      515,
+      411
+     ]
     }
    ]
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T12:29:30+00:00"
+ "updated": "2026-11-22T13:11:50+00:00"
 }
