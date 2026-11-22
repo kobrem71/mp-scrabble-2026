@@ -634,3 +634,14 @@ body.champ-open { overflow: hidden; }
 .champ-go { border: 0; border-radius: 10px; padding: 10px 22px; font: 700 1em/1 inherit; cursor: pointer; color: #fff;
   background: linear-gradient(180deg, #2e8b57, #1f6b3f); box-shadow: 0 3px 0 #164d2d; }
 .champ-go:hover { filter: brightness(1.08); }
+.champ-typer { margin: 0 0 16px; padding-top: 14px; border-top: 2px dashed #d9cf9e; }
+.ct-head { font: 700 .8em/1 Verdana, sans-serif; letter-spacing: .15em; text-transform: uppercase; color: #3c687a; }
+.ct-win { margin: 6px 0 10px; font-size: 1.15em; color: #14262e; }
+.ct-win b { color: #b07a0c; }
+.ct-podium { list-style: none; margin: 0 auto; padding: 0; max-width: 320px; text-align: left; }
+.ct-podium li { display: flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 8px; }
+.ct-podium li.p1 { background: rgba(232,163,23,.18); font-weight: 700; }
+.ct-m { font-size: 1.2em; width: 1.4em; }
+.ct-n { flex: 1; overflow-wrap: anywhere; }
+.ct-p { white-space: nowrap; font-weight: 700; color: #3c687a; }
+.champ-card { max-height: calc(100vh - 32px); overflow-y: auto; }

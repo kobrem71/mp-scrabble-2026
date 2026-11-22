@@ -670,12 +670,30 @@
     }
     return entries.map((e, k) => ({ ...e, win: e.ai ? null : win[k] / sims, exp: sum[k] / sims }));
   }
+
+  // po zakończeniu turnieju: zwycięzca i podium typera na planszy mistrza
+  function fillChampTyper(res) {
+    const box = document.getElementById("champTyper");
+    if (!box) return;
+    const hum = res.filter(r => !r.ai && r.now != null).sort((a, b) => b.now - a.now);
+    if (!hum.length) return;
+    let place = 0, prev = null;
+    const ranked = hum.map((r, k) => { if (r.now !== prev) { place = k + 1; prev = r.now; } return { ...r, place }; });
+    const podium = ranked.filter(r => r.place <= 3);
+    const winners = ranked.filter(r => r.place === 1);
+    const medal = ["", "🥇", "🥈", "🥉"];
+    box.innerHTML = `<div class="ct-head">Typer</div>
+      <p class="ct-win">${winners.length > 1 ? "Ex aequo wygrywają" : "Wygrywa"} <b>${winners.map(w => esc(w.nick)).join(", ")}</b>!</p>
+      <ol class="ct-podium">${podium.map(r => `<li class="p${r.place}"><span class="ct-m">${medal[r.place]}</span><span class="ct-n">${esc(r.nick)}</span><span class="ct-p">${r.now.toFixed(1)} pkt</span></li>`).join("")}</ol>`;
+    box.hidden = false;
+  }
   function renderLiveTypers() {
     const st = standings(), anyPlayed = matches.some(isDone), fin = st.map(x => x.i), done = finished();
     const simOn = matches.some(m => !m.score && whatIf[m.key]);
     const res = typerMC(typerEntries()).map(r => ({ ...r, now: anyPlayed ? typerScore(r.order, fin).total : null }));
     res.sort((a, b) => done ? b.now - a.now : (b.win ?? -1) - (a.win ?? -1) || (b.now ?? 0) - (a.now ?? 0) || b.exp - a.exp);
     const nReal = matches.filter(m => m.score).length;
+    if (nReal === matches.length) fillChampTyper(res);
     $("#titleHead").textContent = done ? (simOn ? "Typerzy – wynik symulacji" : "Typerzy – klasyfikacja końcowa") : "Typerzy na żywo";
     $("#simNote").textContent = done ? "" : `${nReal} z ${matches.length} partii rozegranych${simOn ? " + Twoja symulacja" : ""} · szanse z ${TYPER_SIMS.toLocaleString("pl-PL")} symulacji reszty turnieju`;
     const maxW = Math.max(...res.map(r => r.win || 0), 0.0001);
