@@ -767,32 +767,50 @@
     {
      "a": "Kamil Górka",
      "b": "Joanna Juszczak",
-     "score": null
+     "score": [
+      378,
+      318
+     ]
     },
     {
      "a": "Dominik Urbacki",
      "b": "Łukasz Bobowski",
-     "score": null
+     "score": [
+      418,
+      346
+     ]
     },
     {
      "a": "Dariusz Ulatowski",
      "b": "Marcin Rogala",
-     "score": null
+     "score": [
+      488,
+      429
+     ]
     },
     {
      "a": "Kacper Zegadło",
      "b": "Bartosz Morawski",
-     "score": null
+     "score": [
+      321,
+      405
+     ]
     },
     {
      "a": "Dawid Adamczyk",
      "b": "Sławomir Piotrowski",
-     "score": null
+     "score": [
+      427,
+      342
+     ]
     },
     {
      "a": "Artur Irzyk",
      "b": "Przemysław Herdzina",
-     "score": null
+     "score": [
+      318,
+      377
+     ]
     },
     {
      "a": "Karolina Urbańska",
@@ -802,7 +820,10 @@
     {
      "a": "Jakub Szymczak",
      "b": "Wojciech Zemło",
-     "score": null
+     "score": [
+      522,
+      462
+     ]
     }
    ]
   },
@@ -946,5 +967,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T09:45:42+00:00"
+ "updated": "2026-11-22T10:37:11+00:00"
 }
