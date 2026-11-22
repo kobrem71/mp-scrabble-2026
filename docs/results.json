@@ -868,7 +868,10 @@
     {
      "a": "Dawid Adamczyk",
      "b": "Mariusz Skrobosz",
-     "score": null
+     "score": [
+      389,
+      339
+     ]
     },
     {
      "a": "Artur Irzyk",
@@ -898,6 +901,51 @@
   },
   {
    "round": 14,
+   "matches": [
+    {
+     "a": "Dariusz Ulatowski",
+     "b": "Kamil Górka",
+     "score": null
+    },
+    {
+     "a": "Kacper Zegadło",
+     "b": "Dominik Urbacki",
+     "score": null
+    },
+    {
+     "a": "Łukasz Bobowski",
+     "b": "Bartosz Morawski",
+     "score": null
+    },
+    {
+     "a": "Joanna Juszczak",
+     "b": "Marcin Rogala",
+     "score": null
+    },
+    {
+     "a": "Karolina Urbańska",
+     "b": "Dawid Adamczyk",
+     "score": null
+    },
+    {
+     "a": "Jakub Szymczak",
+     "b": "Artur Irzyk",
+     "score": null
+    },
+    {
+     "a": "Przemysław Herdzina",
+     "b": "Wojciech Zemło",
+     "score": null
+    },
+    {
+     "a": "Sławomir Piotrowski",
+     "b": "Mariusz Skrobosz",
+     "score": null
+    }
+   ]
+  },
+  {
+   "round": 15,
    "tentative": true,
    "matches": [
     {
@@ -932,52 +980,6 @@
     },
     {
      "a": "Mariusz Skrobosz",
-     "b": "Sławomir Piotrowski",
-     "score": null
-    },
-    {
-     "a": "Przemysław Herdzina",
-     "b": "Wojciech Zemło",
-     "score": null
-    }
-   ]
-  },
-  {
-   "round": 15,
-   "tentative": true,
-   "matches": [
-    {
-     "a": "Artur Irzyk",
-     "b": "Jakub Szymczak",
-     "score": null
-    },
-    {
-     "a": "Bartosz Morawski",
-     "b": "Łukasz Bobowski",
-     "score": null
-    },
-    {
-     "a": "Dariusz Ulatowski",
-     "b": "Kamil Górka",
-     "score": null
-    },
-    {
-     "a": "Dawid Adamczyk",
-     "b": "Karolina Urbańska",
-     "score": null
-    },
-    {
-     "a": "Dominik Urbacki",
-     "b": "Kacper Zegadło",
-     "score": null
-    },
-    {
-     "a": "Joanna Juszczak",
-     "b": "Marcin Rogala",
-     "score": null
-    },
-    {
-     "a": "Mariusz Skrobosz",
      "b": "Wojciech Zemło",
      "score": null
     },
@@ -990,5 +992,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T11:25:43+00:00"
+ "updated": "2026-11-22T11:34:49+00:00"
 }
