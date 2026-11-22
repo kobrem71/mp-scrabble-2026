@@ -929,7 +929,10 @@
     {
      "a": "Joanna Juszczak",
      "b": "Marcin Rogala",
-     "score": null
+     "score": [
+      372,
+      393
+     ]
     },
     {
      "a": "Karolina Urbańska",
@@ -1013,5 +1016,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T12:20:20+00:00"
+ "updated": "2026-11-22T12:26:26+00:00"
 }
