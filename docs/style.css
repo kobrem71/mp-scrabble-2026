@@ -611,3 +611,26 @@ input[type=text] { font: inherit; font-size: 14px; padding: 5px 8px; border: 1px
 .live-typ td.nick, .live-typ td.nick span { white-space: normal; }
 .live-typ td.nick span { display: block; max-width: 120px; overflow-wrap: anywhere; word-break: break-word; }
 @media (max-width: 520px) { .live-typ td.nick span { max-width: 100px; } }
+
+/* ---------- plansza mistrza ---------- */
+.champ { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 50% 40%, rgba(20,38,46,.82), rgba(10,20,26,.94)); transition: opacity .4s; padding: 16px; }
+.champ.hide { opacity: 0; pointer-events: none; }
+.champ canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: auto; }
+.champ-card { position: relative; z-index: 1; text-align: center; background: linear-gradient(180deg, #fbfbec, #f1efd2);
+  border: 3px solid #e8a317; border-radius: 18px; padding: 28px 36px 24px; max-width: 460px; width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5); animation: champIn .7s cubic-bezier(.2,1.4,.4,1); }
+@keyframes champIn { from { transform: scale(.6) translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+.champ-x { position: absolute; top: 8px; right: 12px; border: 0; background: none; font-size: 30px; line-height: 1; color: #3c687a; cursor: pointer; }
+.champ-tiles { justify-content: center; --gap: 4px; margin-bottom: 14px; }
+.champ-tiles .tile { --s: 40px; }
+.champ-photo { width: 170px; height: 170px; border-radius: 50%; object-fit: cover; border: 5px solid #e8a317;
+  box-shadow: 0 0 0 4px #fbfbec, 0 0 30px rgba(232,163,23,.7); }
+.champ-pre { margin: 16px 0 2px; font-size: 1.15em; color: #3c687a; }
+.champ-name { margin: 0; font-family: "Roboto Slab", Georgia, serif; font-size: 2.1em; color: #14262e; line-height: 1.15; }
+.champ-sub { margin: 6px 0 16px; font-size: 1.1em; font-weight: 700; color: #b07a0c; }
+body.champ-open { overflow: hidden; }
+@media (max-width: 520px) { .champ-card { padding: 24px 18px 20px; } .champ-tiles .tile { --s: 32px; } .champ-name { font-size: 1.7em; } .champ-photo { width: 140px; height: 140px; } }
+.champ-go { border: 0; border-radius: 10px; padding: 10px 22px; font: 700 1em/1 inherit; cursor: pointer; color: #fff;
+  background: linear-gradient(180deg, #2e8b57, #1f6b3f); box-shadow: 0 3px 0 #164d2d; }
+.champ-go:hover { filter: brightness(1.08); }
