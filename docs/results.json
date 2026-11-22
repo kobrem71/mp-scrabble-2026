@@ -650,7 +650,10 @@
     {
      "a": "Jakub Szymczak",
      "b": "Kacper Zegadło",
-     "score": null
+     "score": [
+      540,
+      290
+     ]
     },
     {
      "a": "Wojciech Zemło",
@@ -912,5 +915,5 @@
   }
  ],
  "source": "https://www.pfs.org.pl/live/index.php?id=1400",
- "updated": "2026-11-22T08:42:09+00:00"
+ "updated": "2026-11-22T08:45:13+00:00"
 }
